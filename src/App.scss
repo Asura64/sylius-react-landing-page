@@ -1,0 +1,26 @@
+@use './styles/tokens';
+@use './styles/base';
+@use './styles/shared';
+
+.app {
+  width: min(calc(100% - 2rem), var(--shell));
+  margin: 0 auto;
+  padding-bottom: 2.5rem;
+
+  &__layout {
+    display: block;
+  }
+
+  &__content {
+    min-width: 0;
+  }
+}
+
+@media (min-width: 981px) {
+  .app__layout {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+  }
+}

@@ -1,0 +1,56 @@
+.site-footer {
+  background: rgba(255, 255, 255, 0.55);
+  padding: 2rem 0 2.4rem;
+
+  &__inner {
+    width: min(calc(100% - 2rem), var(--shell));
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  &__brand {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  &__copy {
+    margin: 0.35rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.75;
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  &__link {
+    color: var(--text-muted);
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  &__link-button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-footer__inner {
+    align-items: flex-start;
+  }
+}

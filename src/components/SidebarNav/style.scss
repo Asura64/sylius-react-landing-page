@@ -1,0 +1,45 @@
+.sidebar {
+  display: none;
+
+  &__panel {
+    padding: 1.5rem;
+    border-radius: 1.75rem;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: var(--shadow);
+  }
+
+  &__title {
+    margin: 0 0 1rem;
+    font-family: 'Manrope', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  &__nav {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  &__link {
+    padding: 0.9rem 1rem;
+    border-radius: 1rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    transition: transform 180ms ease, background-color 180ms ease, color 180ms ease;
+
+    &:hover,
+    &--current {
+      color: var(--primary);
+      background: rgba(17, 0, 188, 0.06);
+      transform: translateX(0.15rem);
+    }
+  }
+}
+
+@media (min-width: 981px) {
+  .sidebar {
+    display: block;
+    position: sticky;
+    top: 7rem;
+  }
+}

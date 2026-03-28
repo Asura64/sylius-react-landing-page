@@ -1,0 +1,233 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  margin-top: 2.5rem;
+  padding: 3rem;
+  border-radius: 2rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(243, 244, 245, 0.86));
+  box-shadow: var(--shadow);
+
+  &__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+    gap: 4rem;
+    align-items: center;
+  }
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1.35rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(239, 219, 255, 0.6);
+    color: var(--secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  &__eyebrow-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--secondary);
+  }
+
+  &__title {
+    max-width: 11ch;
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(3rem, 5vw, 4rem);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+
+    span {
+      color: var(--primary);
+      font-style: italic;
+    }
+  }
+
+  &__text {
+    max-width: 38rem;
+    margin: 1.5rem 0 0;
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    line-height: 1.75;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  &__orb,
+  &__glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(20px);
+  }
+
+  &__orb--primary {
+    top: 7rem;
+    right: 10%;
+    width: 18rem;
+    height: 18rem;
+    background: rgba(27, 0, 255, 0.08);
+  }
+
+  &__orb--secondary {
+    bottom: 2rem;
+    left: 8%;
+    width: 16rem;
+    height: 16rem;
+    background: rgba(117, 71, 171, 0.12);
+  }
+
+  &__visual {
+    position: relative;
+    min-height: 34rem;
+    border-radius: 2rem;
+    overflow: hidden;
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(243, 244, 245, 0.8)),
+      linear-gradient(135deg, rgba(17, 0, 188, 0.07), rgba(117, 71, 171, 0.08));
+    box-shadow: 0 28px 64px rgba(25, 28, 29, 0.12);
+    transform: rotate(2deg);
+  }
+
+  &__glow {
+    inset: auto auto 2rem 2rem;
+    width: 14rem;
+    height: 14rem;
+    background: radial-gradient(circle, rgba(27, 0, 255, 0.2), transparent 70%);
+  }
+
+  &__screen {
+    position: absolute;
+    backdrop-filter: blur(14px);
+    box-shadow: var(--shadow);
+
+    &--main {
+      top: 3.25rem;
+      left: 3rem;
+      right: 5.5rem;
+      bottom: 5rem;
+      border-radius: 1.6rem;
+      background:
+        linear-gradient(180deg, rgba(15, 13, 42, 0.95), rgba(34, 29, 87, 0.96)),
+        #120f2d;
+
+      &::before {
+        content: '';
+        position: absolute;
+        inset: 1.3rem 1.3rem auto;
+        height: 1.2rem;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), transparent);
+      }
+    }
+
+    &--panel {
+      right: 2.2rem;
+      bottom: 2.1rem;
+      width: 13rem;
+      padding: 1rem;
+      border-radius: 1.35rem;
+      background: rgba(255, 255, 255, 0.88);
+    }
+  }
+
+  &__code-lines {
+    position: absolute;
+    inset: 4.3rem 1.5rem 1.5rem;
+    display: grid;
+    gap: 1rem;
+
+    span {
+      display: block;
+      height: 3.5rem;
+      border-radius: 1rem;
+      background:
+        linear-gradient(90deg, rgba(76, 214, 255, 0.18), rgba(27, 0, 255, 0.28)),
+        rgba(255, 255, 255, 0.05);
+
+      &:nth-child(2) {
+        width: 82%;
+      }
+
+      &:nth-child(3) {
+        width: 68%;
+      }
+
+      &:nth-child(4) {
+        width: 55%;
+      }
+    }
+  }
+
+  &__metric-pill {
+    display: inline-flex;
+    padding: 0.4rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(17, 0, 188, 0.08);
+    color: var(--primary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  &__metric-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.7rem;
+    margin-top: 0.85rem;
+
+    span {
+      aspect-ratio: 1;
+      border-radius: 0.95rem;
+      background: linear-gradient(145deg, rgba(17, 0, 188, 0.12), rgba(117, 71, 171, 0.18));
+    }
+  }
+}
+
+@media (max-width: 980px) {
+  .hero {
+    padding: 2rem;
+
+    &__grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+
+    &__visual {
+      min-height: 24rem;
+      transform: none;
+    }
+
+    &__screen--main {
+      top: 1.5rem;
+      left: 1.4rem;
+      right: 4rem;
+      bottom: 3.2rem;
+    }
+
+    &__screen--panel {
+      right: 1rem;
+      bottom: 1rem;
+      width: 9.5rem;
+    }
+  }
+}

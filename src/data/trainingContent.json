@@ -1,0 +1,144 @@
+{
+  "navigation": {
+    "brand": "Formation Sylius 2",
+    "links": [
+      { "label": "Accueil", "href": "#hero", "active": true },
+      { "label": "Modules", "href": "#modules", "active": false },
+      { "label": "Postuler", "href": "#postuler", "active": false }
+    ],
+    "cta": { "label": "Commencer", "href": "#postuler" }
+  },
+  "hero": {
+    "eyebrow": "Sylius 2.2 Edition",
+    "titlePrefix": "Formation Sylius 2",
+    "titleHighlight": "pour les devs",
+    "description": "Maîtrisez Sylius 2 avec une formation complète, de l'installation aux workflows avancés, et un accompagnement ciblé sur vos vrais enjeux projet e-commerce.",
+    "primaryAction": { "label": "Commencer maintenant", "href": "#postuler" },
+    "secondaryAction": { "label": "Voir le programme", "href": "#modules" },
+    "visualLabel": "Shop"
+  },
+  "modules": [
+    {
+      "id": "installation",
+      "title": "Installation",
+      "description": "Installez Sylius 2 avec docker pour poser une base stable, rapide et reproductible.\nPréparez un environnement de développement professionnel avec Xdebug.",
+      "icon": "↓",
+      "theme": "primary",
+      "layout": "left",
+      "art": "installation"
+    },
+    {
+      "id": "configuration",
+      "title": "Configuration",
+      "description": "Personnalisez chaque composant Sylius (canaux, taxes, monnaies, paiements, livraisons, produits, promotions...) en utilisant de manière avancée les fixtures et coller à la logique métier de votre projet.",
+      "icon": "⚙",
+      "theme": "secondary",
+      "layout": "right",
+      "art": "configuration"
+    },
+    {
+      "id": "resources",
+      "title": "Ressources",
+      "description": "Découvrez ResourceBundle, étendez les modèles et structurez vos données afin d'ajouter votre logique métier.",
+      "icon": "▣",
+      "theme": "tertiary",
+      "layout": "left",
+      "art": "resources"
+    },
+    {
+      "id": "grids",
+      "title": "Grilles",
+      "description": "Administrez et affichez vos ressources en définissant des grilles admin et front lisibles, extensibles et adaptées à chaque contexte métier.",
+      "icon": "☷",
+      "theme": "primary",
+      "layout": "right",
+      "art": "grids"
+    },
+    {
+      "id": "twig_hooks",
+      "title": "Twig Hooks",
+      "description": "Personnalisez les templates proprement avec Twig Hooks sans casser la structure native de Sylius.",
+      "icon": "⟐",
+      "theme": "secondary",
+      "layout": "left",
+      "art": "twig-hooks"
+    },
+    {
+      "id": "twig_components",
+      "title": "Twig Components",
+      "description": "Composez des interfaces interactives et réutilisables avec Twig Components pour gagner en cohérence et en vitesse.",
+      "icon": "◫",
+      "theme": "tertiary",
+      "layout": "right",
+      "art": "twig-components"
+    },
+    {
+      "id": "workflow",
+      "title": "Workflow",
+      "description": "Maîtrisez la machine à états de Symfony pour automatiser les processus de commande, paiement et expédition.",
+      "icon": "⇄",
+      "theme": "danger",
+      "layout": "left",
+      "art": "workflow"
+    },
+    {
+      "id": "quality",
+      "title": "Qualité",
+      "description": "Mettez en place PHPCS, PHPStan et Behat pour sécuriser vos évolutions et fiabiliser vos livraisons.",
+      "icon": "✓",
+      "theme": "secondary",
+      "layout": "right",
+      "art": "quality"
+    }
+  ],
+  "featureGrid": {
+    "kicker": "Accompagnement dédié",
+    "title": "Accompagnement Sur Mesure",
+    "description": "Profitez d'un mentorat Sylius 2 pour accélérer vos projets e-commerce avec un accompagnement adapté à vos besoins réels et à vos enjeux du moment.",
+    "actions": [
+      { "label": "Me contacter par mail", "href": "mailto:patxi.iparaguirre@gmail.com", "variant": "light" },
+      { "label": "Prendre rendez-vous", "href": "https://calendar.app.google/Bq1heeQeNiyZyK8D6", "variant": "outline" }
+    ],
+    "highlights": [
+      {
+        "title": "Sessions de mentorat",
+        "description": "Présentiel ou distanciel selon vos besoins, avec des sessions de 45 min à 1h.",
+        "icon": "◔",
+        "tone": "primary"
+      },
+      {
+        "title": "Format flexible",
+        "description": "Distanciel en 1:1 ou présentiel en petit groupe pour une attention maximale.",
+        "icon": "◫",
+        "tone": "secondary"
+      },
+      {
+        "title": "Méthodologie active",
+        "description": "Approche pragmatique : 80% de pratique sur le code et 20% de théorie ciblée.",
+        "icon": "◌",
+        "tone": "tertiary"
+      },
+      {
+        "title": "Flexibilité totale",
+        "description": "Aucun engagement, modules au choix, sessions ponctuelles ou régulières.",
+        "icon": "⟳",
+        "tone": "primary"
+      },
+      {
+        "title": "Support GitLab",
+        "description": "Suivi structuré via tags, branches et thématiques pour garder un vrai fil pédagogique.",
+        "icon": "⌘",
+        "tone": "secondary"
+      }
+    ]
+  },
+  "footer": {
+    "brand": "Patxi Iparaguirre",
+    "copy": "©2026 - Formateur, Mentor et Lead Dev",
+    "links": [
+      { "label": "\uD83D\uDCD6 Sylius Doc", "href": "https://docs.sylius.com" },
+      { "label": "\uD83D\uDCAC Community Slack", "href": "https://sylius.com/slack" },
+      { "label": "\uD83D\uDCBB Sylius Demo", "href": "https://demo.sylius.com" }
+    ]
+  }
+}
