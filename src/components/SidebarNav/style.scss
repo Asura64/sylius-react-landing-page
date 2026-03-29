@@ -21,6 +21,9 @@
   }
 
   &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
     padding: 0.9rem 1rem;
     border-radius: 1rem;
     color: var(--text-muted);
@@ -33,6 +36,12 @@
       background: rgba(17, 0, 188, 0.06);
       transform: translateX(0.15rem);
     }
+  }
+
+  &__icon {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
   }
 }
 

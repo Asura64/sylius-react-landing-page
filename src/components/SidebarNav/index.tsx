@@ -1,4 +1,5 @@
 import type { ModuleContent } from '../../types/content'
+import { ModuleIcon } from '../ModuleIcon'
 import './style.scss'
 
 type SidebarNavProps = {
@@ -18,7 +19,8 @@ export function SidebarNav({ modules, activeIndex }: SidebarNavProps) {
               className={`sidebar__link${index === activeIndex ? ' sidebar__link--current' : ''}`}
               href={`#${module.id}`}
             >
-                {module.icon} {module.title}
+              <ModuleIcon className="sidebar__icon" name={module.icon} strokeWidth={2} />
+              <span>{module.title}</span>
             </a>
           ))}
         </nav>

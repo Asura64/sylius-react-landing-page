@@ -1,8 +1,23 @@
+import {
+  Code2,
+  GitBranch,
+  MessageSquareMore,
+  RefreshCcw,
+  SlidersHorizontal,
+} from 'lucide-react'
 import type { FeatureGridContent } from '../../types/content'
 import './style.scss'
 
 type FeatureGridProps = {
   featureGrid: FeatureGridContent
+}
+
+const iconMap = {
+  'Sessions de mentorat': MessageSquareMore,
+  'Format flexible': SlidersHorizontal,
+  'Méthodologie active': Code2,
+  'Flexibilité totale': RefreshCcw,
+  'Support GitLab': GitBranch,
 }
 
 export function FeatureGrid({ featureGrid }: FeatureGridProps) {
@@ -30,18 +45,24 @@ export function FeatureGrid({ featureGrid }: FeatureGridProps) {
         </div>
 
         <div className="feature-grid__highlights">
-          {featureGrid.highlights.map((item, index) => (
-            <article
-              key={item.title}
-              className={`feature-grid__highlight feature-grid__highlight--${item.tone}${index === featureGrid.highlights.length - 1 ? ' feature-grid__highlight--wide' : ''}`}
-            >
-              <div className="feature-grid__highlight-icon" aria-hidden="true">
-                {item.icon}
-              </div>
-              <h3 className="feature-grid__highlight-title">{item.title}</h3>
-              <p className="feature-grid__highlight-copy">{item.description}</p>
-            </article>
-          ))}
+          {featureGrid.highlights.map((item, index) => {
+            const Icon = iconMap[item.title as keyof typeof iconMap] ?? MessageSquareMore
+
+            return (
+              <article
+                key={item.title}
+                className={`feature-grid__highlight feature-grid__highlight--${item.tone}${index === featureGrid.highlights.length - 1 ? ' feature-grid__highlight--wide' : ''}`}
+              >
+                <div className="feature-grid__highlight-heading">
+                  <div className="feature-grid__highlight-icon" aria-hidden="true">
+                    <Icon className="feature-grid__highlight-icon-svg" strokeWidth={2} />
+                  </div>
+                  <h3 className="feature-grid__highlight-title">{item.title}</h3>
+                </div>
+                <p className="feature-grid__highlight-copy">{item.description}</p>
+              </article>
+            )
+          })}
         </div>
       </article>
     </section>

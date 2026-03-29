@@ -1,4 +1,5 @@
 import type { ModuleContent } from '../../types/content'
+import { ModuleIcon } from '../ModuleIcon'
 import './style.scss'
 
 const layoutClassMap = {
@@ -36,10 +37,12 @@ export function TimelineItem({
       <div className="timeline__marker">{index + 1}</div>
 
       <div className="timeline__card">
-        <div className="timeline__icon" aria-hidden="true">
-          {module.icon}
+        <div className="timeline__heading">
+          <div className="timeline__icon" aria-hidden="true">
+            <ModuleIcon className="timeline__icon-svg" name={module.icon} strokeWidth={2} />
+          </div>
+          <h3 className="timeline__title">{module.title}</h3>
         </div>
-        <h3 className="timeline__title">{module.title}</h3>
         <p className="timeline__description">{module.description}</p>
         <div className={`timeline__art timeline__art--${module.art}`} aria-hidden="true"></div>
       </div>
