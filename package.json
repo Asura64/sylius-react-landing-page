@@ -2,7 +2,7 @@
   "name": "patxi",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://asura64.github.io/sylius-react-landing-page",
+  "homepage": "https://patxi.iparaguirre.fr",
   "type": "module",
   "scripts": {
     "build:client": "vite build",

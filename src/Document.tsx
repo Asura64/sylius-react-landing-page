@@ -21,6 +21,7 @@ export function Document({
         <meta name="description" content={description} />
         <meta name="robots" content="index,follow" />
         <meta name="theme-color" content="#1100bc" />
+        <link rel="icon" type="image/png" href="./logo.png" />
         {stylesheets.map((stylesheet) => (
           <link key={stylesheet} rel="stylesheet" href={stylesheet} />
         ))}
