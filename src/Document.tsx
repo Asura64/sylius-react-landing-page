@@ -22,6 +22,7 @@ export function Document({
         <meta name="robots" content="index,follow" />
         <meta name="theme-color" content="#1100bc" />
         <link rel="icon" type="image/png" href="./logo.png" />
+        <link rel="canonical" href="https://patxi.iparaguirre.fr/" />
         {stylesheets.map((stylesheet) => (
           <link key={stylesheet} rel="stylesheet" href={stylesheet} />
         ))}
