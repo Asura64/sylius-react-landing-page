@@ -1,4 +1,5 @@
 import type { NavigationContent } from '../../types/content'
+import logoSrc from '../../assets/logo.png'
 import './style.scss'
 
 type HeaderProps = {
@@ -11,7 +12,7 @@ export function Header({ navigation }: HeaderProps) {
       <div className="site-header__inner">
         <a className="brand" href="#">
           <span className="brand__mark">
-            <img src="/logo.png" alt="" />
+            <img src={logoSrc} alt="" />
           </span>
           <span className="brand__text">{navigation.brand}</span>
         </a>

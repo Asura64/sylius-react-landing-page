@@ -5,10 +5,12 @@
   "homepage": "https://asura64.github.io/sylius-react-landing-page",
   "type": "module",
   "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist",
+    "build:client": "vite build",
+    "build:server": "vite build --ssr src/entry-prerender.tsx --outDir dist-ssr",
+    "build:prerender": "npm run build:client && npm run build:server && node ./scripts/prerender.mjs",
+    "deploy:prerender": "npm run build:prerender && gh-pages -d prerender-dist -b prerender",
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "npm run build:client",
     "lint": "eslint .",
     "preview": "vite preview"
   },
