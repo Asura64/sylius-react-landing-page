@@ -1,5 +1,4 @@
 import type { PropsWithChildren } from 'react'
-import logoSrc from './assets/logo.png'
 
 type DocumentProps = PropsWithChildren<{
   bootstrapModule: string
@@ -22,7 +21,6 @@ export function Document({
         <meta name="description" content={description} />
         <meta name="robots" content="index,follow" />
         <meta name="theme-color" content="#1100bc" />
-        <link rel="icon" type="image/png" href={logoSrc} />
         {stylesheets.map((stylesheet) => (
           <link key={stylesheet} rel="stylesheet" href={stylesheet} />
         ))}
@@ -102,13 +100,31 @@ export function Document({
                 cookiesVersion: '6a970aaa-e6a9-47ff-81e0-d3d0771dba6d',
               };
 
-              (function (d, s) {
-                var t = d.getElementsByTagName(s)[0];
-                var e = d.createElement(s);
+              function loadAxeptio() {
+                if (window.__axeptioLoaded) return;
+
+                window.__axeptioLoaded = true;
+
+                var t = document.getElementsByTagName('script')[0];
+                var e = document.createElement('script');
                 e.async = true;
                 e.src = '//static.axept.io/sdk.js';
                 t.parentNode.insertBefore(e, t);
-              })(document, 'script');
+              }
+
+              function scheduleAxeptio() {
+                if ('requestIdleCallback' in window) {
+                  window.requestIdleCallback(loadAxeptio, { timeout: 2500 });
+                } else {
+                  window.setTimeout(loadAxeptio, 1200);
+                }
+              }
+
+              if (document.readyState === 'complete') {
+                scheduleAxeptio();
+              } else {
+                window.addEventListener('load', scheduleAxeptio, { once: true });
+              }
             `,
           }}
         />

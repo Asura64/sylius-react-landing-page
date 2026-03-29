@@ -2,7 +2,6 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert</title>
     <meta
@@ -74,13 +73,31 @@
         cookiesVersion: '6a970aaa-e6a9-47ff-81e0-d3d0771dba6d',
       };
 
-      (function (d, s) {
-        var t = d.getElementsByTagName(s)[0];
-        var e = d.createElement(s);
+      function loadAxeptio() {
+        if (window.__axeptioLoaded) return;
+
+        window.__axeptioLoaded = true;
+
+        var t = document.getElementsByTagName('script')[0];
+        var e = document.createElement('script');
         e.async = true;
         e.src = '//static.axept.io/sdk.js';
         t.parentNode.insertBefore(e, t);
-      })(document, 'script');
+      }
+
+      function scheduleAxeptio() {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadAxeptio, { timeout: 2500 });
+        } else {
+          window.setTimeout(loadAxeptio, 1200);
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        scheduleAxeptio()
+      } else {
+        window.addEventListener('load', scheduleAxeptio, { once: true })
+      }
     </script>
     <script type="text/javascript">
       var TAWK_VENDOR_ID = 'tawk.to';

@@ -1,5 +1,5 @@
 import type { NavigationContent } from '../../types/content'
-import logoSrc from '../../assets/logo.png'
+import logoSrc from '../../assets/logo-header.webp'
 import './style.scss'
 
 type HeaderProps = {
