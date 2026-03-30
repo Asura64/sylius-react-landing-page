@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
-import App from './App'
 import { Document } from './Document'
 import content from './data/trainingContent.json'
+import { LandingPage } from './pages/LandingPage'
 import type { TrainingContent } from './types/content'
 
 type RenderDocumentParams = {
@@ -14,11 +14,14 @@ export function renderDocument({ bootstrapModule, stylesheets }: RenderDocumentP
 
   return `<!doctype html>${renderToStaticMarkup(
     <Document
+      assetBase="./"
       bootstrapModule={bootstrapModule}
+      canonicalUrl="https://patxi.iparaguirre.fr/"
       description={hero.description}
       stylesheets={stylesheets}
+      title="Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert"
     >
-      <App />
+      <LandingPage />
     </Document>,
   )}`
 }

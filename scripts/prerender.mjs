@@ -35,9 +35,9 @@ rmSync(outputDir, { recursive: true, force: true })
 cpSync(clientDir, outputDir, { recursive: true })
 
 const { renderDocument } = await import(pathToFileURL(serverEntryPath).href)
-const html = renderDocument({ bootstrapModule, stylesheets })
+const landingHtml = renderDocument({ bootstrapModule, stylesheets })
 
-writeFileSync(resolve(outputDir, 'index.html'), html)
+writeFileSync(resolve(outputDir, 'index.html'), landingHtml)
 
 const cnameSource = resolve(rootDir, 'public/CNAME')
 

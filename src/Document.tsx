@@ -1,28 +1,34 @@
 import type { PropsWithChildren } from 'react'
 
 type DocumentProps = PropsWithChildren<{
+  assetBase: string
   bootstrapModule: string
+  canonicalUrl: string
   description: string
   stylesheets: string[]
+  title: string
 }>
 
 export function Document({
+  assetBase,
   bootstrapModule,
+  canonicalUrl,
   children,
   description,
   stylesheets,
+  title,
 }: DocumentProps) {
   return (
     <html lang="fr">
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert</title>
+        <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="robots" content="index,follow" />
         <meta name="theme-color" content="#1100bc" />
-        <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-        <link rel="canonical" href="https://patxi.iparaguirre.fr/" />
+        <link rel="icon" type="image/x-icon" href={`${assetBase}favicon.ico`} />
+        <link rel="canonical" href={canonicalUrl} />
         {stylesheets.map((stylesheet) => (
           <link key={stylesheet} rel="stylesheet" href={stylesheet} />
         ))}
@@ -31,7 +37,7 @@ export function Document({
         <meta property="og:locale" content="fr_FR" />
         <meta
           property="og:title"
-          content="Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert"
+          content={title}
         />
         <meta
           property="og:description"
@@ -40,10 +46,7 @@ export function Document({
         <meta property="og:site_name" content="Formation Sylius 2" />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert"
-        />
+        <meta name="twitter:title" content={title} />
         <meta
           name="twitter:description"
           content="Installation, configuration, ResourceBundle, Twig Hooks, workflow, qualité et mentorat Sylius 2."
