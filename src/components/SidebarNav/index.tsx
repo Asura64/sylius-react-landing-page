@@ -1,10 +1,10 @@
 import type { MouseEvent } from 'react'
-import type { ModuleContent } from '../../types/content'
+import type { Module } from '../../types/content'
 import { ModuleIcon } from '../ModuleIcon'
 import './style.scss'
 
 type SidebarNavProps = {
-  modules: ModuleContent[]
+  modules: Module[]
   activeIndex: number
 }
 
@@ -35,15 +35,15 @@ export function SidebarNav({ modules, activeIndex }: SidebarNavProps) {
     window.requestAnimationFrame(step)
   }
 
-  const handleModuleClick = (event: MouseEvent<HTMLAnchorElement>, moduleId: string) => {
-    const target = document.getElementById(moduleId)
+  const handleModuleClick = (event: MouseEvent<HTMLAnchorElement>, moduleSlug: string) => {
+    const target = document.getElementById(moduleSlug)
 
     if (!target) {
       return
     }
 
     event.preventDefault()
-    window.history.pushState(null, '', `#${moduleId}`)
+    window.history.pushState(null, '', `#${moduleSlug}`)
     const rect = target.getBoundingClientRect()
     const targetTop = window.scrollY + rect.top - (window.innerHeight - rect.height) / 2
 
@@ -57,10 +57,10 @@ export function SidebarNav({ modules, activeIndex }: SidebarNavProps) {
         <nav className="sidebar__nav" aria-label="Modules de formation">
           {modules.map((module, index) => (
             <a
-              key={module.id}
+              key={module.slug}
               className={`sidebar__link${index === activeIndex ? ' sidebar__link--current' : ''}`}
-              href={`#${module.id}`}
-              onClick={(event) => handleModuleClick(event, module.id)}
+              href={`#${module.slug}`}
+              onClick={(event) => handleModuleClick(event, module.slug)}
             >
               <ModuleIcon className="sidebar__icon" name={module.icon} strokeWidth={2} />
               <span>{module.title}</span>

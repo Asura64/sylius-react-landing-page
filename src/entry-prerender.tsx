@@ -1,8 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { Document } from './Document'
-import content from './data/trainingContent.json'
+import { landingPage } from './pages/LandingPage/landingPage'
 import { LandingPage } from './pages/LandingPage'
-import type { TrainingContent } from './types/content'
 
 type RenderDocumentParams = {
   bootstrapModule: string
@@ -10,7 +9,7 @@ type RenderDocumentParams = {
 }
 
 export function renderDocument({ bootstrapModule, stylesheets }: RenderDocumentParams): string {
-  const { hero } = content as TrainingContent
+  const { hero } = landingPage
 
   return `<!doctype html>${renderToStaticMarkup(
     <Document

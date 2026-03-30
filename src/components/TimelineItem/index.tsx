@@ -1,4 +1,4 @@
-import type { ModuleContent } from '../../types/content'
+import type { Module } from '../../types/content'
 import { ModuleIcon } from '../ModuleIcon'
 import './style.scss'
 
@@ -8,7 +8,7 @@ const layoutClassMap = {
 }
 
 type TimelineItemProps = {
-  module: ModuleContent
+  module: Module
   index: number
   isCurrent: boolean
   isReached: boolean
@@ -33,7 +33,7 @@ export function TimelineItem({
     .join(' ')
 
   return (
-    <article ref={setRef} id={module.id} className={classes} data-theme={module.theme}>
+    <article ref={setRef} id={module.slug} className={classes} data-theme={module.theme}>
       <div className="timeline__marker">{index + 1}</div>
 
       <div className="timeline__card">

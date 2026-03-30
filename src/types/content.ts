@@ -32,8 +32,20 @@ export type HeroContent = {
 export type ModuleTheme = 'primary' | 'secondary' | 'tertiary' | 'danger'
 export type ModuleLayout = 'left' | 'right'
 
-export type ModuleContent = {
-  id: string
+export type ModuleDto = {
+  id: number
+  slug: string
+  title: string
+  description: string
+  icon: string
+  theme: ModuleTheme
+  layout: ModuleLayout
+  art: string
+}
+
+export type Module = {
+  id: number
+  slug: string
   title: string
   description: string
   icon: string
@@ -77,7 +89,7 @@ export type FooterContent = {
 export type TrainingContent = {
   navigation: NavigationContent
   hero: HeroContent
-  modules: ModuleContent[]
+  modules: Module[]
   featureGrid: FeatureGridContent
   footer: FooterContent
 }

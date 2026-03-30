@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import '../../App.scss'
-import content from '../../data/trainingContent.json'
+import { landingPage } from './landingPage'
 import { Header } from '../../components/Header'
 import { SidebarNav } from '../../components/SidebarNav'
 import { HeroSection } from '../../components/HeroSection'
@@ -8,10 +8,9 @@ import { JourneySection } from '../../components/JourneySection'
 import { FeatureGrid } from '../../components/FeatureGrid'
 import { Footer } from '../../components/Footer'
 import { useTimelineProgress } from '../../hooks/useTimelineProgress'
-import type { TrainingContent } from '../../types/content'
 
 export function LandingPage() {
-  const { navigation, hero, modules, featureGrid, footer } = content as TrainingContent
+  const { navigation, hero, modules, featureGrid, footer } = landingPage
   const timelineRef = useRef<HTMLDivElement | null>(null)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const timelineState = useTimelineProgress({
