@@ -12,6 +12,10 @@
     <meta name="robots" content="index,follow" />
     <meta name="theme-color" content="#1100bc" />
     <link rel="canonical" href="https://patxi.iparaguirre.fr/" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.css"
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="fr_FR" />
@@ -69,40 +73,8 @@
   </head>
   <body>
     <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/gh/orestbida/cookieconsent@3.1.0/dist/cookieconsent.umd.js"></script>
     <script>
-      window.axeptioSettings = {
-        clientId: '69c7f3285160fc279643988b',
-        cookiesVersion: '6a970aaa-e6a9-47ff-81e0-d3d0771dba6d',
-      };
-
-      function loadAxeptio() {
-        if (window.__axeptioLoaded) return;
-
-        window.__axeptioLoaded = true;
-
-        var t = document.getElementsByTagName('script')[0];
-        var e = document.createElement('script');
-        e.async = true;
-        e.src = '//static.axept.io/sdk.js';
-        t.parentNode.insertBefore(e, t);
-      }
-
-      function scheduleAxeptio() {
-        if ('requestIdleCallback' in window) {
-          window.requestIdleCallback(loadAxeptio, { timeout: 2500 });
-        } else {
-          window.setTimeout(loadAxeptio, 1200);
-        }
-      }
-
-      if (document.readyState === 'complete') {
-        scheduleAxeptio()
-      } else {
-        window.addEventListener('load', scheduleAxeptio, { once: true })
-      }
-    </script>
-    <script type="text/javascript">
-      var TAWK_VENDOR_ID = 'tawk.to';
       var Tawk_API = Tawk_API || {};
       var Tawk_LoadStart;
       var tawkLoaded = false;
@@ -122,17 +94,74 @@
         s0.parentNode.insertBefore(s1, s0);
       }
 
-      window._axcb = window._axcb || [];
-      window._axcb.push(function (sdk) {
-        if (sdk.hasAcceptedVendor(TAWK_VENDOR_ID)) {
+      function updateSupportServices() {
+        if (window.CookieConsent && window.CookieConsent.acceptedCategory('support')) {
           loadTawk();
         }
+      }
 
-        sdk.on('cookies:complete', function (choices) {
-          if (choices && choices[TAWK_VENDOR_ID]) {
-            loadTawk();
-          }
-        });
+      CookieConsent.run({
+        guiOptions: {
+          consentModal: {
+            layout: 'box',
+            position: 'bottom right',
+            equalWeightButtons: true,
+            flipButtons: false,
+          },
+          preferencesModal: {
+            layout: 'box',
+            position: 'right',
+            equalWeightButtons: true,
+            flipButtons: false,
+          },
+        },
+        categories: {
+          necessary: {
+            enabled: true,
+            readOnly: true,
+          },
+          support: {},
+        },
+        language: {
+          default: 'fr',
+          translations: {
+            fr: {
+              consentModal: {
+                title: 'Ce site utilise des cookies',
+                description: 'Nous utilisons des cookies necessaires au fonctionnement du site et, avec votre accord, un service de support par chat.',
+                acceptAllBtn: 'Tout accepter',
+                acceptNecessaryBtn: 'Tout refuser',
+                showPreferencesBtn: 'Personnaliser',
+              },
+              preferencesModal: {
+                title: 'Preferences de consentement',
+                acceptAllBtn: 'Tout accepter',
+                acceptNecessaryBtn: 'Tout refuser',
+                savePreferencesBtn: 'Enregistrer mes choix',
+                closeIconLabel: 'Fermer',
+                sections: [
+                  {
+                    title: 'Gestion des cookies',
+                    description: 'Vous pouvez choisir les services actives sur ce site.',
+                  },
+                  {
+                    title: 'Cookies strictement necessaires',
+                    description: 'Ils sont indispensables au bon fonctionnement du site et ne peuvent pas etre desactives.',
+                    linkedCategory: 'necessary',
+                  },
+                  {
+                    title: 'Support et assistance',
+                    description: 'Autorise le chargement du chat Tawk.to pour vous permettre de nous contacter rapidement.',
+                    linkedCategory: 'support',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        onFirstConsent: updateSupportServices,
+        onConsent: updateSupportServices,
+        onChange: updateSupportServices,
       });
     </script>
     <script type="module" src="/src/main.tsx"></script>

@@ -3,7 +3,9 @@ import './style.scss'
 
 declare global {
   interface Window {
-    openAxeptioCookies?: () => void
+    CookieConsent?: {
+      showPreferences: () => void
+    }
   }
 }
 
@@ -13,8 +15,8 @@ type FooterProps = {
 
 export function Footer({ footer }: FooterProps) {
   const handleOpenCookies = () => {
-    if (typeof window.openAxeptioCookies === 'function') {
-      window.openAxeptioCookies()
+    if (window.CookieConsent) {
+      window.CookieConsent.showPreferences()
     }
   }
 
