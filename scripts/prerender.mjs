@@ -1,6 +1,7 @@
 import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import coursesJson from '../src/data/courses.json' with { type: 'json' }
 
 const rootDir = resolve(process.cwd())
 const clientDir = resolve(rootDir, 'dist')
@@ -34,10 +35,33 @@ const stylesheets = (mainEntry.css ?? []).map((file) => `./${file}`)
 rmSync(outputDir, { recursive: true, force: true })
 cpSync(clientDir, outputDir, { recursive: true })
 
-const { renderDocument } = await import(pathToFileURL(serverEntryPath).href)
-const landingHtml = renderDocument({ bootstrapModule, stylesheets })
+const { renderCourseDocument, renderLandingDocument } = await import(pathToFileURL(serverEntryPath).href)
+const landingHtml = renderLandingDocument({
+  assetBase: './',
+  bootstrapModule,
+  canonicalUrl: 'https://patxi.iparaguirre.fr/',
+  path: '/',
+  stylesheets,
+})
 
 writeFileSync(resolve(outputDir, 'index.html'), landingHtml)
+
+for (const course of coursesJson) {
+  const coursePath = `/cours/sylius/${course.slug}`
+  const courseOutputDir = resolve(outputDir, 'cours', 'sylius', course.slug)
+
+  mkdirSync(courseOutputDir, { recursive: true })
+
+  const courseHtml = renderCourseDocument({
+    assetBase: '../../../',
+    bootstrapModule: '../../../' + mainEntry.file,
+    canonicalUrl: `https://patxi.iparaguirre.fr${coursePath}`,
+    path: coursePath,
+    stylesheets: (mainEntry.css ?? []).map((file) => `../../../${file}`),
+  })
+
+  writeFileSync(resolve(courseOutputDir, 'index.html'), courseHtml)
+}
 
 const cnameSource = resolve(rootDir, 'public/CNAME')
 

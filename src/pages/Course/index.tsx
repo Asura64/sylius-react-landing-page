@@ -19,7 +19,20 @@ const themeClassMap = {
 
 export function CoursePage() {
   const { courseSlug } = useParams()
-  const course = courseSlug ? getCourseBySlug(courseSlug) : undefined
+
+  if (!courseSlug) {
+    return <Navigate to="/" replace />
+  }
+
+  return <CoursePageContent courseSlug={courseSlug} />
+}
+
+type CoursePageContentProps = {
+  courseSlug: string
+}
+
+export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
+  const course = getCourseBySlug(courseSlug)
   const activeTimelineItemRef = useRef<HTMLLIElement | null>(null)
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false)
   const [isResetModalOpen, setIsResetModalOpen] = useState(false)
