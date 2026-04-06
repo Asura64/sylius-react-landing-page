@@ -361,6 +361,10 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
 
   const handleAnswer = (turnId: string, responseId: string) => {
     shouldScrollToTypingRef.current = true
+    const isLastTurnAnswer =
+      lastRevealedTurn?.id === turnId &&
+      revealedTurnCount >= turns.length &&
+      (revealedItemCountByTurnId[turnId] ?? 0) >= lastRevealedTurnAccessibleItems.length
 
     setAnswersByTurnId((currentAnswers) => {
       if (currentAnswers[turnId]) {
@@ -372,13 +376,27 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
         [turnId]: responseId,
       }
     })
+
+    if (isLastTurnAnswer) {
+      window.requestAnimationFrame(() => {
+        onCompletionChange?.(true)
+      })
+    }
   }
 
   const handleQuizStateChange = (itemId: string, state: QuizState) => {
-    setQuizStatesByItemId((currentStates) => ({
-      ...currentStates,
-      [itemId]: state,
-    }))
+    setQuizStatesByItemId((currentStates) => {
+      const previousState = currentStates[itemId]
+
+      if (state.passed && !previousState?.passed) {
+        shouldScrollToTypingRef.current = true
+      }
+
+      return {
+        ...currentStates,
+        [itemId]: state,
+      }
+    })
   }
 
   return (

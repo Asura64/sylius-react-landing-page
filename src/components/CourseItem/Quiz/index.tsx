@@ -1,3 +1,4 @@
+import { Check, CircleX } from 'lucide-react'
 import { useId, useState } from 'react'
 import type { QuizChoice, QuizItemData } from '../../../types/content'
 import './style.scss'
@@ -88,13 +89,19 @@ export function Quiz({ data, onStateChange, state }: QuizProps) {
 
         {data.choices.map((choice) => {
           const isSelected = selectedIds.includes(choice.id)
+          const isCorrect = isSubmitted && isChoiceSelectionCorrect(choice, selectedIds)
           const hasError = isSubmitted && !isChoiceSelectionCorrect(choice, selectedIds)
 
           return (
             <div
               key={choice.id}
-              className={`course-item-quiz__choice${isSelected ? ' course-item-quiz__choice--selected' : ''}${hasError ? ' course-item-quiz__choice--error' : ''}`}
+              className={`course-item-quiz__choice${isSelected ? ' course-item-quiz__choice--selected' : ''}${isCorrect ? ' course-item-quiz__choice--correct' : ''}${hasError ? ' course-item-quiz__choice--error' : ''}`}
             >
+              {isSubmitted ? (
+                <span className="course-item-quiz__result-icon" aria-hidden="true">
+                  {isCorrect ? <Check size={16} /> : <CircleX size={16} />}
+                </span>
+              ) : null}
               <label className="course-item-quiz__choice-main">
                 <input
                   className="course-item-quiz__input"

@@ -34,6 +34,7 @@ type CoursePageContentProps = {
 export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
   const course = getCourseBySlug(courseSlug)
   const activeTimelineItemRef = useRef<HTMLLIElement | null>(null)
+  const skillsRef = useRef<HTMLDivElement | null>(null)
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false)
   const [isResetModalOpen, setIsResetModalOpen] = useState(false)
   const [chatInstanceKey, setChatInstanceKey] = useState(0)
@@ -105,6 +106,23 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
     setIsChatCompleted(false)
     setHasChatStarted(hasChat ? hasCourseChatProgress(course.slug) : false)
   }, [course.slug, hasChat])
+
+  useEffect(() => {
+    if (!isChatCompleted || !skillsRef.current) {
+      return
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      skillsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [isChatCompleted])
 
   const handleConfirmResetChat = () => {
     clearCourseChatProgress(course.slug)
@@ -247,7 +265,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                   />
                 )}
                 {course.skills.length && isChatCompleted ? (
-                  <div className="course-page__skills">
+                  <div ref={skillsRef} className="course-page__skills">
                     <p className="course-page__skills-title">Ce que vous avez appris</p>
                     <ul className="course-page__skills-list">
                       {course.skills.map((skill) => (
