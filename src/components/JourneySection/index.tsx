@@ -6,6 +6,7 @@ import './style.scss'
 
 type JourneySectionProps = {
   modules: Module[]
+  getModuleHref: (moduleId: number) => string | undefined
   timelineRef: RefObject<HTMLDivElement | null>
   itemRefs: MutableRefObject<Array<HTMLElement | null>>
   timelineState: TimelineState
@@ -13,6 +14,7 @@ type JourneySectionProps = {
 
 export function JourneySection({
   modules,
+  getModuleHref,
   timelineRef,
   itemRefs,
   timelineState,
@@ -42,6 +44,7 @@ export function JourneySection({
           <TimelineItem
             key={module.slug}
             module={module}
+            href={getModuleHref(module.id)}
             index={index}
             isCurrent={index === activeIndex}
             isReached={index <= activeIndex}

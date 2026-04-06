@@ -4,13 +4,15 @@ import './style.scss'
 
 type HeaderProps = {
   navigation: NavigationContent
+  brandHref?: string
+  showCta?: boolean
 }
 
-export function Header({ navigation }: HeaderProps) {
+export function Header({ navigation, brandHref = '#', showCta = true }: HeaderProps) {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <a className="brand" href="#">
+        <a className="brand" href={brandHref}>
           <span className="brand__mark">
             <img src={logoSrc} alt="" />
           </span>
@@ -29,9 +31,13 @@ export function Header({ navigation }: HeaderProps) {
           ))}
         </nav>
 
-        <a className="button button--primary button--small" href={navigation.cta.href}>
-          {navigation.cta.label}
-        </a>
+        {showCta ? (
+          <a className="button button--primary button--small" href={navigation.cta.href}>
+            {navigation.cta.label}
+          </a>
+        ) : (
+          <span className="site-header__cta-spacer" aria-hidden="true"></span>
+        )}
       </div>
     </header>
   )

@@ -24,3 +24,11 @@ export const landingPage: TrainingContent = {
   ...baseContent,
   modules: moduleDtos.map(mapModuleDtoToModule),
 }
+
+export function getModuleById(moduleId: number): Module | undefined {
+  return landingPage.modules.find((module) => module.id === moduleId)
+}
+
+export function getModuleBySlug(slug: string): Module | undefined {
+  return landingPage.modules.find((module) => module.slug === slug)
+}

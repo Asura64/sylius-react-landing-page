@@ -1,0 +1,401 @@
+[
+  {
+    "id": 1,
+    "module_id": 1,
+    "private":  false,
+    "slug": "decouvrez-sylius",
+    "title": "Découvrez Sylius",
+    "meta_title": "Faites le tour de la démo de Sylius : tout est en ligne, aucune installation requise !",
+    "description": "Prenez en main l’univers Sylius pas à pas en explorant la boutique, l’interface d’administration et la documentation API, pour comprendre simplement les grands repères de la plateforme avant d’entrer dans la technique.",
+    "meta_description": "Découvrez Sylius pas à pas à travers la boutique de démonstration, l’interface d’administration et la documentation API pour bien démarrer sur la plateforme",
+    "skills": [
+      "Découvrir la structure d'une boutique Sylius",
+      "Se connecter à l'interface d'administration",
+      "Accéder à la documentation interactive de l'API"
+    ],
+    "chat": [
+      {
+        "id": "welcome",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Salut, c'est un plaisir de t'accueillir dans l'équipe !"
+          }
+        ],
+        "responses": {
+          "hi": "Bonjour !"
+        }
+      },
+      {
+        "id": "project-ready",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Nous venons de rencontrer un nouveau client, et nous allons te confier son projet, je vais te le présenter en quelques mots."
+          }
+        ],
+        "responses": {
+          "ok": "Ok"
+        }
+      },
+      {
+        "id": "kick-off",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "NewFashion est un spécialiste du prêt-à-porter et dispose d'un large réseau de magasins."
+          },
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "data": "Il souhaite à présent se développer sur le marché du web et a besoin d'une plateforme e-commerce."
+          }
+        ],
+        "responses": {
+          "witch-platform": "Quelle plateforme ?",
+          "with-specific-needs": "Avec des besoins spécifiques ?"
+        }
+      },
+      {
+        "id": "platform-choice",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "typingDelay": 1000,
+            "responseCondition": "witch-platform",
+            "data": "Il lui faut une solution assez complète pour démarrer un business, et assez flexible pour permettre des évolutions métier."
+          },
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "with-specific-needs",
+            "data": "Pas côté boutique, ce qui nous simplifie le travail. Seulement quelques contraintes \"logistiques\" que je te détaillerais une autre fois, il nous faut donc une solution évolutive."
+          },
+          {
+            "type": "p",
+            "typingDelay": 2000,
+            "data": "Nous avons donc choisi de travailler avec [Sylius](https://sylius.com/fr/), tu connais ?"
+          }
+        ],
+        "responses": {
+          "nope": "Pas du tout... c'est un souci ?",
+          "just-a-little": "Je connais de nom...",
+          "yes": "Oui, ça me parle"
+        }
+      },
+      {
+        "id": "introducing-sylius",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "typingDelay": 1000,
+            "responseCondition": "nope",
+            "data": "Pas du tout ! C'est une solution e-commerce basée sur une de tes compétences : Symfony. Tu confirmes que tu connais bien le framework ?"
+          },
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "just-a-little",
+            "data": "Eh bien, sache que Sylius est basé sur Symfony. Tu confirmes que c'est bien une de tes compétences ?"
+          },
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "yes",
+            "data": "Parfait, alors tu sais à quel point il est important de maîtriser Symfony. C'est bien ton cas ?"
+          }
+        ],
+        "responses": {
+          "yes": "Oui, je confirme ! \uD83D\uDE0A",
+          "maybe": "Plus ou moins oui... \uD83D\uDE05"
+        }
+      },
+      {
+        "id": "sylius-shop",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "yes",
+            "data": "Excellent ! Dans ce cas, tu ne seras pas dépaysé. Je te propose de faire un petit tour de ce que propose Sylius."
+          },
+          {
+            "type": "p",
+            "typingDelay": 3000,
+            "responseCondition": "maybe",
+            "data": "C'est un prérequis très fort pour être efficace avec Sylius, je te conseille de te remettre à niveau avant de commencer le projet. D'ici là, je te propose de te présenter ce qu'offre Sylius."
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Sylius propose un site de démonstration, je t'invite à y faire un tour, tu peux même utiliser un compte client de test pour explorer toutes les fonctionnalités : [https://v2.demo.sylius.com/](https://v2.demo.sylius.com/)"
+          },
+          {
+            "type": "ul",
+            "typingDelay": 1000,
+            "data": {
+              "title": "Voici les identifiants du compte de test :",
+              "items": [
+                "email: [copy]shop@example.com[/copy]",
+                "password: [copy]sylius[/copy]"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Je te laisse explorer la démo, prends bien le temps de tester tout ce que tu peux. Préviens-moi quand c'est fait, je te proposerai un petit quiz qui te permettra d'autoévaluer tes observations."
+          }
+        ],
+        "responses": {
+          "ready": "Je suis prêt, envoie le quiz !"
+        }
+      },
+      {
+        "id": "quizz-shop",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Parmi cette liste, quelles sont les fonctionnalités disponibles sur la boutique de démo ?",
+              "mode": "checkbox",
+              "choices": [
+                {
+                  "id": "search-engine",
+                  "label": "Un champ de recherche",
+                  "answer": true,
+                  "onError": "Il apparaît lors de la navigation dans les catégories."
+                },
+                {
+                  "id": "all-reviews",
+                  "label": "Une page pour voir tous les avis des produits",
+                  "answer": false,
+                  "onError": "Il y a une page d'avis par produit, mais pas de page globale."
+                },
+                {
+                  "id": "wishlist",
+                  "label": "La possibilité d'ajouter des produits dans ses favoris",
+                  "answer": true,
+                  "onError": "C'est le système de wishlist."
+                },
+                {
+                  "id": "address-book",
+                  "label": "Gérer sa liste d'adresses",
+                  "answer": true,
+                  "onError": "Une fois connecté, depuis le tableau de bord du compte client."
+                },
+                {
+                  "id": "cancel-order",
+                  "label": "Annuler une commande non payée (virement, paiement à la livraison)",
+                  "answer": false,
+                  "onError": "Après avoir passé une commande, elle apparaît dans la liste mais ne peut être supprimée par le client."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "sylius-admin",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Félicitations !"
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Tu peux maintenant aller prendre connaissance de l'interface d'administration. Tu verras, c'est très complet également : [https://v2.demo.sylius.com/admin/](https://v2.demo.sylius.com/admin/)"
+          },
+          {
+            "type": "ul",
+            "typingDelay": 1000,
+            "data": {
+              "title": "Voici les identifiants admin de test :",
+              "items": [
+                "email: [copy]sylius@example.com[/copy]",
+                "password: [copy]sylius[/copy]"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Toujours dans le même esprit que tout à l'heure, je te partagerai un quiz pour t'inciter à parcourir l'interface. C'est OK pour toi ?"
+          }
+        ],
+        "responses": {
+          "ready": "Ok, je suis prêt !"
+        }
+      },
+      {
+        "id": "quizz-admin",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Parmi cette liste, quelles sont les fonctionnalités disponibles sur l'interface admin de démo ?",
+              "mode": "checkbox",
+              "choices": [
+                {
+                  "id": "taxons",
+                  "label": "Administrer les catégories",
+                  "answer": true,
+                  "onError": "Il s'agit des \"Taxons\" dans le menu catalogue, c'est le terme employé pour désigner les catégories dans le vocabulaire Sylius."
+                },
+                {
+                  "id": "change-shipment",
+                  "label": "Modifier le transporteur d'une commande",
+                  "answer": false,
+                  "onError": "Il est possible de notifier l'expédition d'une commande, mais pas de changer le transporteur choisi."
+                },
+                {
+                  "id": "change-customer-email",
+                  "label": "Modifier l'email d'un client",
+                  "answer": true,
+                  "onError": "C'est possible en mode édition d'un client, le client peut le faire aussi depuis son compte, mais ça peut toujours être utile."
+                },
+                {
+                  "id": "change-admin-roles",
+                  "label": "Changer les rôles d'un admin",
+                  "answer": false,
+                  "onError": "La fonctionnalité existe bien, elle est cependant réservée à la version \"Sylius +\" et n'est donc pas disponible dans cette démo."
+                },
+                {
+                  "id": "install-plugin",
+                  "label": "Installer un plugin automatiquement",
+                  "answer": false,
+                  "onError": "Il existe plusieurs plugins Sylius, mais les installer nécessite une intervention technique du développeur"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "sylius-api",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Super, tu es prêt pour la suite !"
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Pour terminer, Sylius expose une API avec de nombreux endpoints : [https://v2.demo.sylius.com/api/v2](https://v2.demo.sylius.com/api/v2)"
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Est-ce que cette interface te rappelle quelque chose ?"
+          }
+        ],
+        "responses": {
+          "yes": "Oui, j'ai déjà vu ça quelque part !",
+          "nope": "Pas du tout..."
+        }
+      },
+      {
+        "id": "sylius-api-doc",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "yes",
+            "data": "Pas étonnant, on retrouve ce type d'interface avec [Nelmio](https://symfony.com/bundles/NelmioApiDocBundle/current/index.html), [Api Platform](https://api-platform.com/), [Swagger](https://swagger.io/)..."
+          },
+          {
+            "type": "p",
+            "typingDelay": 1500,
+            "responseCondition": "nope",
+            "data": "Il s'agit d'une interface graphique permettant d'auto-documenter les différents endpoints de l'API et même de les tester."
+          },
+          {
+            "type": "p",
+            "typingDelay": 2500,
+            "data": "Ici, c'est [API Platform](https://api-platform.com/) qui est intégré à Sylius. Je te conseille d'ajouter sa documentation à tes favoris."
+          }
+        ],
+        "responses": {
+          "ok": "C'est noté !"
+        }
+      },
+      {
+        "id": "end",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait, tu sais désormais ce que Sylius propose, lors de notre prochain point tu prépareras ton environnement de développement pour travailler."
+          },
+          {
+            "type": "p",
+            "data": "Je te souhaite une bonne journée, à bientôt !"
+          }
+        ],
+        "responses": {
+          "bye": "Merci, à la prochaine !"
+        }
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "module_id": 1,
+    "private":  false,
+    "slug": "preparez-l-environnement",
+    "title": "Préparez l'environnement",
+    "meta_title": "Préparez votre environnement de développement pour Sylius",
+    "description": "Mettez en place les outils indispensables pour travailler sereinement avec Sylius en préparant Docker, les conteneurs de développement et les premières commandes utiles au projet.",
+    "meta_description": "Préparez votre environnement Sylius en installant Docker, en gérant les conteneurs et en mettant en place les outils nécessaires au développement.",
+    "skills": [
+      "Installer Docker",
+      "Gérer les conteneurs Docker",
+      "Installer Makefile"
+    ],
+    "chat": []
+  },
+  {
+    "id": 3,
+    "module_id": 1,
+    "private":  false,
+    "slug": "installez-sylius",
+    "title": "Installez Sylius",
+    "meta_title": "Installez Sylius avec Docker et les commandes du projet",
+    "description": "Installez Sylius dans de bonnes conditions en utilisant l’environnement Docker du projet, les commandes Makefile disponibles et les conteneurs prévus pour exécuter les outils techniques.",
+    "meta_description": "Installez Sylius avec Docker, utilisez les commandes Makefile du projet et lancez les commandes techniques depuis le conteneur PHP.",
+    "skills": [
+      "Installer Sylius avec Docker",
+      "Utiliser les commandes \"Makefile\" disponibles",
+      "Lancer des commandes Sylius via le conteneur PHP"
+    ],
+    "chat": []
+  },
+  {
+    "id": 4,
+    "module_id": 1,
+    "private":  true,
+    "slug": "ajoutez-des-services",
+    "title": "Ajoutez des services",
+    "meta_title": "Ajoutez des services à votre environnement de développement",
+    "description": "Enrichissez votre environnement de développement Sylius avec des services complémentaires pour mieux observer, déboguer et sécuriser votre travail au quotidien.",
+    "meta_description": "Ajoutez des services utiles à votre environnement Sylius comme PHPMyAdmin, Traefik et Xdebug pour gagner en confort de développement.",
+    "skills": [
+      "Ajouter PHPMyAdmin pour interagir avec la base de données",
+      "Ajouter Traefik pour gérer le trafic HTTPS en local",
+      "Activer Xdebug pour accéder à des outils de debug avancés"
+    ],
+    "chat": []
+  }
+]

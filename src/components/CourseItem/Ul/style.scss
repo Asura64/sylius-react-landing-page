@@ -1,0 +1,37 @@
+.course-item-ul {
+  display: grid;
+}
+
+.course-item-ul__title {
+  margin: 0;
+  color: var(--color-ink-soft);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.course-item-ul__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--color-ink-soft);
+  display: grid;
+}
+
+.course-item-ul__item {
+  line-height: 1.7;
+}
+
+.course-item-ul :where(a) {
+  color: var(--course-accent);
+  font-weight: 600;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.16em;
+}
+
+.course-item-ul :where(strong) {
+  color: var(--color-ink-strong);
+  font-weight: 700;
+}
+
+.course-item-ul :where(em) {
+  font-style: italic;
+}

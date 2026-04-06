@@ -1,0 +1,11 @@
+.course-item-image {
+  margin: 0;
+}
+
+.course-item-image__media {
+  display: block;
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+}

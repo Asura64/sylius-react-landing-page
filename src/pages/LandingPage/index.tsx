@@ -8,9 +8,27 @@ import { JourneySection } from '../../components/JourneySection'
 import { FeatureGrid } from '../../components/FeatureGrid'
 import { Footer } from '../../components/Footer'
 import { useTimelineProgress } from '../../hooks/useTimelineProgress'
+import { getFirstCourseByModuleId } from '../Course/courses'
 
 export function LandingPage() {
   const { navigation, hero, modules, featureGrid, footer } = landingPage
+  const firstModule = modules[0]
+  const firstCourseHref = firstModule ? getFirstCourseByModuleId(firstModule.id) : undefined
+  const startHref = firstCourseHref ? `/cours/sylius/${firstCourseHref.slug}` : navigation.cta.href
+  const landingNavigation = {
+    ...navigation,
+    cta: {
+      ...navigation.cta,
+      href: startHref,
+    },
+  }
+  const landingHero = {
+    ...hero,
+    primaryAction: {
+      ...hero.primaryAction,
+      href: startHref,
+    },
+  }
   const timelineRef = useRef<HTMLDivElement | null>(null)
   const itemRefs = useRef<Array<HTMLElement | null>>([])
   const timelineState = useTimelineProgress({
@@ -21,14 +39,19 @@ export function LandingPage() {
 
   return (
     <>
-      <Header navigation={navigation} />
+      <Header navigation={landingNavigation} />
       <main className="app">
         <div className="app__layout">
           <SidebarNav modules={modules} activeIndex={timelineState.activeIndex} />
           <div className="app__content">
-            <HeroSection hero={hero} />
+            <HeroSection hero={landingHero} />
             <JourneySection
               modules={modules}
+              getModuleHref={(moduleId) => {
+                const course = getFirstCourseByModuleId(moduleId)
+
+                return course ? `/cours/sylius/${course.slug}` : undefined
+              }}
               timelineRef={timelineRef}
               itemRefs={itemRefs}
               timelineState={timelineState}

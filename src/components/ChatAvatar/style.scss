@@ -1,0 +1,21 @@
+.chat-avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.chat-avatar__image {
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  object-fit: contain;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 20px rgba(17, 24, 39, 0.12);
+}
+
+.chat-avatar__name {
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 700;
+}

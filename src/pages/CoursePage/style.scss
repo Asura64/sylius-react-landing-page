@@ -1,0 +1,72 @@
+.course-page {
+  min-height: 100vh;
+  padding: 4rem 1rem;
+  background:
+    radial-gradient(circle at top left, rgba(17, 0, 188, 0.08), transparent 22rem),
+    radial-gradient(circle at bottom right, rgba(117, 71, 171, 0.1), transparent 24rem),
+    var(--background);
+
+  &__shell {
+    width: min(calc(100% - 2rem), 52rem);
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 1.75rem;
+    background: rgba(255, 255, 255, 0.86);
+    box-shadow: var(--shadow);
+  }
+
+  &__eyebrow {
+    margin: 0 0 1rem;
+    color: var(--secondary);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    letter-spacing: -0.04em;
+  }
+
+  &__description,
+  &__note {
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+
+  &__description {
+    margin: 1.25rem 0 0;
+    white-space: pre-line;
+  }
+
+  &__note {
+    margin: 1rem 0 0;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3rem;
+    padding: 0 1.25rem;
+    border-radius: 1rem;
+    background: rgba(17, 0, 188, 0.06);
+    color: var(--primary);
+    font-weight: 700;
+
+    &--primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      color: #fff;
+    }
+  }
+}

@@ -93,3 +93,147 @@ export type TrainingContent = {
   featureGrid: FeatureGridContent
   footer: FooterContent
 }
+
+export type CourseItemType = 'h2' | 'p' | 'img' | 'info' | 'dump' | 'yaml' | 'quiz' | 'ul'
+
+export type BaseCourseItem = {
+  typingDelay?: number
+}
+
+export type H2Item = BaseCourseItem & {
+  type: 'h2'
+  data: string
+}
+
+export type ParagraphItem = BaseCourseItem & {
+  type: 'p'
+  data: string
+}
+
+export type ImageItemData = {
+  src: string
+  alt: string
+}
+
+export type ImageItem = BaseCourseItem & {
+  type: 'img'
+  data: ImageItemData
+}
+
+export type InfoItemData = {
+  heading: string
+  content: string
+}
+
+export type InfoItem = BaseCourseItem & {
+  type: 'info'
+  data: InfoItemData
+}
+
+export type DumpScalar = string | number | boolean | null
+export type DumpValue = DumpScalar | DumpObject | DumpArray
+export type DumpObject = {
+  [key: string]: DumpValue
+}
+export type DumpArray = DumpValue[]
+
+export type DumpItemData = {
+  label?: string
+  value: DumpValue
+  expanded?: boolean
+}
+
+export type DumpItem = BaseCourseItem & {
+  type: 'dump'
+  data: DumpItemData
+}
+
+export type YamlItemData = {
+  label?: string
+  value: string
+}
+
+export type YamlItem = BaseCourseItem & {
+  type: 'yaml'
+  data: YamlItemData
+}
+
+export type QuizChoice = {
+  id: string
+  label: string
+  answer: boolean
+  onError: string
+}
+
+export type QuizItemData = {
+  question: string
+  mode: 'radio' | 'checkbox'
+  choices: QuizChoice[]
+}
+
+export type QuizItem = BaseCourseItem & {
+  type: 'quiz'
+  data: QuizItemData
+}
+
+export type UnorderedListItemData = {
+  title?: string
+  items: string[]
+}
+
+export type UnorderedListItem = BaseCourseItem & {
+  type: 'ul'
+  data: UnorderedListItemData
+}
+
+export type ChatCourseItem = CourseItem & {
+  responseCondition?: string
+}
+
+export type ChatTurnDto = {
+  id: string
+  author: string
+  content: ChatCourseItem[]
+  responses?: Record<string, string>
+}
+
+export type ChatTurn = ChatTurnDto
+
+export type CourseItemDto =
+  | H2Item
+  | ParagraphItem
+  | ImageItem
+  | InfoItem
+  | DumpItem
+  | YamlItem
+  | QuizItem
+  | UnorderedListItem
+export type CourseItem = CourseItemDto
+
+export type CourseDto = {
+  id: number
+  module_id: number
+  private: boolean
+  slug: string
+  title: string
+  meta_title: string
+  description: string
+  meta_description: string
+  skills: string[]
+  chat?: ChatTurnDto[]
+  content: CourseItemDto[]
+}
+
+export type Course = {
+  id: number
+  moduleId: number
+  private: boolean
+  slug: string
+  title: string
+  metaTitle: string
+  description: string
+  metaDescription: string
+  skills: string[]
+  chat?: ChatTurn[]
+  content: CourseItem[]
+}
