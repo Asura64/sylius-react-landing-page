@@ -3,6 +3,8 @@
   color: var(--color-ink-soft);
   font-size: 1rem;
   line-height: 1.75;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 
   a {
     color: var(--course-accent);

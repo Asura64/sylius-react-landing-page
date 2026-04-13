@@ -7,6 +7,8 @@
   color: var(--color-ink-soft);
   font-size: 1rem;
   line-height: 1.75;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .course-item-ul__list {
@@ -18,6 +20,8 @@
 
 .course-item-ul__item {
   line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .course-item-ul :where(a) {

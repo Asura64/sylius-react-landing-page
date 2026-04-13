@@ -3,13 +3,20 @@
 .course-item-ul a {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.22rem;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  vertical-align: middle;
 }
 
 .course-inline-copy {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.45rem;
+  max-width: 100%;
   padding: 0.18rem 0.45rem;
   border: 1px solid rgba(17, 24, 39, 0.12);
   border-radius: 0.65rem;
@@ -19,6 +26,8 @@
   line-height: 1.4;
   vertical-align: middle;
   cursor: pointer;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease,
@@ -47,6 +56,8 @@
     Menlo,
     monospace;
   font-size: 0.92em;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .course-inline-copy__icon {
