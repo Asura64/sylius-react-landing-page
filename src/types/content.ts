@@ -187,12 +187,14 @@ export type UnorderedListItem = BaseCourseItem & {
 }
 
 export type ChatCourseItem = CourseItem & {
+  confirm?: string
   responseCondition?: string
 }
 
 export type ChatTurnDto = {
   id: string
   author: string
+  responseCondition?: string
   content: ChatCourseItem[]
   responses?: Record<string, string>
 }
@@ -234,6 +236,6 @@ export type Course = {
   description: string
   metaDescription: string
   skills: string[]
-  chat?: ChatTurn[]
+  chat: ChatTurn[]
   content: CourseItem[]
 }

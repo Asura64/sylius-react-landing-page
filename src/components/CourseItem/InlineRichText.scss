@@ -1,3 +1,11 @@
+.course-item-paragraph a,
+.course-item-info__content a,
+.course-item-ul a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
 .course-inline-copy {
   display: inline-flex;
   align-items: center;

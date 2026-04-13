@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import type { ChatTurn } from '../../types/content'
 import { ChatAvatar } from '../ChatAvatar'
 import { CourseItem } from '../CourseItem'
@@ -11,7 +11,7 @@ type CourseChatProps = {
   turns: ChatTurn[]
 }
 
-const typingDelay = 520
+const typingDelay = 1000
 const storageVersion = 2
 
 type StoredCourseChatProgress = {
@@ -19,6 +19,12 @@ type StoredCourseChatProgress = {
   quizStatesByItemId: Record<string, QuizState>
   revealedTurnCount: number
   version: number
+}
+
+type ResponseConditionContext = {
+  currentCourseSlug: string
+  currentTurnId: string
+  answersByTurnId: Record<string, string>
 }
 
 function getStorageKey(courseSlug: string) {
@@ -37,19 +43,96 @@ function getChatItemId(turnId: string, itemIndex: number) {
   return `${turnId}:${itemIndex}`
 }
 
+function readStoredAnswersByTurnId(courseSlug: string) {
+  if (typeof window === 'undefined') {
+    return {}
+  }
+
+  const rawValue = window.localStorage.getItem(getStorageKey(courseSlug))
+
+  if (!rawValue) {
+    return {}
+  }
+
+  try {
+    const parsedValue = JSON.parse(rawValue) as Partial<StoredCourseChatProgress>
+
+    return parsedValue.answersByTurnId ?? {}
+  } catch {
+    return {}
+  }
+}
+
+function matchesResponseCondition(responseCondition: string, context: ResponseConditionContext) {
+  return responseCondition
+    .split('|')
+    .map((condition) => condition.trim())
+    .filter(Boolean)
+    .some((condition) => {
+      const segments = condition.split(':')
+
+      if (segments.length === 1) {
+        return Object.values(context.answersByTurnId).includes(condition)
+      }
+
+      let targetCourseSlug = context.currentCourseSlug
+      let targetTurnId = context.currentTurnId
+      let targetAnswer = ''
+
+      if (segments.length === 2) {
+        targetTurnId = segments[0] || context.currentTurnId
+        targetAnswer = segments[1]
+      } else {
+        targetCourseSlug = segments[0] || context.currentCourseSlug
+        targetTurnId = segments[1] || context.currentTurnId
+        targetAnswer = segments.slice(2).join(':')
+      }
+
+      const targetAnswersByTurnId =
+        targetCourseSlug === context.currentCourseSlug
+          ? context.answersByTurnId
+          : readStoredAnswersByTurnId(targetCourseSlug)
+
+      return targetAnswersByTurnId[targetTurnId] === targetAnswer
+    })
+}
+
 function getAccessibleTurnItems(
+  currentCourseSlug: string,
   turn: ChatTurn,
-  responseHistory: string[],
+  answersByTurnId: Record<string, string>,
+  confirmedItemIds: Record<string, boolean>,
   quizStatesByItemId: Record<string, QuizState>,
 ) {
   const accessibleItems: Array<{ item: ChatTurn['content'][number]; itemIndex: number }> = []
+  let hasMatchedPreviousConditionalItem = false
 
   for (const [itemIndex, item] of turn.content.entries()) {
-    if (item.responseCondition && !responseHistory.includes(item.responseCondition)) {
-      continue
+    if (item.responseCondition) {
+      if (item.responseCondition === 'finally') {
+        if (hasMatchedPreviousConditionalItem) {
+          continue
+        }
+      } else {
+        const hasMatchedCurrentCondition = matchesResponseCondition(item.responseCondition, {
+          currentCourseSlug,
+          currentTurnId: turn.id,
+          answersByTurnId,
+        })
+
+        if (!hasMatchedCurrentCondition) {
+          continue
+        }
+
+        hasMatchedPreviousConditionalItem = true
+      }
     }
 
     accessibleItems.push({ item, itemIndex })
+
+    if (item.confirm && !confirmedItemIds[getChatItemId(turn.id, itemIndex)]) {
+      break
+    }
 
     if (item.type === 'quiz' && !quizStatesByItemId[getChatItemId(turn.id, itemIndex)]?.passed) {
       break
@@ -57,6 +140,24 @@ function getAccessibleTurnItems(
   }
 
   return accessibleItems
+}
+
+function getAccessibleTurns(currentCourseSlug: string, turns: ChatTurn[], answersByTurnId: Record<string, string>) {
+  return turns.filter((turn) => {
+    if (!turn.responseCondition) {
+      return true
+    }
+
+    if (turn.responseCondition === 'finally') {
+      return false
+    }
+
+    return matchesResponseCondition(turn.responseCondition, {
+      currentCourseSlug,
+      currentTurnId: turn.id,
+      answersByTurnId,
+    })
+  })
 }
 
 export function clearCourseChatProgress(courseSlug: string) {
@@ -108,38 +209,96 @@ function readStoredProgress(courseSlug: string, turns: ChatTurn[]): StoredCourse
 }
 
 function getInitialRevealedItemCounts(
+  courseSlug: string,
+  turns: ChatTurn[],
+  revealedTurnCount: number,
+  answersByTurnId: Record<string, string>,
+  confirmedItemIds: Record<string, boolean>,
+  quizStatesByItemId: Record<string, QuizState>,
+) {
+  const accessibleTurns = getAccessibleTurns(courseSlug, turns, answersByTurnId)
+
+  return Object.fromEntries(
+    accessibleTurns
+      .slice(0, revealedTurnCount)
+      .map((turn) => [
+        turn.id,
+        getAccessibleTurnItems(courseSlug, turn, answersByTurnId, confirmedItemIds, quizStatesByItemId).length,
+      ]),
+  )
+}
+
+function getInitialConfirmedItemIds(
+  courseSlug: string,
   turns: ChatTurn[],
   revealedTurnCount: number,
   answersByTurnId: Record<string, string>,
   quizStatesByItemId: Record<string, QuizState>,
 ) {
-  const responseHistory = turns
-    .slice(0, revealedTurnCount)
-    .map((turn) => answersByTurnId[turn.id])
-    .filter((answerId): answerId is string => Boolean(answerId))
+  const accessibleTurns = getAccessibleTurns(courseSlug, turns, answersByTurnId)
+  const initialConfirmedItemIds: Record<string, boolean> = {}
 
-  return Object.fromEntries(
-    turns
-      .slice(0, revealedTurnCount)
-      .map((turn) => [turn.id, getAccessibleTurnItems(turn, responseHistory, quizStatesByItemId).length]),
-  )
+  for (const [turnIndex, turn] of accessibleTurns.slice(0, revealedTurnCount).entries()) {
+    const isTurnCompleted = turnIndex < revealedTurnCount - 1 || Boolean(answersByTurnId[turn.id])
+
+    if (!isTurnCompleted) {
+      continue
+    }
+
+    let hasPendingConfirmations = true
+
+    while (hasPendingConfirmations) {
+      hasPendingConfirmations = false
+
+      const accessibleItems = getAccessibleTurnItems(
+        courseSlug,
+        turn,
+        answersByTurnId,
+        initialConfirmedItemIds,
+        quizStatesByItemId,
+      )
+
+      for (const { item, itemIndex } of accessibleItems) {
+        if (item.confirm && !initialConfirmedItemIds[getChatItemId(turn.id, itemIndex)]) {
+          initialConfirmedItemIds[getChatItemId(turn.id, itemIndex)] = true
+          hasPendingConfirmations = true
+        }
+      }
+    }
+  }
+
+  return initialConfirmedItemIds
 }
 
 export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChatProps) {
   const storedProgress = useMemo(() => readStoredProgress(courseSlug, turns), [courseSlug, turns])
+  const initialConfirmedItemIds = useMemo(
+    () =>
+      getInitialConfirmedItemIds(
+        courseSlug,
+        turns,
+        storedProgress?.revealedTurnCount ?? 0,
+        storedProgress?.answersByTurnId ?? {},
+        storedProgress?.quizStatesByItemId ?? {},
+      ),
+    [courseSlug, storedProgress, turns],
+  )
   const [revealedTurnCount, setRevealedTurnCount] = useState(storedProgress?.revealedTurnCount ?? 0)
   const [isTyping, setIsTyping] = useState(false)
   const [answersByTurnId, setAnswersByTurnId] = useState<Record<string, string>>(
     storedProgress?.answersByTurnId ?? {},
   )
+  const [confirmedItemIds, setConfirmedItemIds] = useState<Record<string, boolean>>(initialConfirmedItemIds)
   const [quizStatesByItemId, setQuizStatesByItemId] = useState<Record<string, QuizState>>(
     storedProgress?.quizStatesByItemId ?? {},
   )
   const [revealedItemCountByTurnId, setRevealedItemCountByTurnId] = useState<Record<string, number>>(
     getInitialRevealedItemCounts(
+      courseSlug,
       turns,
       storedProgress?.revealedTurnCount ?? 0,
       storedProgress?.answersByTurnId ?? {},
+      initialConfirmedItemIds,
       storedProgress?.quizStatesByItemId ?? {},
     ),
   )
@@ -147,13 +306,18 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
   const typingTimeoutRef = useRef<number | null>(null)
   const typingMessageRef = useRef<HTMLDivElement | null>(null)
   const shouldScrollToTypingRef = useRef(false)
+  const accessibleTurns = useMemo(
+    () => getAccessibleTurns(courseSlug, turns, answersByTurnId),
+    [answersByTurnId, courseSlug, turns],
+  )
 
-  const responseHistory = useMemo(() => Object.values(answersByTurnId), [answersByTurnId])
-
-  const lastRevealedTurn = revealedTurnCount > 0 ? turns[revealedTurnCount - 1] : undefined
+  const lastRevealedTurn = revealedTurnCount > 0 ? accessibleTurns[revealedTurnCount - 1] : undefined
   const lastRevealedTurnAccessibleItems = lastRevealedTurn
-    ? getAccessibleTurnItems(lastRevealedTurn, responseHistory, quizStatesByItemId)
+    ? getAccessibleTurnItems(courseSlug, lastRevealedTurn, answersByTurnId, confirmedItemIds, quizStatesByItemId)
     : []
+  const hasBlockingConfirm = lastRevealedTurnAccessibleItems.some(
+    ({ item, itemIndex }) => item.confirm && !confirmedItemIds[getChatItemId(lastRevealedTurn!.id, itemIndex)],
+  )
   const hasBlockingQuiz = lastRevealedTurnAccessibleItems.some(
     ({ item, itemIndex }) =>
       item.type === 'quiz' && !quizStatesByItemId[getChatItemId(lastRevealedTurn!.id, itemIndex)]?.passed,
@@ -163,16 +327,25 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
     lastRevealedTurn &&
     answersByTurnId[lastRevealedTurn.id] == null
   const isChatCompleted =
-    revealedTurnCount >= turns.length &&
+    revealedTurnCount >= accessibleTurns.length &&
     !isTyping &&
     !isWaitingForAnswer &&
-    turns.every((turn, index) => {
+    accessibleTurns.every((turn, index) => {
       if (index >= revealedTurnCount) {
         return false
       }
 
-      const accessibleItems = getAccessibleTurnItems(turn, responseHistory, quizStatesByItemId)
+      const accessibleItems = getAccessibleTurnItems(
+        courseSlug,
+        turn,
+        answersByTurnId,
+        confirmedItemIds,
+        quizStatesByItemId,
+      )
       const areItemsFullyRevealed = (revealedItemCountByTurnId[turn.id] ?? 0) >= accessibleItems.length
+      const areTurnConfirmationsAcknowledged = accessibleItems.every(
+        ({ item, itemIndex }) => !item.confirm || Boolean(confirmedItemIds[getChatItemId(turn.id, itemIndex)]),
+      )
       const areTurnQuizzesPassed = accessibleItems.every(({ item, itemIndex }) => {
         if (item.type !== 'quiz') {
           return true
@@ -181,22 +354,25 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
         return Boolean(quizStatesByItemId[getChatItemId(turn.id, itemIndex)]?.passed)
       })
 
-      return areItemsFullyRevealed && areTurnQuizzesPassed
+      return areItemsFullyRevealed && areTurnConfirmationsAcknowledged && areTurnQuizzesPassed
     })
 
   useEffect(() => {
     setRevealedTurnCount(storedProgress?.revealedTurnCount ?? 0)
     setAnswersByTurnId(storedProgress?.answersByTurnId ?? {})
+    setConfirmedItemIds(initialConfirmedItemIds)
     setQuizStatesByItemId(storedProgress?.quizStatesByItemId ?? {})
     setRevealedItemCountByTurnId(
       getInitialRevealedItemCounts(
+        courseSlug,
         turns,
         storedProgress?.revealedTurnCount ?? 0,
         storedProgress?.answersByTurnId ?? {},
+        initialConfirmedItemIds,
         storedProgress?.quizStatesByItemId ?? {},
       ),
     )
-  }, [storedProgress, turns])
+  }, [courseSlug, initialConfirmedItemIds, storedProgress, turns])
 
   useEffect(() => {
     if (typingTimeoutRef.current) {
@@ -204,7 +380,7 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
       typingTimeoutRef.current = null
     }
 
-    if (turns.length === 0) {
+    if (accessibleTurns.length === 0) {
       setIsTyping(false)
       return
     }
@@ -213,7 +389,7 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
       setIsTyping(true)
 
       typingTimeoutRef.current = window.setTimeout(() => {
-        const firstTurn = turns[0]
+        const firstTurn = accessibleTurns[0]
 
         setRevealedTurnCount(1)
         setRevealedItemCountByTurnId({
@@ -236,7 +412,13 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
       return
     }
 
-    const accessibleItems = getAccessibleTurnItems(lastRevealedTurn, responseHistory, quizStatesByItemId)
+    const accessibleItems = getAccessibleTurnItems(
+      courseSlug,
+      lastRevealedTurn,
+      answersByTurnId,
+      confirmedItemIds,
+      quizStatesByItemId,
+    )
     const revealedItemCount = revealedItemCountByTurnId[lastRevealedTurn.id] ?? 0
 
     if (revealedItemCount < accessibleItems.length) {
@@ -262,12 +444,12 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
       }
     }
 
-    if (hasBlockingQuiz || isWaitingForAnswer || revealedTurnCount >= turns.length) {
+    if (hasBlockingConfirm || hasBlockingQuiz || isWaitingForAnswer || revealedTurnCount >= accessibleTurns.length) {
       setIsTyping(false)
       return
     }
 
-    const nextTurn = turns[revealedTurnCount]
+    const nextTurn = accessibleTurns[revealedTurnCount]
 
     if (!nextTurn) {
       setIsTyping(false)
@@ -293,14 +475,17 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
       }
     }
   }, [
+    hasBlockingConfirm,
     hasBlockingQuiz,
+    accessibleTurns,
+    confirmedItemIds,
+    courseSlug,
     isWaitingForAnswer,
     lastRevealedTurn,
     quizStatesByItemId,
-    responseHistory,
+    answersByTurnId,
     revealedItemCountByTurnId,
     revealedTurnCount,
-    turns,
   ])
 
   useEffect(() => {
@@ -363,7 +548,7 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
     shouldScrollToTypingRef.current = true
     const isLastTurnAnswer =
       lastRevealedTurn?.id === turnId &&
-      revealedTurnCount >= turns.length &&
+      revealedTurnCount >= accessibleTurns.length &&
       (revealedItemCountByTurnId[turnId] ?? 0) >= lastRevealedTurnAccessibleItems.length
 
     setAnswersByTurnId((currentAnswers) => {
@@ -399,15 +584,66 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
     })
   }
 
+  const handleItemConfirmation = (itemId: string) => {
+    shouldScrollToTypingRef.current = true
+
+    setConfirmedItemIds((currentItemIds) => {
+      if (currentItemIds[itemId]) {
+        return currentItemIds
+      }
+
+      return {
+        ...currentItemIds,
+        [itemId]: true,
+      }
+    })
+  }
+
   return (
     <section className="course-chat" aria-label="Conversation de cours">
       <div ref={transcriptRef} className="course-chat__transcript">
-        {turns.slice(0, revealedTurnCount).map((turn, turnIndex) => {
+        {accessibleTurns.slice(0, revealedTurnCount).map((turn, turnIndex) => {
+          const previousTurn = turnIndex > 0 ? accessibleTurns[turnIndex - 1] : undefined
+          const previousTurnAnswerId = previousTurn ? answersByTurnId[previousTurn.id] : undefined
+          const previousTurnAccessibleItems = previousTurn
+            ? getAccessibleTurnItems(courseSlug, previousTurn, answersByTurnId, confirmedItemIds, quizStatesByItemId)
+            : []
+          const previousTurnShowedItemConfirmation = previousTurnAccessibleItems.some(
+            ({ item, itemIndex }) => item.confirm && Boolean(confirmedItemIds[getChatItemId(previousTurn!.id, itemIndex)]),
+          )
+          const previousTurnQuizPassed = previousTurnAccessibleItems.every(({ item, itemIndex }) => {
+            if (item.type !== 'quiz') {
+              return true
+            }
+
+            return Boolean(quizStatesByItemId[getChatItemId(previousTurn!.id, itemIndex)]?.passed)
+          })
+          const previousTurnShowedQuizCompletion =
+            Boolean(previousTurn) &&
+            !previousTurnAnswerId &&
+            previousTurnQuizPassed &&
+            previousTurnAccessibleItems.some(({ item }) => item.type === 'quiz')
+          const shouldShowMentorAvatar =
+            !previousTurn ||
+            previousTurn.author !== turn.author ||
+            Boolean(previousTurnAnswerId) ||
+            previousTurnShowedItemConfirmation ||
+            previousTurnShowedQuizCompletion
+
           const answerId = answersByTurnId[turn.id]
           const answerLabel = answerId ? turn.responses?.[answerId] : undefined
-          const accessibleItems = getAccessibleTurnItems(turn, responseHistory, quizStatesByItemId)
+          const accessibleItems = getAccessibleTurnItems(
+            courseSlug,
+            turn,
+            answersByTurnId,
+            confirmedItemIds,
+            quizStatesByItemId,
+          )
           const revealedItems = accessibleItems.slice(0, revealedItemCountByTurnId[turn.id] ?? 0)
           const isTurnFullyRevealed = revealedItems.length >= accessibleItems.length
+          const isTurnConfirmationsAcknowledged = accessibleItems.every(
+            ({ item, itemIndex }) => !item.confirm || Boolean(confirmedItemIds[getChatItemId(turn.id, itemIndex)]),
+          )
           const isTurnQuizPassed = accessibleItems.every(({ item, itemIndex }) => {
             if (item.type !== 'quiz') {
               return true
@@ -424,29 +660,49 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
           return (
             <div key={`${turn.author}-${turnIndex}`} className="course-chat__turn">
               {revealedItems.map(({ item, itemIndex }, revealedItemIndex) => (
-                <div
-                  key={`${turnIndex}-${item.type}-${itemIndex}`}
-                  className="course-chat__message course-chat__message--mentor"
-                >
-                  {revealedItemIndex === 0 ? (
-                    <div className="course-chat__meta">
-                      <ChatAvatar imageSrc="/resource/avatar/patxi.png" name={turn.author} />
+                <Fragment key={`${turnIndex}-${item.type}-${itemIndex}`}>
+                  <div
+                    className="course-chat__message course-chat__message--mentor"
+                  >
+                    {revealedItemIndex === 0 && shouldShowMentorAvatar ? (
+                      <div className="course-chat__meta">
+                        <ChatAvatar imageSrc="/resource/avatar/patxi.png" name={turn.author} />
+                      </div>
+                    ) : null}
+                    <div className="course-chat__bubble course-chat__bubble--mentor">
+                      <CourseItem
+                        item={item}
+                        onQuizStateChange={
+                          item.type === 'quiz'
+                            ? (state) => handleQuizStateChange(getChatItemId(turn.id, itemIndex), state)
+                            : undefined
+                        }
+                        quizState={
+                          item.type === 'quiz' ? quizStatesByItemId[getChatItemId(turn.id, itemIndex)] : undefined
+                        }
+                      />
                     </div>
-                  ) : null}
-                  <div className="course-chat__bubble course-chat__bubble--mentor">
-                    <CourseItem
-                      item={item}
-                      onQuizStateChange={
-                        item.type === 'quiz'
-                          ? (state) => handleQuizStateChange(getChatItemId(turn.id, itemIndex), state)
-                          : undefined
-                      }
-                      quizState={
-                        item.type === 'quiz' ? quizStatesByItemId[getChatItemId(turn.id, itemIndex)] : undefined
-                      }
-                    />
                   </div>
-                </div>
+                  {item.confirm ? (
+                    confirmedItemIds[getChatItemId(turn.id, itemIndex)] ? (
+                      <div className="course-chat__message course-chat__message--learner">
+                        <div className="course-chat__bubble course-chat__bubble--learner">
+                          <p className="course-chat__answer">{item.confirm}</p>
+                        </div>
+                      </div>
+                    ) : revealedItemIndex === revealedItems.length - 1 ? (
+                      <div className="course-chat__responses" aria-label="Confirmation">
+                        <button
+                          className="course-chat__response-button"
+                          type="button"
+                          onClick={() => handleItemConfirmation(getChatItemId(turn.id, itemIndex))}
+                        >
+                          {item.confirm}
+                        </button>
+                      </div>
+                    ) : null
+                  ) : null}
+                </Fragment>
               ))}
 
               {answerLabel ? (
@@ -463,7 +719,7 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
                 </div>
               ) : null}
 
-              {turn.responses && !answerLabel && isTurnFullyRevealed && isTurnQuizPassed ? (
+              {turn.responses && !answerLabel && isTurnFullyRevealed && isTurnConfirmationsAcknowledged && isTurnQuizPassed ? (
                 <div className="course-chat__responses" aria-label="Réponses proposées">
                   {Object.entries(turn.responses).map(([responseId, responseLabel]) => (
                     <button

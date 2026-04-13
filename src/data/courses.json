@@ -73,7 +73,7 @@
             "type": "p",
             "typingDelay": 1500,
             "responseCondition": "with-specific-needs",
-            "data": "Pas côté boutique, ce qui nous simplifie le travail. Seulement quelques contraintes \"logistiques\" que je te détaillerais une autre fois, il nous faut donc une solution évolutive."
+            "data": "Pas côté boutique, ce qui nous simplifie le travail. Seulement quelques contraintes \"logistiques\" que je te détaillerai une autre fois, il nous faut donc une solution évolutive."
           },
           {
             "type": "p",
@@ -361,10 +361,765 @@
     "meta_description": "Préparez votre environnement Sylius en installant Docker, en gérant les conteneurs et en mettant en place les outils nécessaires au développement.",
     "skills": [
       "Installer Docker",
-      "Gérer les conteneurs Docker",
+      "Connecter l'IDE aux conteneurs Docker",
       "Installer Makefile"
     ],
-    "chat": []
+    "chat": [
+      {
+        "id": "greetings",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Salut, tu te sens prêt à travailler avec Sylius ?"
+          }
+        ],
+        "responses": {
+          "for_sure": "Plus que jamais ! \uD83D\uDCAA"
+        }
+      },
+      {
+        "id": "requirements_intro",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Je n'en doutais pas un instant !"
+          },
+          {
+            "type": "p",
+            "data": "Mais..."
+          },
+          {
+            "type": "p",
+            "data": "Et ton ordi, il est prêt, lui ? \uD83D\uDE05"
+          }
+        ],
+        "responses": {
+          "doubt": "Euh... \uD83E\uDD14"
+        }
+      },
+      {
+        "id": "os_requirements",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "T'inquiète, on va vérifier ça ensemble, en se référant aux prérequis officiels :"
+          },
+          {
+            "type": "info",
+            "data": {
+              "heading": "Documentation officielle",
+              "content": "[System requirements](https://docs.sylius.com/getting-started-with-sylius/before-you-begin#system-requirements)"
+            }
+          },
+          {
+            "type": "p",
+            "data": "Commençons par ton système d'exploitation, sur quoi tourne ton ordinateur ?"
+          }
+        ],
+        "responses": {
+          "macos": "MacOS \uD83C\uDF4E",
+          "linux": "Linux \uD83D\uDC27",
+          "windows": "Windows \uD83E\uDE9F"
+        }
+      },
+      {
+        "id": "os_check",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "responseCondition": "macos|linux",
+            "data": "Parfait, ton OS est déjà compatible."
+          },
+          {
+            "type": "p",
+            "responseCondition": "windows",
+            "data": "Sur Windows, la documentation recommande d'installer [le sous-système WSL](https://learn.microsoft.com/fr-fr/windows/wsl/install)"
+          }
+        ]
+      },
+      {
+        "id": "wsl_check",
+        "author": "Patxi",
+        "responseCondition": "os_requirements:windows",
+        "content": [
+          {
+            "type": "p",
+            "data": "As-tu déjà WSL installé, ou veux-tu un coup de main ?"
+          }
+        ],
+        "responses": {
+          "help_me": "Je veux bien de l'aide",
+          "let_me_try": "Je vais me débrouiller avec le lien",
+          "already_installed": "C'est déjà installé"
+        }
+      },
+      {
+        "id": "wsl_installed",
+        "author": "Patxi",
+        "responseCondition": "wsl_check:already_installed",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait !"
+          }
+        ],
+        "responses": {
+          "ready": "Prêt pour la suite !"
+        }
+      },
+      {
+        "id": "try_install_wsl",
+        "author": "Patxi",
+        "responseCondition": "wsl_check:let_me_try",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, tiens-moi au courant"
+          }
+        ],
+        "responses": {
+          "ready": "Prêt pour la suite !",
+          "help_me": "Finalement je veux bien un peu d'aide..."
+        }
+      },
+      {
+        "id": "help_install_wsl",
+        "author": "Patxi",
+        "responseCondition": "wsl_check:help_me|try_install_wsl:help_me",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, je vais t'aider, commence par ouvrir PowerShell, et tape la commande suivante : [copy]wsl --install ubuntu[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "Ok, c'est fait"
+        }
+      },
+      {
+        "id": "help_setup_wsl",
+        "author": "Patxi",
+        "responseCondition": "help_install_wsl:done",
+        "content": [
+          {
+            "type": "p",
+            "data": "Très bien, tu seras invité à enregistrer ton mot de passe utilisateur, ne l'oublie pas \uD83D\uDE05"
+          },
+          {
+            "type": "p",
+            "data": "Voici un aperçu de ce que tu devrais avoir :"
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/environment/wsl_install.png",
+              "alt": "Installation WSL sur Windows"
+            }
+          }
+        ],
+        "responses": {
+          "done": "Ok, c'est installé"
+        }
+      },
+      {
+        "id": "help_setup_wsl_default_distro",
+        "author": "Patxi",
+        "responseCondition": "help_setup_wsl:done",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, je t'ai fait installer la distribution Ubuntu, mais libre à toi de choisir celle que tu préfères."
+          },
+          {
+            "type": "p",
+            "data": "Il est cependant conseillé de définir la distribution par défaut, vu qu'il est possible d'en installer plusieurs."
+          },
+          {
+            "type": "p",
+            "data": "Relance le terminal PowerShell et saisis la commande suivante : [copy]wsl --set-default ubuntu[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "C'est fait"
+        }
+      },
+      {
+        "id": "check_install_wsl",
+        "author": "Patxi",
+        "responseCondition": "help_setup_wsl_default_distro:done",
+        "content": [
+          {
+            "type": "p",
+            "data": "Bien, à présent, chaque fois que tu auras besoin de te connecter à WSL, il te suffira d'ouvrir PowerShell et de taper la commande [copy]wsl[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "Je note ça !"
+        }
+      },
+      {
+        "id": "too_much_requirements",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Passons aux autres prérequis... accroche-toi..."
+          },
+          {
+            "type": "ul",
+            "data": {
+              "items": [
+                "PHP...",
+                "...avec les extensions gd, exif, fileinfo, intl, sodium",
+                "MySQL, MariaDB ou PostgreSQL",
+                "Composer",
+                "Node.js",
+                "Git",
+                "Symfony CLI",
+                "Symfony Local Web Server"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "go": "On va installer... tout ça ??? \uD83D\uDE31"
+        }
+      },
+      {
+        "id": "introducing_docker",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Je ne sais pas pour toi, mais moi, je n'en aurais pas la patience !"
+          },
+          {
+            "type": "p",
+            "data": "Heureusement, la [Sylius Team](https://sylius.com/team/) a pensé à notre santé mentale et a intégré des conteneurs Docker prêts à l'emploi !"
+          }
+        ],
+        "responses": {
+          "what": "Des quoi ?",
+          "great": "Super !"
+        }
+      },
+      {
+        "id": "installing_docker",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "responseCondition": "what",
+            "data": "Docker est un système de \"conteneurs\" qui va nous permettre d'exécuter des services prêts à l'emploi plutôt que de tout devoir installer sur notre machine."
+          },
+          {
+            "type": "p",
+            "data": "Je te présenterai les services disponibles lorsque nous installerons Sylius ; pour le moment, il faut installer Docker !"
+          }
+        ],
+        "responses": {
+          "ok": "Ok, allons-y !"
+        }
+      },
+      {
+        "id": "docker_engine_or_desktop",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Avant, je dois t'expliquer un point très important concernant Docker..."
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "Deux procédures d'installation se distinguent :",
+              "items": [
+                "Installer \"**Docker Desktop**\" : recommandé par Docker, contient un package complet, avec une interface graphique pour observer et interagir avec les conteneurs (très pratique)",
+                "Installer unitairement le moteur docker \"**Docker Engine**\" et ses éventuels plugins (nous aurons besoin du plugin \"**Docker Compose**\")"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "desktop": "Le plus simple est donc Docker Desktop"
+        }
+      },
+      {
+        "id": "docker_desktop_perf",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Oui, le plus simple à installer..."
+          },
+          {
+            "type": "p",
+            "data": "...mais pas le plus performant, car il ajoute une couche VM qui provoque un goulot d'étranglement à cause des nombreuses entrées/sorties Sylius (Composer, cache Symfony, vendor, logs, parfois node build)"
+          },
+          {
+            "type": "p",
+            "data": "Même sur un très bon ordinateur Windows, avec WSL + Docker Desktop (donc 2 couches de virtualisation), j'ai vu des pages mettre plus de 15 secondes à s'afficher... crispant..."
+          }
+        ],
+        "responses": {
+          "omg": "Quelle horreur !"
+        }
+      },
+      {
+        "id": "docker_engine_if_possible",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "J'en fais encore des cauchemars !"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:windows",
+            "data": "Puisque tu es sur Windows, tu es directement concerné : **Docker Desktop** est à bannir !"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:linux",
+            "data": "Tu es sur Linux, tu es sauvé! Le moteur Docker y tourne nativement, aucune couche de virtualisation inutile !"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:macos",
+            "data": "Malheureusement, sur macOS, le moteur Docker ne peut pas être installé seul à ce jour. Il n'existe pas d'autre solution que d'installer **Docker Desktop**. Ce n'est pas la catastrophe pour autant, car ce sera la seule couche de virtualisation (pas de WSL comme sur Windows)."
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "En résumé, du plus performant au moins performant :",
+              "items": [
+                "Linux + Docker Engine : 0VM \uD83D\uDE80",
+                "macOS + Docker Desktop : 1VM ✈\uFE0F",
+                "Windows WSL + Docker Engine : 1VM \uD83C\uDFCE\uFE0F",
+                "Windows WSL + Docker Desktop : 2VM (à éviter !) \uD83D\uDC22"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "ok": "Ok, alors passons à l'installation"
+        }
+      },
+      {
+        "id": "install_docker_macos",
+        "responseCondition": "os_requirements:macos",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Suis les instructions d'installation suivantes pour **Docker Desktop** et dis-moi quand c'est fait :"
+          },
+          {
+            "type": "p",
+            "data": "[https://docs.docker.com/desktop/setup/install/mac-install/](https://docs.docker.com/desktop/setup/install/mac-install/)"
+          }
+        ],
+        "responses": {
+          "done": "C'est fait"
+        }
+      },
+      {
+        "id": "install_docker_linux",
+        "responseCondition": "os_requirements:linux",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Suis les instructions d'installation de **Docker Engine** en fonction de ta distribution et dis-moi quand c'est fait :"
+          },
+          {
+            "type": "p",
+            "data": "[https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
+          }
+        ],
+        "responses": {
+          "done": "C'est fait"
+        }
+      },
+      {
+        "id": "install_docker_windows",
+        "responseCondition": "os_requirements:windows",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Commence par te connecter à WSL, puis suis la procédure d'installation de **Docker Engine** pour la distribution Ubuntu (ou une autre si tu n'as pas choisi Ubuntu lors de l'installation de WSL) :"
+          },
+          {
+            "type": "p",
+            "data": "[https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
+          }
+        ],
+        "responses": {
+          "done": "C'est fait"
+        }
+      },
+      {
+        "id": "install_docker_check",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, tu peux tester que docker est bien installé avec la commande suivante : [copy]docker -v[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "C'est ok"
+        }
+      },
+      {
+        "id": "install_docker_compose",
+        "author": "Patxi",
+        "responseCondition": "os_requirements:windows|os_requirements:linux",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait, installons maintenant le plugin **Docker Compose**, nous en aurons besoin et c'est simple à ajouter."
+          },
+          {
+            "type": "p",
+            "data": "Voici l'instruction d'installation : [copy]sudo apt-get install docker-compose-plugin[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Tu peux vérifier que l'installation se soit bien passée avec [copy]docker-compose -v[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "Ok, c'est terminé ?"
+        }
+      },
+      {
+        "id": "docker_add_user_to_group",
+        "author": "Patxi",
+        "responseCondition": "os_requirements:windows|os_requirements:linux",
+        "content": [
+          {
+            "type": "p",
+            "data": "Presque ! Dernier détail, et pas des moindres : il faut ajouter ton utilisateur au groupe Docker, pour éviter tout problème de droits :"
+          },
+          {
+            "type": "p",
+            "data": "[copy]sudo usermod -aG docker $USER[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "C'est fait"
+        }
+      },
+      {
+        "id": "docker_installed",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "typingDelay": 500,
+            "data": "Excellent !"
+          },
+          {
+            "type": "p",
+            "data": "Ça peut sembler fastidieux, mais ça va nous simplifier la suite..."
+          },
+          {
+            "type": "p",
+            "data": "Lorsque nous installerons Sylius, nous travaillerons sur le **même environnement** avec les **mêmes services**, quelle que soit notre machine."
+          },
+          {
+            "type": "p",
+            "data": "Et crois-moi, pour avoir passé des heures à aider des collègues, il vaut mieux éviter de multiplier les sources de problèmes possibles \uD83D\uDE05"
+          }
+        ],
+        "responses": {
+          "got_it": "Je comprends"
+        }
+      },
+      {
+        "id": "ide_choice",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Maintenant, bien que ce ne soit pas indispensable, il est parfois utile de connecter son IDE à Docker."
+          },
+          {
+            "type": "p",
+            "data": "Même pour ceux qui utilisent Docker Desktop et son interface graphique, beaucoup de devs apprécient d'avoir un accès rapide depuis l'IDE."
+          },
+          {
+            "type": "p",
+            "data": "Tu pourras ainsi voir tes conteneurs. Si tu n'en as pas encore, tu peux essayer le classique \"Hello World\" : [copy]docker run hello-world[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Pour la suite, j'ai besoin de savoir quel IDE tu utilises ?"
+          }
+        ],
+        "responses": {
+          "vscode": "VS Code",
+          "jetbrains": "PhpStorm (ou autre IDE JetBrains)",
+          "other": "Autre"
+        }
+      },
+      {
+        "id": "other_ide",
+        "responseCondition": "ide_choice:other",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Alors désolé, je ne connais pas assez bien les autres IDE. Tu veux que je te montre tout de même comment faire sur VS Code ou PhpStorm ?"
+          }
+        ],
+        "responses": {
+          "nope": "Non, ça ira je vais me débrouiller",
+          "vscode": "Oui, montre-moi pour VS Code",
+          "jetbrains": "Oui, montre-moi pour PhpStorm"
+        }
+      },
+      {
+        "id": "vscode_ide",
+        "responseCondition": "ide_choice:vscode|other_ide:vscode",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:windows",
+            "data": "Ouvre VS Code et installe l'extension Remote Development."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:windows",
+            "data": {
+              "src": "/resource/install/environment/vscode_remote_dev.png",
+              "alt": "Installation de l'extension VS Code Remote Development"
+            },
+            "confirm": "Ok"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:windows",
+            "data": "Clique sur l'icône de l'extension, puis choisis de te connecter à ta distribution WSL."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:windows",
+            "data": {
+              "src": "/resource/install/environment/vscode_connect_wsl.png",
+              "alt": "VS Code connecté à WSL"
+            },
+            "confirm": "C'est fait"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:windows",
+            "data": "Maintenant, tu devrais voir les conteneurs et les images Docker via le \"REMOTE EXPLORER\"."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:windows",
+            "data": {
+              "src": "/resource/install/environment/vscode_remote_explorer.png",
+              "alt": "VS Code Remote Explorer"
+            }
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": "Ouvre VS Code et installe l'extension Docker."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": {
+              "src": "/resource/install/environment/vscode_docker_plugin.png",
+              "alt": "Installation de l'extension Docker dans VS Code"
+            },
+            "confirm": "Ok"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": "Maintenant, tu devrais voir les conteneurs et les images Docker en cliquant sur l'icône \"Containers\"."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": {
+              "src": "/resource/install/environment/vscode_manage_containers.png",
+              "alt": "Vue Docker dans VS Code"
+            }
+          }
+        ],
+        "responses": {
+          "done": "Ok, c'est bon !"
+        }
+      },
+      {
+        "id": "jetbrains_ide",
+        "responseCondition": "ide_choice:jetbrains|other_ide:jetbrains",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ouvre PhpStorm et clique sur l'icône des \"Services\" pour ajouter une connexion Docker."
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/environment/phpstorm_services.png",
+              "alt": "Services dans PhpStorm"
+            },
+            "confirm": "Ok"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:windows",
+            "data": "Choisis WSL pour te connecter à Docker."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:windows",
+            "data": {
+              "src": "/resource/install/environment/phpstorm_docker_wsl_service.png",
+              "alt": "Connexion de PhpStorm à WSL pour Docker"
+            },
+            "confirm": "C'est fait"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": "Choisis Unix socket pour te connecter à Docker."
+          },
+          {
+            "type": "img",
+            "responseCondition": "os_requirements:linux|os_requirements:macos",
+            "data": {
+              "src": "/resource/install/environment/phpstorm_docker_unix_service.png",
+              "alt": "Connexion de PhpStorm au démon Docker"
+            },
+            "confirm": "C'est fait"
+          },
+          {
+            "type": "p",
+            "data": "Maintenant, tu devrais voir les conteneurs et les images Docker via la section \"Services\"."
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/environment/phpstorm_remote_dev.png",
+              "alt": "Visualisation des conteneurs avec PhpStorm"
+            }
+          }
+        ],
+        "responses": {
+          "done": "Ok, c'est bon !"
+        }
+      },
+      {
+        "id": "introducing_make",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Tu as fait le plus dur, maintenant tu as tous les outils pour travailler confortablement avec Docker \uD83D\uDC4F"
+          },
+          {
+            "type": "p",
+            "data": "Dernier outil nécessaire : \"make\", tu connais ?"
+          }
+        ],
+        "responses": {
+          "yes": "Oui, je connais",
+          "yes_and_got_it": "Oui, et je l'ai déjà installé \uD83D\uDC51",
+          "no": "Non, c'est quoi ça encore ? \uD83E\uDD14"
+        }
+      },
+      {
+        "id": "install_make",
+        "author": "Patxi",
+        "responseCondition": "introducing_make:yes|introducing_make:no",
+        "content": [
+          {
+            "type": "p",
+            "data": "Sylius met à disposition les commandes docker les plus courantes dans un fichier \"Makefile\""
+          },
+          {
+            "type": "p",
+            "data": "Pour pouvoir les exécuter, l'outil \"make\" doit être installé (promis, c'est le dernier !)"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:linux|os_requirements:windows",
+            "data": "Au moins, l'installation est très simple : [copy]sudo apt install make[/copy]"
+          },
+          {
+            "type": "p",
+            "responseCondition": "os_requirements:macos",
+            "data": "Au moins, l'installation est très simple : [copy]xcode-select --install[/copy]"
+          }
+        ],
+        "responses": {
+          "done": "Ok, et je vérifie comment que ça fonctionne ?"
+        }
+      },
+      {
+        "id": "make_already_installed",
+        "author": "Patxi",
+        "responseCondition": "introducing_make:yes_and_got_it",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait, vérifions alors qu'il fonctionne bien."
+          }
+        ],
+        "responses": {
+          "done": "Ok, et je vérifie ça comment ?"
+        }
+      },
+      {
+        "id": "check_make",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Un simple [copy]make -v[/copy] fera l'affaire \uD83D\uDC4D"
+          }
+        ],
+        "responses": {
+          "done": "Au moins, c'est simple"
+        }
+      },
+      {
+        "id": "ending",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Tu vas pouvoir souffler, TOUT est prêt sur ton environnement \uD83C\uDF89"
+          },
+          {
+            "type": "p",
+            "data": "C'était un effort loin d'être négligeable, mais ça en valait la peine : nous pourrons installer Sylius en une seule commande !"
+          },
+          {
+            "type": "p",
+            "data": "Je te propose d'en rester là pour aujourd'hui, nous verrons ça ensemble lors de notre prochain point, je te souhaite une bonne journée !"
+          }
+        ],
+        "responses": {
+          "bye": "Bonne journée et merci pour ton aide !"
+        }
+      }
+    ]
   },
   {
     "id": 3,

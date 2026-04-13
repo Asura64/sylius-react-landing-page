@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, ExternalLink } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import './InlineRichText.scss'
 
@@ -81,7 +81,8 @@ export function InlineRichText({ content }: InlineRichTextProps) {
     } else if (linkLabel && linkHref) {
       nodes.push(
         <a key={key} href={linkHref} target="_blank" rel="noreferrer">
-          {linkLabel}
+          <span>{linkLabel}</span>
+          <ExternalLink size={13} strokeWidth={2.2} aria-hidden="true" />
         </a>,
       )
     } else if (strongText) {

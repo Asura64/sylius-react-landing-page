@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import '../../App.scss'
 import { landingPage } from './landingPage'
 import { Header } from '../../components/Header'
@@ -36,6 +36,30 @@ export function LandingPage() {
     itemRefs,
     itemCount: modules.length,
   })
+
+  useEffect(() => {
+    document.title = 'Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert'
+
+    let metaDescription = document.querySelector('meta[name="description"]')
+
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta')
+      metaDescription.setAttribute('name', 'description')
+      document.head.appendChild(metaDescription)
+    }
+
+    metaDescription.setAttribute('content', hero.description)
+
+    let canonicalLink = document.querySelector('link[rel="canonical"]')
+
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link')
+      canonicalLink.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonicalLink)
+    }
+
+    canonicalLink.setAttribute('href', 'https://patxi.iparaguirre.fr/')
+  }, [hero.description])
 
   return (
     <>

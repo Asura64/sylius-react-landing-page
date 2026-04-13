@@ -47,7 +47,7 @@ const landingHtml = renderLandingDocument({
 writeFileSync(resolve(outputDir, 'index.html'), landingHtml)
 
 for (const course of coursesJson) {
-  const coursePath = `/cours/sylius/${course.slug}`
+  const coursePath = `/cours/sylius/${course.slug}/`
   const courseOutputDir = resolve(outputDir, 'cours', 'sylius', course.slug)
 
   mkdirSync(courseOutputDir, { recursive: true })

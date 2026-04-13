@@ -71,6 +71,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
   useEffect(() => {
     const title = course.metaTitle || course.title
     const description = course.metaDescription || course.description
+    const canonicalUrl = `https://patxi.iparaguirre.fr/cours/sylius/${course.slug}/`
 
     document.title = title
 
@@ -83,7 +84,17 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
     }
 
     metaDescription.setAttribute('content', description)
-  }, [course.description, course.metaDescription, course.metaTitle, course.title])
+
+    let canonicalLink = document.querySelector('link[rel="canonical"]')
+
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link')
+      canonicalLink.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonicalLink)
+    }
+
+    canonicalLink.setAttribute('href', canonicalUrl)
+  }, [course.description, course.metaDescription, course.metaTitle, course.slug, course.title])
 
   useEffect(() => {
     const activeItem = activeTimelineItemRef.current

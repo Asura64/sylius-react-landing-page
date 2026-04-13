@@ -6,11 +6,23 @@
 }
 
 .course-item-info__heading {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.55rem;
   margin: 0 0 0.5rem;
   color: var(--color-ink-strong);
   font-family: 'Manrope', sans-serif;
   font-size: 1rem;
   font-weight: 700;
+}
+
+.course-item-info__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--course-accent);
+  flex: 0 0 auto;
+  transform: translateY(0.2em);
 }
 
 .course-item-info__content {
