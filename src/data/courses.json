@@ -738,7 +738,7 @@
           },
           {
             "type": "p",
-            "data": "[https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
+            "data": "[https://docs.docker.com/engine/install](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
           }
         ],
         "responses": {
@@ -756,7 +756,7 @@
           },
           {
             "type": "p",
-            "data": "[https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
+            "data": "[https://docs.docker.com/engine/install](https://docs.docker.com/engine/install/#installation-procedures-for-supported-platforms)"
           }
         ],
         "responses": {
