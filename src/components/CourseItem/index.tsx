@@ -1,4 +1,5 @@
 import type {
+  ArchitectureItem,
   CourseItem as CourseItemData,
   DumpItem,
   H2Item,
@@ -9,6 +10,7 @@ import type {
   UnorderedListItem,
   YamlItem,
 } from '../../types/content'
+import { Architecture } from './Architecture'
 import { Dump } from './Dump'
 import { H2 } from './H2'
 import { ImageItem as ImageCourseItem } from './Img'
@@ -32,6 +34,7 @@ const courseItemMap = {
   dump: (item: DumpItem) => <Dump data={item.data} />,
   yaml: (item: YamlItem) => <Yaml data={item.data} />,
   ul: (item: UnorderedListItem) => <UnorderedList data={item.data} />,
+  architecture: (item: ArchitectureItem) => <Architecture data={item.data} />,
 } as const
 
 export function CourseItem({ item, onQuizStateChange, quizState }: CourseItemProps) {
@@ -61,6 +64,10 @@ export function CourseItem({ item, onQuizStateChange, quizState }: CourseItemPro
 
   if (item.type === 'ul') {
     return courseItemMap.ul(item)
+  }
+
+  if (item.type === 'architecture') {
+    return courseItemMap.architecture(item)
   }
 
   return courseItemMap.info(item)

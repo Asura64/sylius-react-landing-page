@@ -1,10 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
-import { EllipsisVertical } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { Check, EllipsisVertical } from 'lucide-react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import '../../App.scss'
 import { Footer } from '../../components/Footer'
 import { Header } from '../../components/Header'
-import { CourseChat, clearCourseChatProgress, hasCourseChatProgress } from '../../components/CourseChat'
+import {
+  CourseChat,
+  clearCourseChatProgress,
+  getCourseChatProgressPercent,
+  hasCourseChatProgress,
+  isCourseChatCompleted,
+} from '../../components/CourseChat'
 import { ModuleIcon } from '../../components/ModuleIcon'
 import { landingPage, getModuleById } from '../LandingPage/landingPage'
 import { getCourseBySlug, getCoursesByModuleId } from './courses'
@@ -40,6 +46,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
   const [chatInstanceKey, setChatInstanceKey] = useState(0)
   const [isChatCompleted, setIsChatCompleted] = useState(false)
   const [hasChatStarted, setHasChatStarted] = useState(false)
+  const [chatProgressPercent, setChatProgressPercent] = useState(0)
 
   if (!course) {
     return <Navigate to="/" replace />
@@ -53,6 +60,29 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
 
   const moduleCourses = getCoursesByModuleId(module.id)
   const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === course.slug)
+  const currentModuleIndex = landingPage.modules.findIndex((item) => item.id === module.id)
+  const previousCourseInModule = currentCourseIndex > 0 ? moduleCourses[currentCourseIndex - 1] : undefined
+  const previousModule = currentModuleIndex > 0 ? landingPage.modules[currentModuleIndex - 1] : undefined
+  const nextCourseInModule = currentCourseIndex >= 0 ? moduleCourses[currentCourseIndex + 1] : undefined
+  const nextModule = currentModuleIndex >= 0 ? landingPage.modules[currentModuleIndex + 1] : undefined
+  const previousCourse = previousCourseInModule ?? (previousModule ? getCoursesByModuleId(previousModule.id).at(-1) : undefined)
+  const nextCourse = nextCourseInModule ?? (nextModule ? getCoursesByModuleId(nextModule.id)[0] : undefined)
+  const currentCourseGlobalIndex = landingPage.modules
+    .flatMap((landingModule) => getCoursesByModuleId(landingModule.id))
+    .findIndex((item) => item.slug === course.slug)
+  const nextPublicCourse = landingPage.modules
+    .flatMap((landingModule) => getCoursesByModuleId(landingModule.id))
+    .slice(currentCourseGlobalIndex + 1)
+    .find((item) => !item.private)
+  const completedCourseSlugs = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return []
+    }
+
+    return moduleCourses
+      .filter((moduleCourse) => moduleCourse.chat.length > 0 && isCourseChatCompleted(moduleCourse.slug, moduleCourse.chat))
+      .map((moduleCourse) => moduleCourse.slug)
+  }, [moduleCourses])
   const themeClass = themeClassMap[module.theme]
   const hasChat = course.chat.length > 0
   const courseNavigation = {
@@ -116,6 +146,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
     setChatInstanceKey(0)
     setIsChatCompleted(false)
     setHasChatStarted(hasChat ? hasCourseChatProgress(course.slug) : false)
+    setChatProgressPercent(hasChat ? getCourseChatProgressPercent(course.slug, course.chat) : 0)
   }, [course.slug, hasChat])
 
   useEffect(() => {
@@ -141,6 +172,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
     setIsChatMenuOpen(false)
     setIsResetModalOpen(false)
     setHasChatStarted(false)
+    setChatProgressPercent(0)
   }
 
   return (
@@ -153,15 +185,19 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
             {moduleCourses.map((moduleCourse, index) => {
               const isCurrent = moduleCourse.slug === course.slug
               const isReached = index <= currentCourseIndex
+              const isCompleted = completedCourseSlugs.includes(moduleCourse.slug)
 
               return (
                 <li
                   key={moduleCourse.slug}
                   ref={isCurrent ? activeTimelineItemRef : null}
-                  className={`course-page__timeline-item${isCurrent ? ' course-page__timeline-item--current' : ''}${isReached ? ' course-page__timeline-item--reached' : ''}`}
+                  className={`course-page__timeline-item${isCurrent ? ' course-page__timeline-item--current' : ''}${isReached ? ' course-page__timeline-item--reached' : ''}${isCompleted ? ' course-page__timeline-item--completed' : ''}`}
                 >
                   <Link className="course-page__timeline-link" to={`/cours/sylius/${moduleCourse.slug}`}>
-                    <span className="course-page__timeline-marker">{index + 1}</span>
+                    <span className="course-page__timeline-marker">
+                      <span>{index + 1}</span>
+                      {isCompleted ? <Check size={14} strokeWidth={2.8} /> : null}
+                    </span>
                     <span className="course-page__timeline-label">{moduleCourse.title}</span>
                   </Link>
                 </li>
@@ -215,8 +251,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
               <div className="course-page__locked">
                 <p className="course-page__locked-title">Contenu réservé</p>
                 <p className="course-page__locked-copy">
-                  Cette page de cours est visible, mais son contenu détaille n&apos;est pas encore
-                  accessible.
+                  Cette page de cours est un support pédagogique réservé à l'accompagnement personnalisé.
                 </p>
                 {course.skills.length ? (
                   <>
@@ -232,9 +267,16 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                     </div>
                   </>
                 ) : null}
-                <a className="button button--primary" href="/#postuler">
-                  Découvrir l&apos;accompagnement
-                </a>
+                <div className="course-page__locked-actions">
+                  {nextPublicCourse ? (
+                    <Link className="button button--tertiary" to={`/cours/sylius/${nextPublicCourse.slug}`}>
+                      Cours libre suivant
+                    </Link>
+                  ) : null}
+                  <a className="button button--primary" href="/#postuler">
+                    Découvrir l&apos;accompagnement
+                  </a>
+                </div>
               </div>
             ) : !hasChat ? (
               <div className="course-page__locked">
@@ -272,20 +314,70 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                     key={`${course.slug}-${chatInstanceKey}`}
                     courseSlug={course.slug}
                     onCompletionChange={setIsChatCompleted}
+                    onProgressChange={setChatProgressPercent}
                     turns={course.chat}
                   />
                 )}
-                {course.skills.length && isChatCompleted ? (
-                  <div ref={skillsRef} className="course-page__skills">
-                    <p className="course-page__skills-title">Ce que vous avez appris</p>
-                    <ul className="course-page__skills-list">
-                      {course.skills.map((skill) => (
-                        <li key={skill} className="course-page__skills-item">
-                          {skill}
-                        </li>
-                      ))}
-                    </ul>
+                {hasChatStarted ? (
+                  <div
+                    className={`course-page__chat-progress${isChatCompleted ? ' course-page__chat-progress--completed' : ''}`}
+                    style={{ '--course-progress': `${chatProgressPercent}%` } as CSSProperties}
+                  >
+                    <span className="course-page__chat-progress-ring" aria-hidden="true">
+                      <span className="course-page__chat-progress-value">{chatProgressPercent}%</span>
+                    </span>
+                    <div className="course-page__chat-progress-content">
+                      <p className="course-page__chat-progress-title">Progression du cours</p>
+                      <p className="course-page__chat-progress-copy">
+                        {isChatCompleted
+                          ? 'Ce cours est terminé. Vous pouvez le recommencer à tout moment.'
+                          : 'Votre avancement se met à jour au fil de la conversation.'}
+                      </p>
+                      <button
+                        className="course-page__chat-progress-reset"
+                        type="button"
+                        onClick={() => setIsResetModalOpen(true)}
+                      >
+                        Recommencer ce cours
+                      </button>
+                    </div>
                   </div>
+                ) : null}
+                {course.skills.length && isChatCompleted ? (
+                  <>
+                    <div ref={skillsRef} className="course-page__skills">
+                      <p className="course-page__skills-title">Ce que vous avez appris</p>
+                      <ul className="course-page__skills-list">
+                        {course.skills.map((skill) => (
+                          <li key={skill} className="course-page__skills-item">
+                            {skill}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {previousCourse || nextCourse ? (
+                      <div className="course-page__course-nav">
+                        {nextCourse ? (
+                          <div className="course-page__course-nav-card course-page__course-nav-card--next">
+                            <p className="course-page__course-nav-eyebrow">Cours suivant</p>
+                            <p className="course-page__course-nav-title">{nextCourse.title}</p>
+                            <Link className="button button--primary" to={`/cours/sylius/${nextCourse.slug}`}>
+                              Continuer
+                            </Link>
+                          </div>
+                        ) : null}
+                        {previousCourse ? (
+                          <div className="course-page__course-nav-card course-page__course-nav-card--previous">
+                            <p className="course-page__course-nav-eyebrow">Cours précédent</p>
+                            <p className="course-page__course-nav-title">{previousCourse.title}</p>
+                            <Link className="button button--tertiary" to={`/cours/sylius/${previousCourse.slug}`}>
+                              Revenir
+                            </Link>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </>
                 ) : null}
               </>
             )}

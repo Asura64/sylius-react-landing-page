@@ -49,7 +49,6 @@ export function SidebarNav({ modules, activeIndex }: SidebarNavProps) {
 
     animateScrollTo(Math.max(0, targetTop))
   }
-
   return (
     <aside className="sidebar">
       <div className="sidebar__panel">

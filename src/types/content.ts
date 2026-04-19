@@ -94,7 +94,7 @@ export type TrainingContent = {
   footer: FooterContent
 }
 
-export type CourseItemType = 'h2' | 'p' | 'img' | 'info' | 'dump' | 'yaml' | 'quiz' | 'ul'
+export type CourseItemType = 'h2' | 'p' | 'img' | 'info' | 'dump' | 'yaml' | 'quiz' | 'ul' | 'architecture'
 
 export type BaseCourseItem = {
   typingDelay?: number
@@ -169,6 +169,7 @@ export type QuizItemData = {
   question: string
   mode: 'radio' | 'checkbox'
   choices: QuizChoice[]
+  response?: string | null
 }
 
 export type QuizItem = BaseCourseItem & {
@@ -184,6 +185,15 @@ export type UnorderedListItemData = {
 export type UnorderedListItem = BaseCourseItem & {
   type: 'ul'
   data: UnorderedListItemData
+}
+
+export type ArchitectureNode = {
+  [key: string]: ArchitectureNode | null
+}
+
+export type ArchitectureItem = BaseCourseItem & {
+  type: 'architecture'
+  data: ArchitectureNode
 }
 
 export type ChatCourseItem = CourseItem & {
@@ -210,6 +220,7 @@ export type CourseItemDto =
   | YamlItem
   | QuizItem
   | UnorderedListItem
+  | ArchitectureItem
 export type CourseItem = CourseItemDto
 
 export type CourseDto = {

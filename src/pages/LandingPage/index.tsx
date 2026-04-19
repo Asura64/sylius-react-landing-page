@@ -8,7 +8,7 @@ import { JourneySection } from '../../components/JourneySection'
 import { FeatureGrid } from '../../components/FeatureGrid'
 import { Footer } from '../../components/Footer'
 import { useTimelineProgress } from '../../hooks/useTimelineProgress'
-import { getFirstCourseByModuleId } from '../Course/courses'
+import { getCoursesByModuleId, getFirstCourseByModuleId } from '../Course/courses'
 
 export function LandingPage() {
   const { navigation, hero, modules, featureGrid, footer } = landingPage
@@ -71,6 +71,7 @@ export function LandingPage() {
             <HeroSection hero={landingHero} />
             <JourneySection
               modules={modules}
+              getModuleCourses={getCoursesByModuleId}
               getModuleHref={(moduleId) => {
                 const course = getFirstCourseByModuleId(moduleId)
 

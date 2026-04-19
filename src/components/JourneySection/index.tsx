@@ -1,11 +1,12 @@
+import type { Course, Module } from '../../types/content'
 import type { MutableRefObject, RefObject } from 'react'
 import { TimelineItem } from '../TimelineItem'
-import type { Module } from '../../types/content'
 import type { TimelineState } from '../../hooks/useTimelineProgress'
 import './style.scss'
 
 type JourneySectionProps = {
   modules: Module[]
+  getModuleCourses: (moduleId: number) => Course[]
   getModuleHref: (moduleId: number) => string | undefined
   timelineRef: RefObject<HTMLDivElement | null>
   itemRefs: MutableRefObject<Array<HTMLElement | null>>
@@ -14,6 +15,7 @@ type JourneySectionProps = {
 
 export function JourneySection({
   modules,
+  getModuleCourses,
   getModuleHref,
   timelineRef,
   itemRefs,
@@ -43,6 +45,7 @@ export function JourneySection({
         {modules.map((module, index) => (
           <TimelineItem
             key={module.slug}
+            courses={getModuleCourses(module.id)}
             module={module}
             href={getModuleHref(module.id)}
             index={index}

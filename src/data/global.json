@@ -12,7 +12,7 @@
     "eyebrow": "Sylius 2.2 Edition",
     "titlePrefix": "Formation Sylius 2",
     "titleHighlight": "pour les devs",
-    "description": "Maîtrisez Sylius 2 avec une formation complète, de l'installation aux workflows avancés, et un accompagnement ciblé sur vos vrais enjeux projet e-commerce.",
+    "description": "Maîtrisez Sylius 2 avec un parcours progressif, de l'installation à la configuration métier de la boutique, puis aux personnalisations avancées, workflows et bonnes pratiques projet.",
     "primaryAction": { "label": "Commencer maintenant", "href": "#postuler" },
     "secondaryAction": { "label": "Voir le programme", "href": "#modules" },
     "visualLabel": "Shop"

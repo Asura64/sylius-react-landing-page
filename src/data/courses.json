@@ -1135,7 +1135,475 @@
       "Utiliser les commandes \"Makefile\" disponibles",
       "Lancer des commandes Sylius via le conteneur PHP"
     ],
-    "chat": []
+    "chat": [
+      {
+        "id": "greetings",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Salut, prêt à installer Sylius sur ta machine ?"
+          }
+        ],
+        "responses": {
+          "ready": "J'ai hâte !"
+        }
+      },
+      {
+        "id": "git_clone",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Alors c'est parti !"
+          },
+          {
+            "type": "p",
+            "data": "Pour information, je vais me référer à [ces instructions](https://docs.sylius.com/getting-started-with-sylius/sylius-ce-installation-with-docker) issues de la documentation."
+          },
+          {
+            "type": "p",
+            "data": "Comme indiqué, la première étape consiste à cloner le dépôt, tu dois donc ouvrir un terminal."
+          },
+          {
+            "type": "p",
+            "responseCondition": "preparez-l-environnement:os_requirements:windows",
+            "data": "(Si tu as bien suivi les instructions pour Windows, ouvre le terminal WSL)"
+          },
+          {
+            "type": "p",
+            "data": "Nous allons nommer le projet \"sylius_tuto\" : [copy]git clone git@github.com:Sylius/Sylius-Standard.git sylius_tuto[/copy]"
+          }
+        ],
+        "responses": {
+          "what": "Il s'est passé quoi ? \uD83E\uDD14",
+          "done": "C'est cloné ! ✌\uD83C\uDFFB"
+        }
+      },
+      {
+        "id": "install",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "responseCondition": "what",
+            "data": "Le code source de Sylius a simplement été installé dans le répertoire \"sylius_tuto\" \uD83D\uDCC1"
+          },
+          {
+            "type": "p",
+            "responseCondition": "done",
+            "data": "Parfait \uD83D\uDC4C\uD83C\uDFFB"
+          },
+          {
+            "type": "p",
+            "data": "Maintenant, déplace-toi dans le répertoire : [copy]cd sylius_tuto[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Et lance l'installation avec [copy]make init[/copy] ✨"
+          }
+        ],
+        "responses": {
+          "worrying": "Euh... c'est inquiétant toutes ces instructions qui défilent !"
+        }
+      },
+      {
+        "id": "installing",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Au contraire, ça me rassure, ça signifie que l'installation se déroule bien."
+          },
+          {
+            "type": "p",
+            "data": "Préviens-moi quand l'installation sera terminée."
+          }
+        ],
+        "responses": {
+          "done": "C'est fini"
+        }
+      },
+      {
+        "id": "installed",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait, tu devrais voir ceci dans ton terminal :"
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/sylius/installed.png",
+              "alt": "Sylius installé"
+            }
+          },
+          {
+            "type": "p",
+            "data": "Tout simplement ! Tu peux voir la boutique sur [http://localhost](http://localhost)."
+          },
+          {
+            "type": "p",
+            "data": "Et l'interface d'administration sur [http://localhost/admin](http://localhost/admin)."
+          }
+        ],
+        "responses": {
+          "login_admin": "On me demande un mot de passe..."
+        }
+      },
+      {
+        "id": "admin_login",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Oui, et heureusement, un compte de dev a été créé par défaut :"
+          },
+          {
+            "type": "ul",
+            "data": {
+              "items": [
+                "Username : [copy]sylius[/copy]",
+                "Password : [copy]sylius[/copy]"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Tu devrais arriver sur le tableau de bord :"
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/sylius/dashboard.png",
+              "alt": "Dashboard admin Sylius"
+            }
+          }
+        ],
+        "responses": {
+          "ok": "Ok, j'y suis"
+        }
+      },
+      {
+        "id": "send_mail",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Maintenant, je voudrais te faire essayer quelque chose..."
+          },
+          {
+            "type": "p",
+            "data": "Rends-toi sur la liste des expéditions (shipments) : [http://localhost/admin/shipments/](http://localhost/admin/shipments/)."
+          },
+          {
+            "type": "p",
+            "data": "Et clique sur le bouton \"\uD83D\uDE9A Ship\" d'une commande."
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/sylius/ship.png",
+              "alt": "Bouton d'expédition"
+            }
+          }
+        ],
+        "responses": {
+          "done": "Ok, mais pourquoi faire ?"
+        }
+      },
+      {
+        "id": "mailcatcher",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Cette action déclenche un envoi d'email..."
+          },
+          {
+            "type": "p",
+            "data": "Et je voulais te montrer que Sylius t'a même préparé un mailcatcher avec Docker :"
+          },
+          {
+            "type": "p",
+            "data": "[http://localhost:8025](http://localhost:8025)"
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/sylius/mailhog.png",
+              "alt": "Mailhog"
+            }
+          },
+          {
+            "type": "p",
+            "data": "Tous les mails qui seront émis par Sylius iront là, pratique pour le développement, non ?"
+          }
+        ],
+        "responses": {
+          "great": "Super, ils ont pensé à tout !"
+        }
+      },
+      {
+        "id": "make_targets",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Je ne te le fais pas dire !"
+          },
+          {
+            "type": "p",
+            "data": "Et ce n'est pas tout ! Tu te souviens de la commande utilisée pour installer Sylius ?",
+            "confirm": "make init ?"
+          },
+          {
+            "type": "p",
+            "data": "Tout à fait. *init* est ce que l'on appelle une \"cible\" de *make*."
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "Il en existe d'autres :",
+              "items": [
+                "**docker-compose-check** : vérifie l'installation et la version de Docker Compose",
+                "**install** : raccourci vers la commande **bin/console sylius:install**",
+                "**up** : démarre la stack",
+                "**run** : alias de \"up\"",
+                "**debug** : démarre en chargeant une configuration optionnelle `compose.debug.yml`",
+                "**down** : stoppe les conteneurs",
+                "**clean** : stoppe et supprime les conteneurs",
+                "**php-shell** : accès au shell du conteneur PHP",
+                "**node-shell** : accès au shell du conteneur Node.js",
+                "**node-watch** : active le watcher du conteneur Node.js"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "question": "Il faut toutes les retenir ?"
+        }
+      },
+      {
+        "id": "php-shell",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Oui et non, pour une simple raison : la liste des commandes est disponible après avoir tapé `make` dans ton terminal, puis **Tab** pour l'autocomplétion."
+          },
+          {
+            "type": "p",
+            "data": "Ce qu'il faut retenir, c'est ce que fait chaque commande, mais je trouve que leur nom est déjà assez explicite \uD83D\uDE09"
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "Pour le moment, retiens surtout ces deux-là :",
+              "items": [
+                "**make up** : à lancer après avoir démarré ton PC, afin de lancer la stack",
+                "**make php-shell** : pour accéder aux commandes PHP Symfony"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Justement, va faire un tour sur le conteneur php avec [copy]make php-shell[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Tu seras ainsi en terrain connu : la liste des commandes symfony est disponible avec [copy]bin/console[/copy]"
+          }
+        ],
+        "responses": {
+          "confirm": "Je confirme"
+        }
+      },
+      {
+        "id": "sylius_commands",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Oui, tu connais déjà Symfony, je ne vais pas te faire l'offense de t'expliquer toutes ces commandes \uD83D\uDC40"
+          },
+          {
+            "type": "p",
+            "data": "Je voudrais plutôt attirer ton attention sur la liste des commandes sous le namespace sylius :"
+          },
+          {
+            "type": "img",
+            "data": {
+              "src": "/resource/install/sylius/sylius_commands.png",
+              "alt": "Commandes Sylius"
+            }
+          },
+          {
+            "type": "p",
+            "data": "On ne va pas toutes les passer en revue aujourd'hui, mais sache qu'elles existent."
+          },
+          {
+            "type": "p",
+            "data": "Je te propose tout de même d'en tester quelques unes..."
+          }
+        ],
+        "responses": {
+          "which_ones": "Lesquelles ?"
+        }
+      },
+      {
+        "id": "change_password",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Eh bien, par exemple, quelle commande permet de voir la liste des comptes admin ?",
+              "mode": "radio",
+              "response": null,
+              "choices": [
+                {
+                  "id": "sylius_admin_show",
+                  "label": "sylius:admin:show",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin-user_show",
+                  "label": "sylius:admin-user:show",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin_list",
+                  "label": "sylius:admin:list",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin-user_list",
+                  "label": "sylius:admin-user:list",
+                  "answer": true
+                },
+                {
+                  "id": "sylius_user_list",
+                  "label": "sylius:user:list",
+                  "answer": false
+                }
+              ]
+            }
+          },
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Bien ! Nous nous sommes connectés à l'administration avec l'utilisateur \"sylius\", mais y a-t-il un autre compte admin ?",
+              "mode": "radio",
+              "response": null,
+              "choices": [
+                {
+                  "id": "seller",
+                  "label": "Oui, un compte \"seller@example.com\"",
+                  "answer": false,
+                  "onError": "Tu as vu ça où ? Je l'ai juste inventé \uD83D\uDE05"
+                },
+                {
+                  "id": "api",
+                  "label": "Oui, un compte \"api@example.com\"",
+                  "answer": true
+                },
+                {
+                  "id": "buyer",
+                  "label": "Oui, un compte \"buyer@example.com\"",
+                  "answer": false,
+                  "onError": "Tu as vu ça où ? Je l'ai juste inventé \uD83D\uDE05"
+                },
+                {
+                  "id": "none",
+                  "label": "Non, il n'y a que le compte \"sylius@example.com\"",
+                  "answer": false,
+                  "onError": "Regarde mieux ! \uD83D\uDC40"
+                }
+              ]
+            }
+          },
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Parfait ! Et si tu souhaites changer le mot de passe du compte \"api\", comment faire ?",
+              "mode": "radio",
+              "response": null,
+              "choices": [
+                {
+                  "id": "sylius_admin_change-password_with_old_password",
+                  "label": "Avec la commande sylius:admin:change-password puis en saisissant l'ancien et le nouveau password",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin_change-password",
+                  "label": "Avec la commande sylius:admin:change-password puis en saisissant le nouveau password",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin-user_change-password_with_old_password",
+                  "label": "Avec la commande sylius:admin-user:change-password puis en saisissant l'ancien et le nouveau password",
+                  "answer": false
+                },
+                {
+                  "id": "sylius_admin-user_change-password",
+                  "label": "Avec la commande sylius:admin-user:change-password puis en saisissant le nouveau password",
+                  "answer": true
+                },
+                {
+                  "id": "sylius_plus_only",
+                  "label": "Impossible avec Sylius Standard, il faut utiliser Sylius Plus",
+                  "answer": false
+                }
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Parfait ! Nous verrons les autres commandes au fur et à mesure."
+          }
+        ],
+        "responses": {
+          "ready": "Eh bien, je pense être prêt à travailler sur Sylius \uD83D\uDCAA"
+        }
+      },
+      {
+        "id": "bye",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Je confirme !"
+          },
+          {
+            "type": "p",
+            "data": "Comme tu peux le constater, la stack Docker disponible est déjà très complète en termes de services."
+          },
+          {
+            "type": "p",
+            "data": "Toutefois, pour élever à un niveau \"professionnel\" ton installation, je te propose pour la prochaine fois d'ajouter quelques services :"
+          },
+          {
+            "type": "ul",
+            "data": {
+              "items": [
+                "**Xdebug** : déjà disponible, mais nécessite une légère configuration au niveau de ton IDE",
+                "**phpMyAdmin** : pour administrer ta base de données MySQL",
+                "**Traefik** : pour gérer efficacement le HTTPS"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Pour le moment, ça suffira pour aujourd'hui, alors je te souhaite une excellente journée !"
+          }
+        ],
+        "responses": {
+          "thanks": "Merci et à bientôt !"
+        }
+      }
+    ]
   },
   {
     "id": 4,
@@ -1150,6 +1618,21 @@
       "Ajouter PHPMyAdmin pour interagir avec la base de données",
       "Ajouter Traefik pour gérer le trafic HTTPS en local",
       "Activer Xdebug pour accéder à des outils de debug avancés"
+    ],
+    "chat": []
+  },
+  {
+    "id": 5,
+    "module_id": 2,
+    "private":  false,
+    "slug": "configurez-la-boutique",
+    "title": "Configurez la boutique",
+    "meta_title": "Configurez votre boutique Sylius avec les fixtures et l'administration",
+    "description": "Apprenez à configurer une boutique Sylius en vous appuyant sur les fixtures existantes pour personnaliser les canaux, les moyens de paiement, les modes de livraison et d'autres réglages clés, tout en faisant le lien avec les écrans importants de l'administration.",
+    "meta_description": "Configurez votre boutique Sylius avec des fixtures YAML et passez en revue les éléments clés de l'administration : canaux, paiements, livraison et réglages essentiels.",
+    "skills": [
+      "Comprendre les fixtures Sylius",
+      "Personnaliser les fixtures pour configurer la boutique"
     ],
     "chat": []
   }

@@ -45,7 +45,7 @@ export function Document({
         />
         <meta
           property="og:description"
-          content="Maîtrisez Sylius 2 avec un parcours complet, des modules avancés et un accompagnement sur mesure pour vos projets e-commerce."
+          content="Maîtrisez Sylius 2 avec un parcours progressif : installation, configuration de la boutique, personnalisations avancées, workflow et accompagnement sur mesure."
         />
         <meta property="og:site_name" content="Formation Sylius 2" />
 
@@ -53,7 +53,7 @@ export function Document({
         <meta name="twitter:title" content={title} />
         <meta
           name="twitter:description"
-          content="Installation, configuration, ResourceBundle, Twig Hooks, workflow, qualité et mentorat Sylius 2."
+          content="Installation, configuration de la boutique, fixtures YAML, ResourceBundle, Live Components, workflow et qualité sur Sylius 2."
         />
 
         <script
@@ -76,7 +76,7 @@ export function Document({
                   '@type': 'Course',
                   name: 'Formation Sylius 2',
                   description:
-                    'Formation Sylius 2 orientée architecture, personnalisation, workflow, qualité et accompagnement sur mesure.',
+                    'Formation Sylius 2 orientée installation, configuration métier de la boutique, personnalisation, workflow, qualité et accompagnement sur mesure.',
                   provider: {
                     '@type': 'Organization',
                     name: 'Patxi Iparaguirre',
@@ -84,11 +84,12 @@ export function Document({
                   educationalLevel: 'Advanced',
                   teaches: [
                     'Installation de Sylius 2',
-                    'Configuration Sylius',
+                    'Configuration de la boutique Sylius',
+                    'Fixtures YAML',
                     'ResourceBundle',
                     'Grilles admin et front',
                     'Twig Hooks',
-                    'Twig Components',
+                    'Symfony UX Live Components',
                     'Workflow',
                     'Qualité de code',
                   ],

@@ -2,6 +2,7 @@
   display: none;
 
   &__panel {
+    height: fit-content;
     padding: 1.5rem;
     border-radius: 1.75rem;
     background: rgba(255, 255, 255, 0.8);
@@ -48,7 +49,18 @@
 @media (min-width: 981px) {
   .sidebar {
     display: block;
-    position: sticky;
-    top: 7rem;
+    align-self: start;
+    height: fit-content;
+    min-height: 1px;
+  }
+
+  .sidebar__panel {
+    position: fixed;
+    top: 6.5rem;
+    left: max(1rem, calc((100vw - var(--shell)) / 2));
+    width: 16rem;
+    max-height: calc(100vh - 8rem);
+    overflow: auto;
+    scrollbar-width: thin;
   }
 }

@@ -8,6 +8,7 @@ import './style.scss'
 type CourseChatProps = {
   courseSlug: string
   onCompletionChange?: (isCompleted: boolean) => void
+  onProgressChange?: (progressPercent: number) => void
   turns: ChatTurn[]
 }
 
@@ -160,6 +161,20 @@ function getAccessibleTurns(currentCourseSlug: string, turns: ChatTurn[], answer
   })
 }
 
+function getQuizCompletionResponse(turn: ChatTurn, accessibleItems: Array<{ item: ChatTurn['content'][number]; itemIndex: number }>) {
+  const quizItem = [...accessibleItems].reverse().find(({ item }) => item.type === 'quiz')?.item
+
+  if (!quizItem || quizItem.type !== 'quiz') {
+    return undefined
+  }
+
+  if (quizItem.data.response === null) {
+    return null
+  }
+
+  return quizItem.data.response ?? "J'ai terminé"
+}
+
 export function clearCourseChatProgress(courseSlug: string) {
   if (typeof window === 'undefined') {
     return
@@ -270,7 +285,182 @@ function getInitialConfirmedItemIds(
   return initialConfirmedItemIds
 }
 
-export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChatProps) {
+export function isCourseChatCompleted(courseSlug: string, turns: ChatTurn[]) {
+  const storedProgress = readStoredProgress(courseSlug, turns)
+
+  if (!storedProgress) {
+    return false
+  }
+
+  const confirmedItemIds = getInitialConfirmedItemIds(
+    courseSlug,
+    turns,
+    storedProgress.revealedTurnCount,
+    storedProgress.answersByTurnId,
+    storedProgress.quizStatesByItemId,
+  )
+  const revealedItemCountByTurnId = getInitialRevealedItemCounts(
+    courseSlug,
+    turns,
+    storedProgress.revealedTurnCount,
+    storedProgress.answersByTurnId,
+    confirmedItemIds,
+    storedProgress.quizStatesByItemId,
+  )
+  const accessibleTurns = getAccessibleTurns(courseSlug, turns, storedProgress.answersByTurnId)
+  const lastRevealedTurn =
+    storedProgress.revealedTurnCount > 0 ? accessibleTurns[storedProgress.revealedTurnCount - 1] : undefined
+  const lastRevealedTurnAccessibleItems = lastRevealedTurn
+    ? getAccessibleTurnItems(
+        courseSlug,
+        lastRevealedTurn,
+        storedProgress.answersByTurnId,
+        confirmedItemIds,
+        storedProgress.quizStatesByItemId,
+      )
+    : []
+  const isWaitingForAnswer =
+    Boolean(lastRevealedTurn?.responses) &&
+    lastRevealedTurn &&
+    storedProgress.answersByTurnId[lastRevealedTurn.id] == null
+
+  return (
+    storedProgress.revealedTurnCount >= accessibleTurns.length &&
+    !isWaitingForAnswer &&
+    accessibleTurns.every((turn, index) => {
+      if (index >= storedProgress.revealedTurnCount) {
+        return false
+      }
+
+      const accessibleItems = getAccessibleTurnItems(
+        courseSlug,
+        turn,
+        storedProgress.answersByTurnId,
+        confirmedItemIds,
+        storedProgress.quizStatesByItemId,
+      )
+      const areItemsFullyRevealed = (revealedItemCountByTurnId[turn.id] ?? 0) >= accessibleItems.length
+      const areTurnConfirmationsAcknowledged = accessibleItems.every(
+        ({ item, itemIndex }) => !item.confirm || Boolean(confirmedItemIds[getChatItemId(turn.id, itemIndex)]),
+      )
+      const areTurnQuizzesPassed = accessibleItems.every(({ item, itemIndex }) => {
+        if (item.type !== 'quiz') {
+          return true
+        }
+
+        return Boolean(storedProgress.quizStatesByItemId[getChatItemId(turn.id, itemIndex)]?.passed)
+      })
+
+      return areItemsFullyRevealed && areTurnConfirmationsAcknowledged && areTurnQuizzesPassed
+    }) &&
+    lastRevealedTurnAccessibleItems.every(({ item, itemIndex }) => {
+      if (item.type !== 'quiz') {
+        return true
+      }
+
+      return Boolean(storedProgress.quizStatesByItemId[getChatItemId(lastRevealedTurn!.id, itemIndex)]?.passed)
+    })
+  )
+}
+
+export function getCourseChatProgressPercent(courseSlug: string, turns: ChatTurn[]) {
+  const storedProgress = readStoredProgress(courseSlug, turns)
+
+  if (!storedProgress || turns.length === 0) {
+    return 0
+  }
+
+  const confirmedItemIds = getInitialConfirmedItemIds(
+    courseSlug,
+    turns,
+    storedProgress.revealedTurnCount,
+    storedProgress.answersByTurnId,
+    storedProgress.quizStatesByItemId,
+  )
+  const revealedItemCountByTurnId = getInitialRevealedItemCounts(
+    courseSlug,
+    turns,
+    storedProgress.revealedTurnCount,
+    storedProgress.answersByTurnId,
+    confirmedItemIds,
+    storedProgress.quizStatesByItemId,
+  )
+  const accessibleTurns = getAccessibleTurns(courseSlug, turns, storedProgress.answersByTurnId)
+
+  if (accessibleTurns.length === 0) {
+    return 0
+  }
+
+  const totals = accessibleTurns.reduce(
+    (accumulator, turn, index) => {
+      const accessibleItems = getAccessibleTurnItems(
+        courseSlug,
+        turn,
+        storedProgress.answersByTurnId,
+        confirmedItemIds,
+        storedProgress.quizStatesByItemId,
+      )
+      const turnUnits = accessibleItems.length + (turn.responses ? 1 : 0)
+      const revealedItems = index < storedProgress.revealedTurnCount ? revealedItemCountByTurnId[turn.id] ?? 0 : 0
+      const answerUnit = storedProgress.answersByTurnId[turn.id] ? 1 : 0
+
+      return {
+        completedUnits: accumulator.completedUnits + Math.min(revealedItems, accessibleItems.length) + answerUnit,
+        totalUnits: accumulator.totalUnits + turnUnits,
+      }
+    },
+    { completedUnits: 0, totalUnits: 0 },
+  )
+
+  if (totals.totalUnits === 0) {
+    return 0
+  }
+
+  return Math.max(0, Math.min(100, Math.round((totals.completedUnits / totals.totalUnits) * 100)))
+}
+
+function getCurrentProgressPercent(
+  courseSlug: string,
+  accessibleTurns: ChatTurn[],
+  revealedTurnCount: number,
+  answersByTurnId: Record<string, string>,
+  confirmedItemIds: Record<string, boolean>,
+  quizStatesByItemId: Record<string, QuizState>,
+  revealedItemCountByTurnId: Record<string, number>,
+) {
+  if (accessibleTurns.length === 0) {
+    return 0
+  }
+
+  const totals = accessibleTurns.reduce(
+    (accumulator, turn, index) => {
+      const accessibleItems = getAccessibleTurnItems(
+        courseSlug,
+        turn,
+        answersByTurnId,
+        confirmedItemIds,
+        quizStatesByItemId,
+      )
+      const turnUnits = accessibleItems.length + (turn.responses ? 1 : 0)
+      const revealedItems = index < revealedTurnCount ? revealedItemCountByTurnId[turn.id] ?? 0 : 0
+      const answerUnit = answersByTurnId[turn.id] ? 1 : 0
+
+      return {
+        completedUnits: accumulator.completedUnits + Math.min(revealedItems, accessibleItems.length) + answerUnit,
+        totalUnits: accumulator.totalUnits + turnUnits,
+      }
+    },
+    { completedUnits: 0, totalUnits: 0 },
+  )
+
+  if (totals.totalUnits === 0) {
+    return 0
+  }
+
+  return Math.max(0, Math.min(100, Math.round((totals.completedUnits / totals.totalUnits) * 100)))
+}
+
+export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, turns }: CourseChatProps) {
   const storedProgress = useMemo(() => readStoredProgress(courseSlug, turns), [courseSlug, turns])
   const initialConfirmedItemIds = useMemo(
     () =>
@@ -356,6 +546,27 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
 
       return areItemsFullyRevealed && areTurnConfirmationsAcknowledged && areTurnQuizzesPassed
     })
+  const currentProgressPercent = useMemo(
+    () =>
+      getCurrentProgressPercent(
+        courseSlug,
+        accessibleTurns,
+        revealedTurnCount,
+        answersByTurnId,
+        confirmedItemIds,
+        quizStatesByItemId,
+        revealedItemCountByTurnId,
+      ),
+    [
+      accessibleTurns,
+      answersByTurnId,
+      confirmedItemIds,
+      courseSlug,
+      quizStatesByItemId,
+      revealedItemCountByTurnId,
+      revealedTurnCount,
+    ],
+  )
 
   useEffect(() => {
     setRevealedTurnCount(storedProgress?.revealedTurnCount ?? 0)
@@ -544,6 +755,10 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
     onCompletionChange?.(isChatCompleted)
   }, [isChatCompleted, onCompletionChange])
 
+  useEffect(() => {
+    onProgressChange?.(currentProgressPercent)
+  }, [currentProgressPercent, onProgressChange])
+
   const handleAnswer = (turnId: string, responseId: string) => {
     shouldScrollToTypingRef.current = true
     const isLastTurnAnswer =
@@ -622,7 +837,7 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
             Boolean(previousTurn) &&
             !previousTurnAnswerId &&
             previousTurnQuizPassed &&
-            previousTurnAccessibleItems.some(({ item }) => item.type === 'quiz')
+            getQuizCompletionResponse(previousTurn, previousTurnAccessibleItems) != null
           const shouldShowMentorAvatar =
             !previousTurn ||
             previousTurn.author !== turn.author ||
@@ -656,6 +871,9 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
             isTurnFullyRevealed &&
             isTurnQuizPassed &&
             accessibleItems.some(({ item }) => item.type === 'quiz')
+          const quizCompletionResponse = shouldShowQuizCompletion
+            ? getQuizCompletionResponse(turn, accessibleItems)
+            : undefined
 
           return (
             <div key={`${turn.author}-${turnIndex}`} className="course-chat__turn">
@@ -711,10 +929,10 @@ export function CourseChat({ courseSlug, onCompletionChange, turns }: CourseChat
                     <p className="course-chat__answer">{answerLabel}</p>
                   </div>
                 </div>
-              ) : shouldShowQuizCompletion ? (
+              ) : shouldShowQuizCompletion && quizCompletionResponse != null ? (
                 <div className="course-chat__message course-chat__message--learner">
                   <div className="course-chat__bubble course-chat__bubble--learner">
-                    <p className="course-chat__answer">J&apos;ai terminé</p>
+                    <p className="course-chat__answer">{quizCompletionResponse}</p>
                   </div>
                 </div>
               ) : null}

@@ -89,15 +89,15 @@ export function Quiz({ data, onStateChange, state }: QuizProps) {
 
         {data.choices.map((choice) => {
           const isSelected = selectedIds.includes(choice.id)
-          const isCorrect = isSubmitted && isChoiceSelectionCorrect(choice, selectedIds)
-          const hasError = isSubmitted && !isChoiceSelectionCorrect(choice, selectedIds)
+          const isCorrect = isSubmitted && (isMultiple ? isChoiceSelectionCorrect(choice, selectedIds) : isSelected && choice.answer)
+          const hasError = isSubmitted && (isMultiple ? !isChoiceSelectionCorrect(choice, selectedIds) : isSelected && !choice.answer)
 
           return (
             <div
               key={choice.id}
               className={`course-item-quiz__choice${isSelected ? ' course-item-quiz__choice--selected' : ''}${isCorrect ? ' course-item-quiz__choice--correct' : ''}${hasError ? ' course-item-quiz__choice--error' : ''}`}
             >
-              {isSubmitted ? (
+              {isCorrect || hasError ? (
                 <span className="course-item-quiz__result-icon" aria-hidden="true">
                   {isCorrect ? <Check size={16} /> : <CircleX size={16} />}
                 </span>
