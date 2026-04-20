@@ -1,4 +1,5 @@
 .course-item-image {
+  position: relative;
   margin: 0;
 }
 
@@ -8,4 +9,93 @@
   border: 1px solid rgba(17, 24, 39, 0.08);
   border-radius: 1.25rem;
   box-shadow: 0 20px 40px rgba(17, 24, 39, 0.08);
+}
+
+.course-item-image__fullscreen-trigger {
+  position: absolute;
+  right: 0.95rem;
+  bottom: 0.95rem;
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(15, 18, 29, 0.72);
+  color: #fff;
+  box-shadow: 0 14px 28px rgba(15, 18, 29, 0.24);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: rgba(15, 18, 29, 0.82);
+  }
+}
+
+.course-item-image__fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  align-items: start;
+  justify-items: stretch;
+  padding: 0.35rem;
+  background: rgba(10, 13, 20, 0.82);
+  backdrop-filter: blur(10px);
+  overflow: auto;
+}
+
+.course-item-image__fullscreen-dialog {
+  position: relative;
+  display: grid;
+  align-items: start;
+  justify-items: stretch;
+  width: 100%;
+  min-height: calc(100vh - 0.7rem);
+  padding-top: 3rem;
+}
+
+.course-item-image__fullscreen-close {
+  position: fixed;
+  top: 0.45rem;
+  right: 0.45rem;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: rgba(15, 18, 29, 0.24);
+  color: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 10px 20px rgba(15, 18, 29, 0.12);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+
+  &:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(15, 18, 29, 0.72);
+    color: #fff;
+    box-shadow: 0 14px 28px rgba(15, 18, 29, 0.24);
+  }
+}
+
+.course-item-image__fullscreen-media {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(100vh - 3.4rem);
+  margin: 0 auto;
+  object-fit: contain;
+  border-radius: 0;
+  box-shadow: 0 28px 56px rgba(10, 13, 20, 0.32);
 }
