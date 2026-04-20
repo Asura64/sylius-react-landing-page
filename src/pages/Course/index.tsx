@@ -144,10 +144,10 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
     setIsChatMenuOpen(false)
     setIsResetModalOpen(false)
     setChatInstanceKey(0)
-    setIsChatCompleted(false)
+    setIsChatCompleted(hasChat ? isCourseChatCompleted(course.slug, course.chat) : false)
     setHasChatStarted(hasChat ? hasCourseChatProgress(course.slug) : false)
     setChatProgressPercent(hasChat ? getCourseChatProgressPercent(course.slug, course.chat) : 0)
-  }, [course.slug, hasChat])
+  }, [course.chat, course.slug, hasChat])
 
   useEffect(() => {
     if (!isChatCompleted || !skillsRef.current) {
@@ -193,7 +193,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                   ref={isCurrent ? activeTimelineItemRef : null}
                   className={`course-page__timeline-item${isCurrent ? ' course-page__timeline-item--current' : ''}${isReached ? ' course-page__timeline-item--reached' : ''}${isCompleted ? ' course-page__timeline-item--completed' : ''}`}
                 >
-                  <Link className="course-page__timeline-link" to={`/cours/sylius/${moduleCourse.slug}`}>
+                  <Link className="course-page__timeline-link" to={`/cours/sylius/${moduleCourse.slug}/`}>
                     <span className="course-page__timeline-marker">
                       <span>{index + 1}</span>
                       {isCompleted ? <Check size={14} strokeWidth={2.8} /> : null}
@@ -269,7 +269,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                 ) : null}
                 <div className="course-page__locked-actions">
                   {nextPublicCourse ? (
-                    <Link className="button button--tertiary" to={`/cours/sylius/${nextPublicCourse.slug}`}>
+                    <Link className="button button--tertiary" to={`/cours/sylius/${nextPublicCourse.slug}/`}>
                       Cours libre suivant
                     </Link>
                   ) : null}
@@ -361,7 +361,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                           <div className="course-page__course-nav-card course-page__course-nav-card--next">
                             <p className="course-page__course-nav-eyebrow">Cours suivant</p>
                             <p className="course-page__course-nav-title">{nextCourse.title}</p>
-                            <Link className="button button--primary" to={`/cours/sylius/${nextCourse.slug}`}>
+                            <Link className="button button--primary" to={`/cours/sylius/${nextCourse.slug}/`}>
                               Continuer
                             </Link>
                           </div>
@@ -370,7 +370,7 @@ export function CoursePageContent({ courseSlug }: CoursePageContentProps) {
                           <div className="course-page__course-nav-card course-page__course-nav-card--previous">
                             <p className="course-page__course-nav-eyebrow">Cours précédent</p>
                             <p className="course-page__course-nav-title">{previousCourse.title}</p>
-                            <Link className="button button--tertiary" to={`/cours/sylius/${previousCourse.slug}`}>
+                            <Link className="button button--tertiary" to={`/cours/sylius/${previousCourse.slug}/`}>
                               Revenir
                             </Link>
                           </div>

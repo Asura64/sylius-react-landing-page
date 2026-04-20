@@ -55,7 +55,7 @@ export function TimelineItem({
       <ul className="timeline__courses-list">
         {courses.map((course) => (
           <li key={course.slug} className="timeline__courses-item">
-            <a className="timeline__courses-link" href={`/cours/sylius/${course.slug}`}>
+            <a className="timeline__courses-link" href={`/cours/sylius/${course.slug}/`}>
               <span className="timeline__courses-name">{course.title}</span>
               {completedCourseSlugs.includes(course.slug) ? (
                 <span className="timeline__courses-check" aria-label="Cours terminé">

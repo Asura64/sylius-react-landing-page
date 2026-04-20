@@ -14,7 +14,7 @@ export function LandingPage() {
   const { navigation, hero, modules, featureGrid, footer } = landingPage
   const firstModule = modules[0]
   const firstCourseHref = firstModule ? getFirstCourseByModuleId(firstModule.id) : undefined
-  const startHref = firstCourseHref ? `/cours/sylius/${firstCourseHref.slug}` : navigation.cta.href
+  const startHref = firstCourseHref ? `/cours/sylius/${firstCourseHref.slug}/` : navigation.cta.href
   const landingNavigation = {
     ...navigation,
     cta: {
@@ -58,7 +58,7 @@ export function LandingPage() {
       document.head.appendChild(canonicalLink)
     }
 
-    canonicalLink.setAttribute('href', 'https://patxi.iparaguirre.fr/')
+    canonicalLink.setAttribute('href', 'https://patxi.iparaguirre.fr')
   }, [hero.description])
 
   return (
@@ -75,7 +75,7 @@ export function LandingPage() {
               getModuleHref={(moduleId) => {
                 const course = getFirstCourseByModuleId(moduleId)
 
-                return course ? `/cours/sylius/${course.slug}` : undefined
+                return course ? `/cours/sylius/${course.slug}/` : undefined
               }}
               timelineRef={timelineRef}
               itemRefs={itemRefs}

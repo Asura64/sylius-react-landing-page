@@ -39,7 +39,7 @@ const { renderCourseDocument, renderLandingDocument } = await import(pathToFileU
 const landingHtml = renderLandingDocument({
   assetBase: './',
   bootstrapModule,
-  canonicalUrl: 'https://patxi.iparaguirre.fr/',
+  canonicalUrl: 'https://patxi.iparaguirre.fr',
   path: '/',
   stylesheets,
 })
