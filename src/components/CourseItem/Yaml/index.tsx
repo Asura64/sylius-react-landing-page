@@ -40,6 +40,26 @@ function stringifyScalar(value: Exclude<YamlValue, object>) {
   return String(value)
 }
 
+function getInlineObjectScalar(value: YamlValue) {
+  if (value == null || typeof value !== 'object' || Array.isArray(value)) {
+    return undefined
+  }
+
+  const entries = Object.entries(value)
+
+  if (entries.length !== 1) {
+    return undefined
+  }
+
+  const [entryKey, entryValue] = entries[0]
+
+  if (entryValue != null && typeof entryValue === 'object') {
+    return undefined
+  }
+
+  return `{${entryKey}: ${stringifyScalar(entryValue)}}`
+}
+
 function buildYamlLines(value: YamlValue, depth = 0, key?: string, prefix = ''): YamlLine[] {
   const indent = '  '.repeat(depth)
 
@@ -51,7 +71,15 @@ function buildYamlLines(value: YamlValue, depth = 0, key?: string, prefix = ''):
 
       return [
         { indent, key },
-        ...value.flatMap((item) => buildYamlLines(item, depth + 1, undefined, '- ')),
+        ...value.flatMap((item) => {
+          const inlineObjectScalar = getInlineObjectScalar(item)
+
+          if (inlineObjectScalar) {
+            return [{ indent: '  '.repeat(depth + 1), prefix: '- ', scalar: inlineObjectScalar }]
+          }
+
+          return buildYamlLines(item, depth + 1, undefined, '- ')
+        }),
       ]
     }
 
@@ -59,7 +87,15 @@ function buildYamlLines(value: YamlValue, depth = 0, key?: string, prefix = ''):
       return [{ indent, prefix, scalar: '[]' }]
     }
 
-    return value.flatMap((item) => buildYamlLines(item, depth, undefined, '- '))
+    return value.flatMap((item) => {
+      const inlineObjectScalar = getInlineObjectScalar(item)
+
+      if (inlineObjectScalar) {
+        return [{ indent, prefix: '- ', scalar: inlineObjectScalar }]
+      }
+
+      return buildYamlLines(item, depth, undefined, '- ')
+    })
   }
 
   if (value != null && typeof value === 'object') {
@@ -84,6 +120,29 @@ function buildYamlLines(value: YamlValue, depth = 0, key?: string, prefix = ''):
 
     if (entries.length === 0) {
       return [{ indent, prefix, scalar: '{}' }]
+    }
+
+    if (prefix) {
+      const [firstEntryKey, firstEntryValue] = entries[0]
+      const firstLine =
+        firstEntryValue != null && typeof firstEntryValue === 'object'
+          ? [{ indent, prefix, key: firstEntryKey }]
+          : [{ indent, prefix, key: firstEntryKey, scalar: stringifyScalar(firstEntryValue) }]
+
+      const nestedFirstEntry =
+        firstEntryValue != null && typeof firstEntryValue === 'object'
+          ? buildYamlLines(firstEntryValue, depth + 2)
+          : []
+
+      const remainingLines = entries.slice(1).flatMap(([childKey, childValue]) => {
+        if (childKey.startsWith('__comment')) {
+          return [{ indent: '  '.repeat(depth + 2), comment: `# ${stringifyScalar(childValue as Exclude<YamlValue, object>)}` }]
+        }
+
+        return buildYamlLines(childValue, depth + 2, childKey)
+      })
+
+      return [...firstLine, ...nestedFirstEntry, ...remainingLines]
     }
 
     return entries.flatMap(([childKey, childValue]) => {
@@ -111,6 +170,10 @@ function renderYamlLine(line: YamlLine, index: number) {
     )
   }
 
+  const inlineObjectMatch = !line.key && line.scalar ? line.scalar.match(/^\{([^:]+):\s*(.*)\}$/) : null
+  const inlineObjectKey = inlineObjectMatch?.[1]
+  const inlineObjectValue = inlineObjectMatch?.[2]
+
   return (
     <span key={index} className="course-item-yaml__line">
       {line.indent ? <span className="course-item-yaml__indent">{line.indent}</span> : null}
@@ -125,6 +188,17 @@ function renderYamlLine(line: YamlLine, index: number) {
               <span className={getScalarClassName(line.scalar)}>{line.scalar}</span>
             </>
           ) : null}
+        </>
+      ) : inlineObjectKey && inlineObjectValue ? (
+        <>
+          <span className="course-item-yaml__punctuation">{'{'}</span>
+          <span> </span>
+          <span className="course-item-yaml__key">{inlineObjectKey}</span>
+          <span className="course-item-yaml__punctuation">:</span>
+          <span> </span>
+          <span className={getScalarClassName(inlineObjectValue)}>{inlineObjectValue}</span>
+          <span> </span>
+          <span className="course-item-yaml__punctuation">{'}'}</span>
         </>
       ) : line.scalar ? (
         <span className={getScalarClassName(line.scalar)}>{line.scalar}</span>
