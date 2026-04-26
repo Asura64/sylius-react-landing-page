@@ -14,13 +14,13 @@
   &__content {
     min-width: 0;
   }
-}
 
-@media (min-width: 981px) {
-  .app__layout {
-    display: grid;
-    grid-template-columns: 16rem minmax(0, 1fr);
-    gap: 2rem;
-    align-items: start;
+  @media (min-width: 981px) {
+    &__layout {
+      display: grid;
+      grid-template-columns: 16rem minmax(0, 1fr);
+      gap: 2rem;
+      align-items: start;
+    }
   }
 }

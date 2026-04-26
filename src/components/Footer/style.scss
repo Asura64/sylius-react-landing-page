@@ -47,10 +47,10 @@
     font: inherit;
     cursor: pointer;
   }
-}
 
-@media (max-width: 760px) {
-  .site-footer__inner {
-    align-items: flex-start;
+  @media (max-width: 760px) {
+    &__inner {
+      align-items: flex-start;
+    }
   }
 }

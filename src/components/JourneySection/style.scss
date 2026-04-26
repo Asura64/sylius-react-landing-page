@@ -3,6 +3,10 @@
   padding: 5rem 0;
   border-radius: 2rem;
   background: linear-gradient(180deg, var(--surface-low), var(--surface-container));
+
+  @media (max-width: 760px) {
+    padding: 4rem 0;
+  }
 }
 
 .section-heading {
@@ -68,17 +72,11 @@
     box-shadow: 0 0 18px rgba(17, 0, 188, 0.22);
     transition: background 220ms ease-out, height 120ms linear;
   }
-}
 
-@media (max-width: 980px) {
-  .timeline__line {
-    left: 1.5rem;
-    transform: none;
-  }
-}
-
-@media (max-width: 760px) {
-  .journey {
-    padding: 4rem 0;
+  @media (max-width: 980px) {
+    &__line {
+      left: 1.5rem;
+      transform: none;
+    }
   }
 }

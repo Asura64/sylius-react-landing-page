@@ -44,23 +44,21 @@
     height: 1rem;
     flex: 0 0 auto;
   }
-}
 
-@media (min-width: 981px) {
-  .sidebar {
+  @media (min-width: 981px) {
     display: block;
     align-self: start;
     height: fit-content;
     min-height: 1px;
-  }
 
-  .sidebar__panel {
-    position: fixed;
-    top: 6.5rem;
-    left: max(1rem, calc((100vw - var(--shell)) / 2));
-    width: 16rem;
-    max-height: calc(100vh - 8rem);
-    overflow: auto;
-    scrollbar-width: thin;
+    &__panel {
+      position: fixed;
+      top: 6.5rem;
+      left: max(1rem, calc((100vw - var(--shell)) / 2));
+      width: 16rem;
+      max-height: calc(100vh - 8rem);
+      overflow: auto;
+      scrollbar-width: thin;
+    }
   }
 }

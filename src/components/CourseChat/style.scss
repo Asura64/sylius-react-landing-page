@@ -3,136 +3,150 @@ $course-chat-response-stagger: 0.2s;
 
 .course-chat {
   display: grid;
-}
 
-.course-chat__transcript {
-  display: grid;
-  gap: 1.25rem;
-}
-
-.course-chat__turn {
-  display: grid;
-  gap: 0.35rem;
-}
-
-.course-chat__message {
-  display: grid;
-  gap: 0.55rem;
-}
-
-.course-chat__message--mentor + .course-chat__message--mentor {
-  margin-top: -0.1rem;
-}
-
-.course-chat__message--learner {
-  justify-items: end;
-}
-
-.course-chat__meta {
-  display: flex;
-}
-
-.course-chat__bubble {
-  max-width: min(100%, 44rem);
-  padding: 1rem 1.1rem;
-  border-radius: 1.4rem;
-  box-shadow: 0 18px 36px rgba(17, 24, 39, 0.08);
-}
-
-.course-chat__bubble--mentor {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 246, 255, 0.94));
-  border-top-left-radius: 0.45rem;
-}
-
-.course-chat__bubble--learner {
-  background: linear-gradient(180deg, rgba(17, 0, 188, 0.96), rgba(42, 19, 183, 0.94));
-  color: #fff;
-  border-top-right-radius: 0.45rem;
-}
-
-.course-chat__bubble--learner .course-item-paragraph,
-.course-chat__bubble--learner .course-chat__answer {
-  color: inherit;
-}
-
-.course-chat__bubble :where(.course-item-h2) {
-  font-size: clamp(1.4rem, 3vw, 1.8rem);
-}
-
-.course-chat__bubble :where(.course-item-image__media) {
-  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);
-}
-
-.course-chat__responses {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
-
-.course-chat__response-button {
-  padding: 0.8rem 1rem;
-  border: 1px solid rgba(17, 0, 188, 0.12);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.96);
-  color: var(--text);
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  animation-name: course-chat-response-nudge;
-  animation-duration: $course-chat-response-delay;
-  animation-delay: $course-chat-response-delay;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
-  transition:
-    transform 160ms ease,
-    box-shadow 160ms ease,
-    border-color 160ms ease;
-
-  &:hover {
-    transform: translateY(-1px);
-    border-color: rgba(17, 0, 188, 0.26);
-    box-shadow: 0 12px 24px rgba(17, 24, 39, 0.08);
-  }
-}
-
-.course-chat__response-button:nth-child(2) {
-  animation-delay: $course-chat-response-delay + $course-chat-response-stagger;
-}
-
-.course-chat__response-button:nth-child(3) {
-  animation-delay: $course-chat-response-delay + ($course-chat-response-stagger * 2);
-}
-
-.course-chat__response-button:nth-child(4) {
-  animation-delay: $course-chat-response-delay + ($course-chat-response-stagger * 3);
-}
-
-.course-chat__answer {
-  margin: 0;
-  line-height: 1.65;
-}
-
-.course-chat__bubble--typing {
-  display: inline-flex;
-  gap: 0.4rem;
-  align-items: center;
-  width: fit-content;
-}
-
-.course-chat__typing-dot {
-  width: 0.5rem;
-  height: 0.5rem;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--course-accent) 56%, white);
-  animation: course-chat-typing 1s infinite ease-in-out;
-
-  &:nth-child(2) {
-    animation-delay: 0.14s;
+  &__transcript {
+    display: grid;
+    gap: 1.25rem;
   }
 
-  &:nth-child(3) {
-    animation-delay: 0.28s;
+  &__turn {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  &__message {
+    display: grid;
+    gap: 0.55rem;
+
+    &--mentor + .course-chat__message--mentor {
+      margin-top: -0.1rem;
+    }
+
+    &--learner {
+      justify-items: end;
+    }
+  }
+
+  &__meta {
+    display: flex;
+  }
+
+  &__bubble {
+    max-width: min(100%, 44rem);
+    padding: 1rem 1.1rem;
+    border-radius: 1.4rem;
+    box-shadow: 0 18px 36px rgba(17, 24, 39, 0.08);
+
+    &--mentor {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 246, 255, 0.94));
+      border-top-left-radius: 0.45rem;
+    }
+
+    &--learner {
+      background: linear-gradient(180deg, rgba(17, 0, 188, 0.96), rgba(42, 19, 183, 0.94));
+      color: #fff;
+      border-top-right-radius: 0.45rem;
+    }
+
+    &--learner .course-item-paragraph,
+    &--learner .course-chat__answer {
+      color: inherit;
+    }
+
+    &--typing {
+      display: inline-flex;
+      gap: 0.4rem;
+      align-items: center;
+      width: fit-content;
+    }
+
+    :where(.course-item-h2) {
+      font-size: clamp(1.4rem, 3vw, 1.8rem);
+    }
+
+    :where(.course-item-image__media) {
+      box-shadow: 0 16px 32px rgba(17, 24, 39, 0.08);
+    }
+  }
+
+  &__responses {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: flex-end;
+  }
+
+  &__response-button {
+    padding: 0.8rem 1rem;
+    border: 1px solid rgba(17, 0, 188, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.96);
+    color: var(--text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    animation-name: course-chat-response-nudge;
+    animation-duration: $course-chat-response-delay;
+    animation-delay: $course-chat-response-delay;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease,
+      border-color 160ms ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      border-color: rgba(17, 0, 188, 0.26);
+      box-shadow: 0 12px 24px rgba(17, 24, 39, 0.08);
+    }
+
+    &:nth-child(2) {
+      animation-delay: $course-chat-response-delay + $course-chat-response-stagger;
+    }
+
+    &:nth-child(3) {
+      animation-delay: $course-chat-response-delay + ($course-chat-response-stagger * 2);
+    }
+
+    &:nth-child(4) {
+      animation-delay: $course-chat-response-delay + ($course-chat-response-stagger * 3);
+    }
+  }
+
+  &__answer {
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  &__typing-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--course-accent) 56%, white);
+    animation: course-chat-typing 1s infinite ease-in-out;
+
+    &:nth-child(2) {
+      animation-delay: 0.14s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.28s;
+    }
+  }
+
+  @media (max-width: 767px) {
+    &__bubble {
+      max-width: 100%;
+    }
+
+    &__responses {
+      justify-content: stretch;
+    }
+
+    &__response-button {
+      width: 100%;
+    }
   }
 }
 
@@ -175,19 +189,5 @@ $course-chat-response-stagger: 0.2s;
     transform: translateY(0) scale(1);
     border-color: rgba(17, 0, 188, 0.18);
     box-shadow: 0 0 0 0 rgba(17, 0, 188, 0);
-  }
-}
-
-@media (max-width: 767px) {
-  .course-chat__bubble {
-    max-width: 100%;
-  }
-
-  .course-chat__responses {
-    justify-content: stretch;
-  }
-
-  .course-chat__response-button {
-    width: 100%;
   }
 }
