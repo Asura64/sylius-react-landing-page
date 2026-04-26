@@ -148,9 +148,17 @@ export type DumpItem = BaseCourseItem & {
   data: DumpItemData
 }
 
+export type YamlScalar = string | number | boolean | null
+export type YamlValue = YamlScalar | YamlObject | YamlArray
+export type YamlObject = {
+  [key: string]: YamlValue
+}
+export type YamlArray = YamlValue[]
+
 export type YamlItemData = {
   label?: string
-  value: string
+  copyable?: boolean
+  value: YamlValue
 }
 
 export type YamlItem = BaseCourseItem & {
