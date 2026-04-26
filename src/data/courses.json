@@ -1625,15 +1625,889 @@
     "id": 5,
     "module_id": 2,
     "private":  false,
-    "slug": "configurez-la-boutique",
-    "title": "Configurez la boutique",
-    "meta_title": "Configurez votre boutique Sylius avec les fixtures et l'administration",
-    "description": "Apprenez à configurer une boutique Sylius en vous appuyant sur les fixtures existantes pour personnaliser les canaux, les moyens de paiement, les modes de livraison et d'autres réglages clés, tout en faisant le lien avec les écrans importants de l'administration.",
-    "meta_description": "Configurez votre boutique Sylius avec des fixtures YAML et passez en revue les éléments clés de l'administration : canaux, paiements, livraison et réglages essentiels.",
+    "slug": "configurez-les-canaux-de-la-boutique",
+    "title": "Configurez les canaux de la boutique",
+    "meta_title": "Configurez les canaux de la boutique Sylius avec les fixtures et l'administration",
+    "description": "Apprenez à configurer une boutique Sylius en vous appuyant sur les fixtures existantes pour personnaliser les canaux, pays, devises et d'autres réglages clés, tout en faisant le lien avec les écrans importants de l'administration.",
+    "meta_description": "Configurez votre boutique Sylius avec des fixtures YAML et passez en revue les éléments clés de l'administration : canaux, pays, devises et réglages essentiels.",
     "skills": [
+      "Comprendre le concept de canal Sylius",
       "Comprendre les fixtures Sylius",
-      "Personnaliser les fixtures pour configurer la boutique"
+      "Personnaliser les fixtures pour configurer un canal"
     ],
-    "chat": []
+    "chat": [
+      {
+        "id": "greetings",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Salut, maintenant que Sylius est installé sur ta machine, tu vas pouvoir configurer la boutique \uD83D\uDD27"
+          }
+        ],
+        "responses": {
+          "why": "Mais... tout a l'air déjà configuré, non ?"
+        }
+      },
+      {
+        "id": "why_customize",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Tu as raison ! Mais rien ne correspond réellement à notre client, \"NewFashion\", mis à part que la boutique par défaut est déjà dans le thème de la mode."
+          }
+        ],
+        "responses": {
+          "indeed": "C'est vrai..."
+        }
+      },
+      {
+        "id": "channel_definition",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Commençons par les canaux... Si tu n'es pas encore familier avec ce terme, je t'invite à consulter [la documentation sur les canaux](https://docs.sylius.com/getting-started-with-sylius/basic-configuration#channels) et à en retenir l'information suivante :"
+          },
+          {
+            "type": "info",
+            "data": {
+              "heading": "Les canaux (channel)",
+              "content": "Chaque canal représente un contexte de vente, qui peut se distinguer par sa propre URL, son nom de domaine, sa langue, sa devise, ses prix ou ses taxes."
+            }
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "Actuellement, ta boutique Sylius expose 2 canaux : ",
+              "items": [
+                "Fashion Web Store : [localhost](http://localhost)",
+                "Euro Web Store : [WEB_EUR.localhost](http://WEB_EUR.localhost)"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Même si l'on est en environnement de développement, il faut être au plus proche du besoin du client."
+          }
+        ],
+        "responses": {
+          "need": "Et quel est son besoin ?"
+        }
+      },
+      {
+        "id": "channel_need",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "ul",
+            "data": {
+              "title": "En voici un extrait qui devrait te mettre sur la voie :",
+              "items": [
+                "Nous souhaitons une présence en ligne en France, Belgique et Suisse",
+                "Un domaine web pour chaque pays"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Je te propose donc de partir sur 3 canaux : fr.localhost, be.localhost et ch.localhost."
+          }
+        ],
+        "responses": {
+          "admin": "C'est parti, je vais les créer dans l'admin",
+          "fixtures": "Ok, je vais écrire des fixtures",
+          "sylius-fixtures": "Il n'y a pas des fixtures Sylius pour ça ?"
+        }
+      },
+      {
+        "id": "channel_creation_answer",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "responseCondition": "admin",
+            "data": "Pas si vite ! Si tu fais ça, ta configuration sera écrasée au prochain chargement de fixtures."
+          },
+          {
+            "type": "p",
+            "responseCondition": "fixtures",
+            "data": "Je vois que tu as de bons réflexes Symfony, mais j'ai mieux à te proposer."
+          },
+          {
+            "type": "p",
+            "responseCondition": "sylius-fixtures",
+            "data": "Tout à fait !"
+          },
+          {
+            "type": "p",
+            "data": "Nous allons nous inspirer des fixtures Sylius existantes, dont voici le [fichier de configuration](https://github.com/Sylius/Sylius/blob/{{ configuration.sylius_version_tag }}/src/Sylius/Bundle/CoreBundle/Resources/config/app/fixtures/shop_configuration.yaml#L85-L107)"
+          }
+        ],
+        "responses": {
+          "ok": "Ok"
+        }
+      },
+      {
+        "id": "create_app_fixture",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Tu vas créer un jeu de fixtures `app` (vide pour le moment), je te propose d'ajouter les fichiers `fixtures.yaml` et `shop_configuration.yaml` selon l'architecture suivante :"
+          },
+          {
+            "type": "architecture",
+            "data": {
+              "config": {
+                "packages": {
+                  "fixtures": {
+                    "shop_configuration.yaml": null
+                  },
+                  "fixtures.yaml": null
+                }
+              }
+            }
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app": "~"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures.yaml",
+              "value": {
+                "imports": [
+                  { "resource": "'fixtures/shop_configuration.yaml'" }
+                ]
+              }
+            }
+          }
+        ],
+        "responses": {
+          "ok": "Ok, c'est fait"
+        }
+      },
+      {
+        "id": "check_app_fixture",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Vérifions si ton jeu de fixtures `app` est bien reconnu."
+          },
+          {
+            "type": "p",
+            "data": "Commence par mettre à jour le cache Symfony : [copy]bin/console cache:clear[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Puis vérifie les fixtures disponibles avec [copy]bin/console sylius:fixtures:list[/copy]"
+          },{
+            "type": "p",
+            "data": "Si tout va bien, tu dois trouver la suite `app` dans la liste."
+          }
+        ],
+        "responses": {
+          "done": "Je confirme"
+        }
+      },
+      {
+        "id": "listeners",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, alors c'est parti"
+          },
+          {
+            "type": "p",
+            "data": "Commence par ajouter les \"listeners\" prévus par les fixtures Sylius :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app": {
+                      "listeners": {
+                        "orm_purger": "~",
+                        "images_purger": "~",
+                        "logger": "~"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ul",
+            "data": {
+              "title": "Ces listeners se déclenchent au lancement de la suite de fixtures, et chacun a un rôle précis",
+              "items": [
+                "**orm_purger** : Vide les tables de la base de données concernées par les fixtures",
+                "**images_purger** : Supprime les images créées par les fixtures précédentes",
+                "**logger** : Uniquement chargé de l'affichage dans le terminal"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "ok": "Ok"
+        }
+      },
+      {
+        "id": "admin_user_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Bien, plusieurs choses doivent être configurées avant de pouvoir ajouter un canal."
+          },
+          {
+            "type": "p",
+            "data": "On va y aller par étapes..."
+          },
+          {
+            "type": "p",
+            "data": "Pour commencer, notre suite est vide, nous n'avons donc même plus de compte admin \uD83D\uDE05"
+          },
+          {
+            "type": "p",
+            "data": "Autant commencer par l'ajouter, tout en le personnalisant à notre convenance."
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                      {
+                        "__comment-listeners": "...",
+                        "fixtures": {
+                          "admin_user": {
+                            "name": "'admin_user'",
+                            "options":{
+                              "custom": [
+                                {
+                                  "email": "'sylius@example.com'",
+                                  "username": "'sylius'",
+                                  "password": "'sylius'",
+                                  "enabled": "true",
+                                  "locale_code": "'fr_FR'",
+                                  "first_name": "'John'",
+                                  "last_name": "'Doe'",
+                                  "avatar": "'@SyliusCoreBundle/Resources/fixtures/adminAvatars/john.webp'"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "next": "Et ensuite ?"
+        }
+      },
+      {
+        "id": "locale_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Je pourrais te lister tout ce qu'il faut configurer, mais ce serait rater une opportunité pour toi de comprendre le lien entre une fixture et son équivalence dans l'administration."
+          },
+          {
+            "type": "p",
+            "data": "Alors c'est le moment de te lancer ! Lance ta suite de fixtures avec [copy]bin/console sylius:fixtures:load app -n[/copy]"
+          },
+          {
+            "type": "p",
+            "data": "Puis rends-toi sur la [page de création de canal](http://localhost/admin/channels/new) (identifiant `sylius` et mot de passe `sylius`)",
+            "confirm": "Je suis prêt"
+          },
+          {
+            "type": "quiz",
+            "data": {
+              "question": "Tu remarqueras que certains paramètres obligatoires ne peuvent même pas être renseignés, lesquels ?",
+              "mode": "checkbox",
+              "response": null,
+              "choices": [
+                {
+                  "id": "code",
+                  "label": "Le Code",
+                  "answer": false,
+                  "onError": "Il est en effet obligatoire, mais le champ est libre et peut donc être renseigné."
+                },
+                {
+                  "id": "currency",
+                  "label": "La devise de référence",
+                  "answer": true,
+                  "onError": "Ce champ est obligatoire, mais aucune devise n'existe encore."
+                },
+                {
+                  "id": "tva",
+                  "label": "La stratégie de calcul de la TVA",
+                  "answer": false,
+                  "onError": "C'est bien obligatoire, mais les choix sont disponibles."
+                },
+                {
+                  "id": "country",
+                  "label": "Le pays de facturation",
+                  "answer": false,
+                  "onError": "Aucun pays n'est encore disponible, mais ce champ n'est pas obligatoire \"techniquement\" pour valider le formulaire. Bien entendu, d'un point de vue métier, il sera important de définir un pays."
+                },
+                {
+                  "id": "locale",
+                  "label": "Les paramètres régionaux par défaut",
+                  "answer": true,
+                  "onError": "Ce champ est obligatoire, mais aucune langue n'est configurée."
+                }
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "Parfait, commence par le plus simple, et ajoute la configuration des langues dont nous aurons besoin, toujours dans le même fichier :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-admin_user": "...",
+                        "locale": {
+                          "options":{
+                            "locales": [
+                              "'fr_FR'",
+                              "'fr_BE'",
+                              "'fr_CH'"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Change également la `locale` par défaut du projet (`en_US`), dans le fichier `config/parameters.yaml` :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/parameters.yaml",
+              "copyable": false,
+              "value": {
+                "parameters": {
+                  "locale": "'fr_FR'"
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Désormais, chaque fois que tu voudras vérifier les changements dans ta suite de fixtures, lance la commande [copy]bin/console sylius:fixtures:load app -n[/copy]"
+          }
+        ],
+        "responses": {
+          "gotit": "C'est noté"
+        }
+      },
+      {
+        "id": "locale_check",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Ok, vérifie bien que les langues (appelées locales) sont apparues dans l'admin : [Paramètres régionaux](http://localhost/admin/locales/)"
+          }
+        ],
+        "responses": {
+          "good": "Oui, c'est bon"
+        }
+      },
+      {
+        "id": "currency_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Bien, passons aux devises possibles, ajoute l'euro (EUR) et le franc Suisse (CHF) :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "currency": {
+                          "options":{
+                            "currencies": [
+                              "'EUR'",
+                              "'CHF'"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Relance la suite de fixtures, et vérifie les [devises disponibles](http://localhost/admin/currencies/)"
+          }
+        ],
+        "responses": {
+          "ok": "C'est fait"
+        }
+      },
+      {
+        "id": "country_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Au tour des pays, ajoute la France, la Belgique et la Suisse :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "geographical": {
+                          "options":{
+                            "countries": [
+                              "'FR'",
+                              "'BE'",
+                              "'CH'"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Relance la suite de fixtures, et vérifie la [liste des pays](http://localhost/admin/countries/)"
+          }
+        ],
+        "responses": {
+          "ok": "C'est bon"
+        }
+      },
+      {
+        "id": "zone_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Maintenant, définissons des zones. Tout comme les canaux, ce concept est à bien comprendre. Je t'invite donc à consulter [la documentation sur les zones](https://docs.sylius.com/getting-started-with-sylius/basic-configuration#zones) et à en retenir l'information suivante :"
+          },
+          {
+            "type": "info",
+            "confirm": "Ok, je vois",
+            "data": {
+              "heading": "Les zones",
+              "content": "Une zone peut être constituée de Pays, de régions, ou d'autres zones. Elles permettent d'appliquer des règles spécifiques de taxe (TVA) ou d'expédition (livraisons)."
+            }
+          },
+          {
+            "type": "p",
+            "data": "Définissons pour le moment une zone pour chaque pays, puisque chacun aura sa propre TVA : "
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "geographical": {
+                          "options":{
+                            "__comment-countries": "...",
+                            "zones":{
+                              "FR": {
+                                "name": "'France'",
+                                "countries": [
+                                  "'FR'"
+                                ]
+                              },
+                              "BE": {
+                                "name": "'Belgique'",
+                                "countries": [
+                                  "'BE'"
+                                ]
+                              },
+                              "CH": {
+                                "name": "'Suisse'",
+                                "countries": [
+                                  "'CH'"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Relance la suite de fixtures, et vérifie la [liste des zones](http://localhost/admin/zones/)"
+          }
+        ],
+        "responses": {
+          "ok": "Ok pour les zones"
+        }
+      },
+      {
+        "id": "taxon_requirement",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Dernier prérequis pour pouvoir configurer nos canaux, une \"catégorie mère\" afin de servir de base au menu principal."
+          },
+          {
+            "type": "p",
+            "data": "Dans le contexte de Sylius, on parle de Taxon pour désigner une catégorie. Si tu veux en savoir plus, voici [le lien vers la documentation](https://docs.sylius.com/the-book/products/taxons)"
+          },
+          {
+            "type": "info",
+            "confirm": "J'ai compris",
+            "data": {
+              "heading": "Ce qu'il faut retenir des taxons",
+              "content": "Les taxons fonctionnent comme des catégories et permettent d'organiser les produits. Les menus et sous menus sont donc en lien direct avec la hiérarchie des taxons."
+            }
+          },
+          {
+            "type": "p",
+            "data": "Le nom du taxon principal n'a pas d'importance capitale, car seuls ses sous-taxons seront affichés. Partons donc sur un nom assez générique :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "menu_taxon": {
+                          "name": "taxon",
+                          "options":{
+                            "custom":{
+                              "category": {
+                                "code": "'ROOT'",
+                                "name": "'Menu principal'",
+                                "slug": "'category'",
+                                "description": "'Racine du menu principal'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Relance la suite de fixtures, et vérifie la catégorie mère sur [la page des taxons](http://localhost/admin/taxons)"
+          }
+        ],
+        "responses": {
+          "ok": "C'est ok"
+        }
+      },
+      {
+        "id": "channel_configuration_fr",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Parfait ! Tout est prêt pour configurer les canaux \uD83C\uDF89"
+          },
+          {
+            "type": "p",
+            "data": "Voici une configuration complète pour le canal français :"
+          },
+          {
+            "type": "yaml",
+            "confirm": "Ok, canal FR créé !",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "channel": {
+                          "options":{
+                            "custom":{
+                              "new_fashion_fr": {
+                                "name": "'NewFashion France'",
+                                "code": "'FR_SHOP'",
+                                "color": "'#318ce7'",
+                                "default_locale": "'fr_FR'",
+                                "base_currency": "'EUR'",
+                                "default_tax_zone": "'FR'",
+                                "tax_calculation_strategy": "'order_items_based'",
+                                "locales": [
+                                  "'fr_FR'"
+                                ],
+                                "currencies": [
+                                  "'EUR'"
+                                ],
+                                "enabled": "true",
+                                "hostname": "'fr.%env(resolve:SYLIUS_FIXTURES_HOSTNAME)%'",
+                                "theme_name": "'%env(resolve:SYLIUS_FIXTURES_THEME_NAME)%'",
+                                "shop_billing_data": {
+                                  "company": "'NewFashion'",
+                                  "tax_id": "'0001112222'",
+                                  "country_code": "'FR'",
+                                  "street": "'123 rue du commerce'",
+                                  "city": "'Paris'",
+                                  "postcode": "'75000'"
+                                },
+                                "menu_taxon": "'ROOT'",
+                                "contact_phone_number": "'+33 1 23 45 67 89'",
+                                "contact_email": "'contact@new-fashion.fr'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "p",
+            "data": "Bien ! J'attire ton attention sur une subtilité : j'ai préfixé la valeur `hostname` avec `fr.`"
+          },
+          {
+            "type": "p",
+            "data": "De cette façon, le canal FR a sa propre URL : [fr.localhost](http://fr.localhost)"
+          },
+          {
+            "type": "p",
+            "data": "Je te laisse t'occuper des canaux belge et suisse. Bien entendu, les informations de facturation et de contact sont arbitraires, je te fais confiance."
+          }
+        ],
+        "responses": {
+          "done": "J'ai terminé \uD83E\uDD18"
+        }
+      },
+      {
+        "id": "channel_configuration",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "À quelques écarts près, tu devrais avoir ces configurations :"
+          },
+          {
+            "type": "yaml",
+            "data": {
+              "label": "config/packages/fixtures/shop_configuration.yaml",
+              "copyable": false,
+              "value": {
+                "sylius_fixtures": {
+                  "suites": {
+                    "app":
+                    {
+                      "__comment-listeners": "...",
+                      "fixtures": {
+                        "__comment-fixtures": "...",
+                        "channel": {
+                          "options":{
+                            "custom":{
+                              "new_fashion_be": {
+                                "name": "'NewFashion Belgique'",
+                                "code": "'BE_SHOP'",
+                                "color": "'#fcd465'",
+                                "default_locale": "'fr_BE'",
+                                "base_currency": "'EUR'",
+                                "default_tax_zone": "'BE'",
+                                "tax_calculation_strategy": "'order_items_based'",
+                                "locales": [
+                                  "'fr_BE'"
+                                ],
+                                "currencies": [
+                                  "'EUR'"
+                                ],
+                                "enabled": "true",
+                                "hostname": "'be.%env(resolve:SYLIUS_FIXTURES_HOSTNAME)%'",
+                                "theme_name": "'%env(resolve:SYLIUS_FIXTURES_THEME_NAME)%'",
+                                "shop_billing_data": {
+                                  "company": "'NewFashion'",
+                                  "tax_id": "'3334445555'",
+                                  "country_code": "'BE'",
+                                  "street": "'123 rue du commerce'",
+                                  "city": "'Bruxelles'",
+                                  "postcode": "'1000'"
+                                },
+                                "menu_taxon": "'ROOT'",
+                                "contact_phone_number": "'+32 1 23 45 67 89'",
+                                "contact_email": "'contact@new-fashion.be'"
+                              },
+                              "new_fashion_ch": {
+                                "name": "'NewFashion Suisse'",
+                                "code": "'CH_SHOP'",
+                                "color": "'#da291c'",
+                                "default_locale": "'fr_CH'",
+                                "base_currency": "'CHF'",
+                                "default_tax_zone": "'CH'",
+                                "tax_calculation_strategy": "'order_items_based'",
+                                "locales": [
+                                  "'fr_CH'"
+                                ],
+                                "currencies": [
+                                  "'CHF'"
+                                ],
+                                "enabled": "true",
+                                "hostname": "'ch.%env(resolve:SYLIUS_FIXTURES_HOSTNAME)%'",
+                                "theme_name": "'%env(resolve:SYLIUS_FIXTURES_THEME_NAME)%'",
+                                "shop_billing_data": {
+                                  "company": "'NewFashion'",
+                                  "tax_id": "'6667778888'",
+                                  "country_code": "'CH'",
+                                  "street": "'123 rue du commerce'",
+                                  "city": "'Berne'",
+                                  "postcode": "'3000'"
+                                },
+                                "menu_taxon": "'ROOT'",
+                                "contact_phone_number": "'+41 1 23 45 67 89'",
+                                "contact_email": "'contact@new-fashion.ch'"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "done": "Ok, j'ai bien mes 3 canaux configurés"
+        }
+      },
+      {
+        "id": "check_channels",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "ul",
+            "data": {
+              "title": "Dans ce cas, tu devrais pouvoir accéder à chaque canal par son URL dédiée :",
+              "items": [
+                "\uD83C\uDDEB\uD83C\uDDF7 France : [fr.localhost](http://fr.localhost)",
+                "\uD83C\uDDE7\uD83C\uDDEA Belgique : [be.localhost](http://be.localhost)",
+                "\uD83C\uDDE8\uD83C\uDDED Suisse : [ch.localhost](http://ch.localhost)"
+              ]
+            }
+          },
+          {
+            "type": "p",
+            "data": "C'est une très bonne chose de faite !"
+          },
+          {
+            "type": "p",
+            "data": "Je te propose que nous en restions là pour aujourd'hui, le temps que tu assimiles bien tout ce que nous avons vu \uD83D\uDE09"
+          },
+          {
+            "type": "p",
+            "data": "Lors de notre prochain échange, nous pourrons terminer la configuration des taxes, livraisons, et moyens de paiement."
+          },
+          {
+            "type": "p",
+            "data": "En tout cas, je te remercie pour ton attention et je te souhaite une bonne journée \uD83D\uDC4B"
+          }
+        ],
+        "responses": {
+          "bye": "Merci, à la prochaine !"
+        }
+      }
+    ]
   }
 ]
