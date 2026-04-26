@@ -2509,5 +2509,22 @@
         }
       }
     ]
+  },
+  {
+    "id": 6,
+    "module_id": 2,
+    "private": false,
+    "slug": "configurez-les-regles-metier-de-la-boutique",
+    "title": "Configurez les règles métier de la boutique",
+    "meta_title": "Configurez les taxes, livraisons et paiements de votre boutique Sylius",
+    "description": "Apprenez à finaliser la configuration métier de votre boutique Sylius en mettant en place les taxes, les modes de livraison, les moyens de paiement et les groupes de clients, toujours à partir de fixtures YAML cohérentes avec l'administration.",
+    "meta_description": "Formation Sylius : configurez les taxes, les livraisons, les moyens de paiement et les groupes clients avec des fixtures YAML reliées à l'administration.",
+    "skills": [
+      "Comprendre la configuration métier d'une boutique Sylius",
+      "Configurer les taxes et les zones associées",
+      "Mettre en place les modes de livraison et les moyens de paiement",
+      "Utiliser les groupes de clients dans une configuration Sylius"
+    ],
+    "chat": []
   }
 ]

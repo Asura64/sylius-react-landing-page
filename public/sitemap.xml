@@ -30,4 +30,9 @@
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  <url>
+    <loc>https://patxi.iparaguirre.fr/cours/sylius/configurez-les-regles-metier-de-la-boutique/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
 </urlset>
