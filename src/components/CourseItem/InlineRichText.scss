@@ -75,3 +75,22 @@
   font-size: 0.82em;
   font-weight: 700;
 }
+
+.course-inline-code {
+  display: inline-block;
+  padding: 0.14rem 0.38rem;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 0.42rem;
+  background: rgba(248, 250, 255, 0.96);
+  color: var(--text);
+  font-family:
+    'JetBrains Mono',
+    'SFMono-Regular',
+    Consolas,
+    'Liberation Mono',
+    Menlo,
+    monospace;
+  font-size: 0.9em;
+  line-height: 1.4;
+  vertical-align: baseline;
+}

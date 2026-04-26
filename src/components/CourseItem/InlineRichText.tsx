@@ -8,7 +8,7 @@ type InlineRichTextProps = {
 }
 
 const inlineTokenPattern =
-  /(\[copy\]([\s\S]*?)\[\/copy\]|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*)/g
+  /(\[copy\]([\s\S]*?)\[\/copy\]|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*|\*([^*]+)\*)/g
 const templateTokenPattern = /\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}/g
 
 function resolveGlobalPlaceholder(path: string) {
@@ -99,7 +99,7 @@ export function InlineRichText({ content }: InlineRichTextProps) {
       nodes.push(resolvedContent.slice(lastIndex, match.index))
     }
 
-    const [fullMatch, , copyText, linkLabel, linkHref, strongText, emText] = match
+    const [fullMatch, , copyText, linkLabel, linkHref, codeText, strongText, emText] = match
     const key = `${match.index}-${fullMatch}`
 
     if (copyText) {
@@ -111,6 +111,8 @@ export function InlineRichText({ content }: InlineRichTextProps) {
           <ExternalLink size={13} strokeWidth={2.2} aria-hidden="true" />
         </a>,
       )
+    } else if (codeText) {
+      nodes.push(<code key={key} className="course-inline-code">{codeText}</code>)
     } else if (strongText) {
       nodes.push(<strong key={key}>{strongText}</strong>)
     } else if (emText) {
