@@ -32,7 +32,9 @@ $course-chat-response-stagger: 0.2s;
   }
 
   &__bubble {
+    min-width: 0;
     max-width: min(100%, 44rem);
+    overflow-x: hidden;
     padding: 1rem 1.1rem;
     border-radius: 1.4rem;
     box-shadow: 0 18px 36px rgba(17, 24, 39, 0.08);
