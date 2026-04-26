@@ -1,5 +1,6 @@
 import { Check, Copy, ExternalLink } from 'lucide-react'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import globalContent from '../../data/global.json'
 import './InlineRichText.scss'
 
 type InlineRichTextProps = {
@@ -8,6 +9,29 @@ type InlineRichTextProps = {
 
 const inlineTokenPattern =
   /(\[copy\]([\s\S]*?)\[\/copy\]|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*)/g
+const templateTokenPattern = /\{\{\s*([a-zA-Z0-9_.]+)\s*\}\}/g
+
+function resolveGlobalPlaceholder(path: string) {
+  const resolvedValue = path
+    .split('.')
+    .reduce<unknown>((currentValue, segment) => {
+      if (currentValue == null || typeof currentValue !== 'object' || !(segment in currentValue)) {
+        return undefined
+      }
+
+      return (currentValue as Record<string, unknown>)[segment]
+    }, globalContent)
+
+  return typeof resolvedValue === 'string' || typeof resolvedValue === 'number' ? String(resolvedValue) : undefined
+}
+
+function interpolateGlobalContent(content: string) {
+  return content.replace(templateTokenPattern, (fullMatch, path: string) => {
+    const resolvedValue = resolveGlobalPlaceholder(path)
+
+    return resolvedValue ?? fullMatch
+  })
+}
 
 function CopyInline({ content }: { content: string }) {
   const [isCopied, setIsCopied] = useState(false)
@@ -62,15 +86,17 @@ function CopyInline({ content }: { content: string }) {
 }
 
 export function InlineRichText({ content }: InlineRichTextProps) {
+  const resolvedContent = interpolateGlobalContent(content)
   const nodes: ReactNode[] = []
   let lastIndex = 0
   let match: RegExpExecArray | null
 
-  match = inlineTokenPattern.exec(content)
+  inlineTokenPattern.lastIndex = 0
+  match = inlineTokenPattern.exec(resolvedContent)
 
   while (match) {
     if (match.index > lastIndex) {
-      nodes.push(content.slice(lastIndex, match.index))
+      nodes.push(resolvedContent.slice(lastIndex, match.index))
     }
 
     const [fullMatch, , copyText, linkLabel, linkHref, strongText, emText] = match
@@ -95,8 +121,8 @@ export function InlineRichText({ content }: InlineRichTextProps) {
     match = inlineTokenPattern.exec(content)
   }
 
-  if (lastIndex < content.length) {
-    nodes.push(content.slice(lastIndex))
+  if (lastIndex < resolvedContent.length) {
+    nodes.push(resolvedContent.slice(lastIndex))
   }
 
   return <>{nodes}</>

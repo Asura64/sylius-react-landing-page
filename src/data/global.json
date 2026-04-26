@@ -1,4 +1,7 @@
 {
+  "configuration": {
+    "sylius_version_tag": "v2.2.5"
+  },
   "navigation": {
     "brand": "Formation Sylius 2",
     "links": [
