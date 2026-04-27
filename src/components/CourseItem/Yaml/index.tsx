@@ -270,7 +270,7 @@ export function Yaml({ data }: YamlProps) {
             <span className="course-item-yaml__copy-icon" aria-hidden="true">
               {isCopied ? <Check size={15} /> : <Copy size={15} />}
             </span>
-            <span>{isCopied ? 'Copié' : 'Copier'}</span>
+            {isCopied ? <span>Copié</span> : ''}
           </button>
         ) : null}
         <pre className="course-item-yaml__panel">
