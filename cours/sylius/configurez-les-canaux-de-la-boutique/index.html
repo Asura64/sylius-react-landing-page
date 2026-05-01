@@ -29,67 +29,77 @@
         }
       }
 
-      CookieConsent.run({
-        guiOptions: {
-          consentModal: {
-            layout: 'box',
-            position: 'bottom right',
-            equalWeightButtons: true,
-            flipButtons: false,
+      function initCookieConsent() {
+        if (!window.CookieConsent) return false;
+
+        window.CookieConsent.run({
+          guiOptions: {
+            consentModal: {
+              layout: 'box',
+              position: 'bottom right',
+              equalWeightButtons: true,
+              flipButtons: false,
+            },
+            preferencesModal: {
+              layout: 'box',
+              position: 'right',
+              equalWeightButtons: true,
+              flipButtons: false,
+            },
           },
-          preferencesModal: {
-            layout: 'box',
-            position: 'right',
-            equalWeightButtons: true,
-            flipButtons: false,
+          categories: {
+            necessary: {
+              enabled: true,
+              readOnly: true,
+            },
+            support: {},
           },
-        },
-        categories: {
-          necessary: {
-            enabled: true,
-            readOnly: true,
-          },
-          support: {},
-        },
-        language: {
-          default: 'fr',
-          translations: {
-            fr: {
-              consentModal: {
-                title: 'Ce site utilise des cookies',
-                description: 'Nous utilisons des cookies necessaires au fonctionnement du site et, avec votre accord, un service de support par chat.',
-                acceptAllBtn: 'Tout accepter',
-                acceptNecessaryBtn: 'Tout refuser',
-                showPreferencesBtn: 'Personnaliser',
-              },
-              preferencesModal: {
-                title: 'Preferences de consentement',
-                acceptAllBtn: 'Tout accepter',
-                acceptNecessaryBtn: 'Tout refuser',
-                savePreferencesBtn: 'Enregistrer mes choix',
-                closeIconLabel: 'Fermer',
-                sections: [
-                  {
-                    title: 'Gestion des cookies',
-                    description: 'Vous pouvez choisir les services actives sur ce site.',
-                  },
-                  {
-                    title: 'Cookies strictement necessaires',
-                    description: 'Ils sont indispensables au bon fonctionnement du site et ne peuvent pas etre desactives.',
-                    linkedCategory: 'necessary',
-                  },
-                  {
-                    title: 'Support et assistance',
-                    description: 'Autorise le chargement du chat Tawk.to pour vous permettre de nous contacter rapidement.',
-                    linkedCategory: 'support',
-                  },
-                ],
+          language: {
+            default: 'fr',
+            translations: {
+              fr: {
+                consentModal: {
+                  title: 'Ce site utilise des cookies',
+                  description: 'Nous utilisons des cookies necessaires au fonctionnement du site et, avec votre accord, un service de support par chat.',
+                  acceptAllBtn: 'Tout accepter',
+                  acceptNecessaryBtn: 'Tout refuser',
+                  showPreferencesBtn: 'Personnaliser',
+                },
+                preferencesModal: {
+                  title: 'Preferences de consentement',
+                  acceptAllBtn: 'Tout accepter',
+                  acceptNecessaryBtn: 'Tout refuser',
+                  savePreferencesBtn: 'Enregistrer mes choix',
+                  closeIconLabel: 'Fermer',
+                  sections: [
+                    {
+                      title: 'Gestion des cookies',
+                      description: 'Vous pouvez choisir les services actives sur ce site.',
+                    },
+                    {
+                      title: 'Cookies strictement necessaires',
+                      description: 'Ils sont indispensables au bon fonctionnement du site et ne peuvent pas etre desactives.',
+                      linkedCategory: 'necessary',
+                    },
+                    {
+                      title: 'Support et assistance',
+                      description: 'Autorise le chargement du chat Tawk.to pour vous permettre de nous contacter rapidement.',
+                      linkedCategory: 'support',
+                    },
+                  ],
+                },
               },
             },
           },
-        },
-        onFirstConsent: updateSupportServices,
-        onConsent: updateSupportServices,
-        onChange: updateSupportServices,
-      });
+          onFirstConsent: updateSupportServices,
+          onConsent: updateSupportServices,
+          onChange: updateSupportServices,
+        });
+
+        return true;
+      }
+
+      if (!initCookieConsent()) {
+        window.addEventListener('load', initCookieConsent, { once: true });
+      }
     </script> </body> </html>
