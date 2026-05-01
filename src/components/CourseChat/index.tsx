@@ -461,7 +461,8 @@ function getCurrentProgressPercent(
 }
 
 export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, turns }: CourseChatProps) {
-  const storedProgress = useMemo(() => readStoredProgress(courseSlug, turns), [courseSlug, turns])
+  const [storedProgress, setStoredProgress] = useState<StoredCourseChatProgress | null>(null)
+  const [hasInitializedFromStorage, setHasInitializedFromStorage] = useState(false)
   const initialConfirmedItemIds = useMemo(
     () =>
       getInitialConfirmedItemIds(
@@ -569,6 +570,11 @@ export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, t
   )
 
   useEffect(() => {
+    setStoredProgress(readStoredProgress(courseSlug, turns))
+    setHasInitializedFromStorage(false)
+  }, [courseSlug, turns])
+
+  useEffect(() => {
     setRevealedTurnCount(storedProgress?.revealedTurnCount ?? 0)
     setAnswersByTurnId(storedProgress?.answersByTurnId ?? {})
     setConfirmedItemIds(initialConfirmedItemIds)
@@ -583,9 +589,14 @@ export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, t
         storedProgress?.quizStatesByItemId ?? {},
       ),
     )
+    setHasInitializedFromStorage(true)
   }, [courseSlug, initialConfirmedItemIds, storedProgress, turns])
 
   useEffect(() => {
+    if (!hasInitializedFromStorage) {
+      return
+    }
+
     if (typingTimeoutRef.current) {
       window.clearTimeout(typingTimeoutRef.current)
       typingTimeoutRef.current = null
@@ -697,6 +708,7 @@ export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, t
     answersByTurnId,
     revealedItemCountByTurnId,
     revealedTurnCount,
+    hasInitializedFromStorage,
   ])
 
   useEffect(() => {
@@ -737,7 +749,7 @@ export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, t
   }, [isTyping])
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (!hasInitializedFromStorage || typeof window === 'undefined') {
       return
     }
 
@@ -749,7 +761,7 @@ export function CourseChat({ courseSlug, onCompletionChange, onProgressChange, t
     }
 
     window.localStorage.setItem(getStorageKey(courseSlug), JSON.stringify(payload))
-  }, [answersByTurnId, courseSlug, quizStatesByItemId, revealedTurnCount])
+  }, [answersByTurnId, courseSlug, hasInitializedFromStorage, quizStatesByItemId, revealedTurnCount])
 
   useEffect(() => {
     onCompletionChange?.(isChatCompleted)

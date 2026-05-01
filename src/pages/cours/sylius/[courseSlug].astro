@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import '../../../App.scss'
+import '../../../components/Footer/style.scss'
+import '../../Course/style.scss'
+import { CourseInteractive } from '../../../components/CourseInteractive'
+import { CourseTimeline } from '../../../components/CourseTimeline'
+import { Header } from '../../../components/Header'
+import { getCoursePageData } from '../../../lib/coursePage'
+import { siteUrl } from '../../../lib/site'
+import { ModuleIcon } from '../../../components/ModuleIcon'
+import { courses } from '../../Course/_courses'
+import { landingPage } from '../../LandingPage/_landingPage'
+
+export function getStaticPaths() {
+  return courses.map((course) => ({
+    params: {
+      courseSlug: course.slug,
+    },
+  }))
+}
+
+const { courseSlug } = Astro.params
+const pageData = courseSlug ? getCoursePageData(courseSlug) : undefined
+
+if (!pageData) {
+  return Astro.redirect('/')
+}
+
+const {
+  course,
+  module,
+  moduleCourses,
+  previousCourse,
+  nextCourse,
+  nextPublicCourse,
+  hasChat,
+  themeClass,
+  courseNavigation,
+} = pageData
+
+const { footer } = landingPage
+---
+
+<BaseLayout
+  title={course.metaTitle || course.title}
+  description={course.metaDescription || course.description}
+  canonical={`${siteUrl}/cours/sylius/${course.slug}/`}
+>
+  <div class={`course-page ${themeClass}`}>
+    <Header navigation={courseNavigation} brandHref="/#hero" showCta={false} />
+
+    <main class="app">
+      <CourseTimeline currentCourseSlug={course.slug} moduleCourses={moduleCourses} client:load />
+
+      <div class="course-page__shell">
+        <section class="course-page__content" aria-label="Contenu du cours">
+          <div class="course-page__eyebrow">
+            <span class="course-page__eyebrow-icon" aria-hidden="true">
+              <ModuleIcon name={module.icon} strokeWidth={2} />
+            </span>
+            <span>{module.title}</span>
+          </div>
+          <h1 class="course-page__title">{course.title}</h1>
+          <p class="course-page__description">{course.description}</p>
+
+          {course.private ? (
+            <div class="course-page__locked">
+              <p class="course-page__locked-title">Contenu réservé</p>
+              <p class="course-page__locked-copy">
+                Cette page de cours est un support pédagogique réservé à l'accompagnement
+                personnalisé.
+              </p>
+              {course.skills.length ? (
+                <div>
+                  <p class="course-page__skills-title">Ce que ce cours vous apprend</p>
+                  <ul class="course-page__skills-list">
+                    {course.skills.map((skill) => (
+                      <li class="course-page__skills-item">{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              <div class="course-page__locked-actions">
+                {nextPublicCourse ? (
+                  <a class="button button--tertiary" href={`/cours/sylius/${nextPublicCourse.slug}/`}>
+                    Cours libre suivant
+                  </a>
+                ) : null}
+                <a class="button button--primary" href="/#postuler">
+                  Découvrir l'accompagnement
+                </a>
+              </div>
+            </div>
+          ) : !hasChat ? (
+            <div class="course-page__locked">
+              <p class="course-page__locked-title">Bientôt disponible gratuitement</p>
+              <p class="course-page__locked-copy">
+                Cette page est en cours de rédaction et sera bientôt disponible en accès libre.
+              </p>
+              {course.skills.length ? (
+                <div>
+                  <p class="course-page__skills-title">Ce que ce cours vous apprend</p>
+                  <ul class="course-page__skills-list">
+                    {course.skills.map((skill) => (
+                      <li class="course-page__skills-item">{skill}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            <CourseInteractive
+              courseSlug={course.slug}
+              nextCourse={nextCourse}
+              previousCourse={previousCourse}
+              skills={course.skills}
+              turns={course.chat}
+              client:load
+            />
+          )}
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__brand-group">
+          <p class="site-footer__brand">{footer.brand}</p>
+          <p class="site-footer__copy">{footer.copy}</p>
+        </div>
+
+        <nav class="site-footer__nav" aria-label="Liens secondaires">
+          <button
+            class="site-footer__link site-footer__link-button"
+            type="button"
+            onclick="window.CookieConsent && window.CookieConsent.showPreferences()"
+          >
+            🍪 Gérer les cookies
+          </button>
+          {footer.links.map((link) => (
+            <a class="site-footer__link" href={link.href}>
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </footer>
+  </div>
+</BaseLayout>

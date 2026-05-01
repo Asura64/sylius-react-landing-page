@@ -8,6 +8,7 @@ type JourneySectionProps = {
   modules: Module[]
   getModuleCourses: (moduleId: number) => Course[]
   getModuleHref: (moduleId: number) => string | undefined
+  getCompletedCourseSlugs: (moduleId: number) => string[]
   timelineRef: RefObject<HTMLDivElement | null>
   itemRefs: MutableRefObject<Array<HTMLElement | null>>
   timelineState: TimelineState
@@ -17,6 +18,7 @@ export function JourneySection({
   modules,
   getModuleCourses,
   getModuleHref,
+  getCompletedCourseSlugs,
   timelineRef,
   itemRefs,
   timelineState,
@@ -46,6 +48,7 @@ export function JourneySection({
           <TimelineItem
             key={module.slug}
             courses={getModuleCourses(module.id)}
+            completedCourseSlugs={getCompletedCourseSlugs(module.id)}
             module={module}
             href={getModuleHref(module.id)}
             index={index}

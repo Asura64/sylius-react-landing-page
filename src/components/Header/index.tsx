@@ -2,6 +2,8 @@ import type { NavigationContent } from '../../types/content'
 import logoSrc from '../../assets/logo-header.webp'
 import './style.scss'
 
+const brandMarkSrc = typeof logoSrc === 'string' ? logoSrc : logoSrc.src
+
 type HeaderProps = {
   navigation: NavigationContent
   brandHref?: string
@@ -14,7 +16,7 @@ export function Header({ navigation, brandHref = '#', showCta = true }: HeaderPr
       <div className="site-header__inner">
         <a className="brand" href={brandHref}>
           <span className="brand__mark">
-            <img src={logoSrc} alt="" />
+            <img src={brandMarkSrc} alt="" />
           </span>
           <span className="brand__text">{navigation.brand}</span>
         </a>

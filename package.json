@@ -5,6 +5,10 @@
   "homepage": "https://patxi.iparaguirre.fr",
   "type": "module",
   "scripts": {
+    "dev:astro": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host",
+    "build:astro": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview:astro": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host",
+    "deploy:astro": "npm run build:astro && gh-pages -d dist -b prerender --dotfiles",
     "build:client": "vite build",
     "build:server": "vite build --ssr src/entry-prerender.tsx --outDir dist-ssr",
     "build:prerender": "npm run build:client && npm run build:server && node ./scripts/prerender.mjs",
@@ -15,6 +19,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@astrojs/react": "^5.0.4",
+    "astro": "^6.2.1",
     "lucide-react": "^1.7.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

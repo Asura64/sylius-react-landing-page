@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import '../../App.scss'
-import { landingPage } from './landingPage'
+import { landingPage } from './_landingPage'
 import { Header } from '../../components/Header'
 import { SidebarNav } from '../../components/SidebarNav'
 import { HeroSection } from '../../components/HeroSection'
@@ -8,7 +8,7 @@ import { JourneySection } from '../../components/JourneySection'
 import { FeatureGrid } from '../../components/FeatureGrid'
 import { Footer } from '../../components/Footer'
 import { useTimelineProgress } from '../../hooks/useTimelineProgress'
-import { getCoursesByModuleId, getFirstCourseByModuleId } from '../Course/courses'
+import { getCoursesByModuleId, getFirstCourseByModuleId } from '../Course/_courses'
 
 export function LandingPage() {
   const { navigation, hero, modules, featureGrid, footer } = landingPage

@@ -6,9 +6,9 @@ import {
   RouterProvider,
   useLocation,
 } from 'react-router-dom'
-import { CoursePage } from './pages/Course'
-import { CvPage } from './pages/Cv'
-import { LandingPage } from './pages/LandingPage'
+import { CoursePage } from './pages/Course/_index'
+import { CvPage } from './pages/Cv/_index'
+import { LandingPage } from './pages/LandingPage/_index'
 
 function ScrollToHash() {
   const location = useLocation()

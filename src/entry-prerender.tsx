@@ -2,14 +2,14 @@ import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'
 import { Document } from './Document'
-import { LandingPage } from './pages/LandingPage'
-import { landingPage } from './pages/LandingPage/landingPage'
-import { CoursePageContent } from './pages/Course'
-import { courses } from './pages/Course/courses'
+import { LandingPage } from './pages/LandingPage/_index'
+import { landingPage } from './pages/LandingPage/_landingPage'
+import { CoursePageContent } from './pages/Course/_index'
+import { courses } from './pages/Course/_courses'
 
 type RenderDocumentParams = {
   assetBase: string
-  bootstrapModule: string
+  bootstrapModule?: string
   canonicalUrl: string
   description: string
   path: string
@@ -20,7 +20,7 @@ type RenderDocumentParams = {
 
 type RenderStaticPageParams = {
   assetBase: string
-  bootstrapModule: string
+  bootstrapModule?: string
   canonicalUrl: string
   path: string
   stylesheets: string[]

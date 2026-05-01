@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { siteUrl } from '../lib/site'
+import { CvPage } from './Cv/_index'
+---
+
+<BaseLayout
+  title="CV | Patxi Iparaguirre"
+  description="CV de Patxi Iparaguirre, lead developer orienté e-commerce, architecture applicative, accompagnement technique et montée en responsabilité."
+  canonical={`${siteUrl}/cv/`}
+>
+  <CvPage client:load />
+</BaseLayout>

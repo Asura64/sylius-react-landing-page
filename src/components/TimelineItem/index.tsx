@@ -1,7 +1,5 @@
 import { Check } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import type { Course, Module } from '../../types/content'
-import { isCourseChatCompleted } from '../CourseChat'
 import { ModuleIcon } from '../ModuleIcon'
 import './style.scss'
 
@@ -12,6 +10,7 @@ const layoutClassMap = {
 
 type TimelineItemProps = {
   courses: Course[]
+  completedCourseSlugs: string[]
   module: Module
   index: number
   isCurrent: boolean
@@ -22,6 +21,7 @@ type TimelineItemProps = {
 
 export function TimelineItem({
   courses,
+  completedCourseSlugs,
   module,
   index,
   isCurrent,
@@ -29,7 +29,6 @@ export function TimelineItem({
   setRef,
   href,
 }: TimelineItemProps) {
-  const [completedCourseSlugs, setCompletedCourseSlugs] = useState<string[]>([])
   const classes = [
     'timeline__item',
     layoutClassMap[module.layout],
@@ -39,16 +38,6 @@ export function TimelineItem({
   ]
     .filter(Boolean)
     .join(' ')
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return
-    }
-
-    setCompletedCourseSlugs(
-      courses.filter((course) => course.chat.length > 0 && isCourseChatCompleted(course.slug, course.chat)).map((course) => course.slug),
-    )
-  }, [courses])
 
   const renderCourseList = (isMobile = false) => (
     <div className={`timeline__courses${isMobile ? ' timeline__courses--mobile' : ''}`}>

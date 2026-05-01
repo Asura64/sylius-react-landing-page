@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react'
 
 type DocumentProps = PropsWithChildren<{
   assetBase: string
-  bootstrapModule: string
+  bootstrapModule?: string
   canonicalUrl: string
   description: string
   stylesheets: string[]
@@ -197,7 +197,7 @@ export function Document({
             `,
           }}
         />
-        <script type="module" src={bootstrapModule}></script>
+        {bootstrapModule ? <script type="module" src={bootstrapModule}></script> : null}
       </body>
     </html>
   )

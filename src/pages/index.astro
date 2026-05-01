@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import '../App.scss'
+import '../components/Footer/style.scss'
+import '../components/SidebarNav/style.scss'
+import '../components/JourneySection/style.scss'
+import '../components/TimelineItem/style.scss'
+import { LandingHeader } from '../components/LandingHeader'
+import { LandingJourney } from '../components/LandingJourney'
+import { getDefaultLandingStartHref } from '../lib/landingCta'
+import { siteUrl } from '../lib/site'
+import { landingPage } from './LandingPage/_landingPage'
+import { publicCourses } from './Course/_courses'
+
+const { navigation, hero, modules, featureGrid, footer } = landingPage
+const startHref = getDefaultLandingStartHref(publicCourses, navigation.cta.href)
+
+const landingNavigation = {
+  ...navigation,
+  cta: {
+    ...navigation.cta,
+    href: startHref,
+  },
+}
+
+const landingHero = {
+  ...hero,
+  primaryAction: {
+    ...hero.primaryAction,
+    href: startHref,
+  },
+}
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'Patxi Iparaguirre',
+      description: 'Formateur, mentor et lead developer spécialisé sur Sylius 2.',
+      sameAs: [
+        'https://docs.sylius.com',
+        'https://sylius.com/slack',
+        'https://demo.sylius.com',
+      ],
+    },
+    {
+      '@type': 'Course',
+      name: 'Formation Sylius 2',
+      description:
+        'Formation Sylius 2 orientée installation, configuration métier de la boutique, personnalisation, workflow, qualité et accompagnement sur mesure.',
+      provider: {
+        '@type': 'Organization',
+        name: 'Patxi Iparaguirre',
+      },
+      educationalLevel: 'Advanced',
+      teaches: [
+        'Installation de Sylius 2',
+        'Configuration de la boutique Sylius',
+        'Fixtures YAML',
+        'ResourceBundle',
+        'Grilles admin et front',
+        'Twig Hooks',
+        'Symfony UX Live Components',
+        'Workflow',
+        'Qualité de code',
+      ],
+    },
+  ],
+}
+---
+
+<BaseLayout
+  title="Formation Sylius 2 pour les devs : architecture, personnalisation et mentorat expert"
+  description={hero.description}
+  canonical={siteUrl}
+  schema={schema}
+>
+  <LandingHeader navigation={landingNavigation} client:load />
+
+  <main class="app">
+    <LandingJourney featureGrid={featureGrid} hero={landingHero} modules={modules} client:load />
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__brand-group">
+        <p class="site-footer__brand">{footer.brand}</p>
+        <p class="site-footer__copy">{footer.copy}</p>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Liens secondaires">
+        <button
+          class="site-footer__link site-footer__link-button"
+          type="button"
+          onclick="window.CookieConsent && window.CookieConsent.showPreferences()"
+        >
+          🍪 Gérer les cookies
+        </button>
+        {footer.links.map((link) => (
+          <a class="site-footer__link" href={link.href}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+    </div>
+  </footer>
+
+</BaseLayout>

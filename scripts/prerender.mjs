@@ -38,7 +38,6 @@ cpSync(clientDir, outputDir, { recursive: true })
 const { renderCourseDocument, renderLandingDocument } = await import(pathToFileURL(serverEntryPath).href)
 const landingHtml = renderLandingDocument({
   assetBase: './',
-  bootstrapModule,
   canonicalUrl: 'https://patxi.iparaguirre.fr',
   path: '/',
   stylesheets,
