@@ -1,0 +1,27 @@
+{
+  "content": [
+    {
+      "type": "dump",
+      "data": {
+        "label": "dump($containerParameters)",
+        "expanded": true,
+        "value": {
+          "kernel.environment": "dev",
+          "kernel.debug": true,
+          "database_url": "mysql://sylius:sylius@database/sylius_dev",
+          "messenger": {
+            "transports": [
+              "async",
+              "failed"
+            ],
+            "default_bus": "command.bus"
+          },
+          "docker": {
+            "php": "8.3",
+            "xdebug": true
+          }
+        }
+      }
+    }
+  ]
+}

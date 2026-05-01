@@ -1,11 +1,13 @@
 import { useEffect } from 'react'
 import {
   Outlet,
+  Navigate,
   createBrowserRouter,
   RouterProvider,
   useLocation,
 } from 'react-router-dom'
 import { CoursePage } from './pages/Course'
+import { CvPage } from './pages/Cv'
 import { LandingPage } from './pages/LandingPage'
 
 function ScrollToHash() {
@@ -51,6 +53,14 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <LandingPage />,
+      },
+      {
+        path: '/cv',
+        element: <Navigate to="/cv/" replace />,
+      },
+      {
+        path: '/cv/',
+        element: <CvPage />,
       },
       {
         path: '/cours/sylius/:courseSlug',
