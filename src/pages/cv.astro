@@ -1,7 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
+import '../pages/Cv/style.scss'
 import { siteUrl } from '../lib/site'
-import { CvPage } from './Cv/_index'
+import { cvProfile } from '../lib/cv'
+
+const mainExperiences = cvProfile.experiences.filter((experience) => experience.track === 'main')
+const sideExperiences = cvProfile.experiences.filter((experience) => experience.track === 'side')
 ---
 
 <BaseLayout
@@ -9,5 +13,154 @@ import { CvPage } from './Cv/_index'
   description="CV de Patxi Iparaguirre, lead developer orienté e-commerce, architecture applicative, accompagnement technique et montée en responsabilité."
   canonical={`${siteUrl}/cv/`}
 >
-  <CvPage client:load />
+  <main class="cv-page">
+    <article class="cv-page__sheet">
+      <div class="cv-page__actions">
+        <button class="cv-page__print-button" type="button" onclick="window.print()">
+          <span aria-hidden="true">🖨️</span>
+          Imprimer
+        </button>
+      </div>
+
+      <header class="cv-page__header">
+        <img
+          class="cv-page__avatar"
+          src="/resource/avatar/patxi_real.jpeg"
+          alt="Portrait de Patxi Iparaguirre"
+        />
+
+        <div class="cv-page__intro">
+          <ul class="cv-page__contact-list" aria-label="Informations de contact">
+            {cvProfile.contact.map((item) => (
+              <li class="cv-page__contact-item">
+                <span class="cv-page__contact-icon" aria-hidden="true">
+                  {item.icon === 'globe' ? '🌐' : item.icon === 'phone' ? '📞' : '📍'}
+                </span>
+                {item.href ? (
+                  <a class="cv-page__contact-link" href={item.href} target="_blank" rel="noreferrer">
+                    {item.value}
+                  </a>
+                ) : (
+                  <span class="cv-page__contact-value">{item.value}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div class="cv-page__identity">
+            <h1 class="cv-page__name">{cvProfile.name}</h1>
+            <p class="cv-page__title">{cvProfile.title}</p>
+          </div>
+        </div>
+      </header>
+
+      <section class="cv-page__section">
+        <div class="cv-page__section-label">
+          <h2>À propos</h2>
+        </div>
+
+        <div class="cv-page__section-content">
+          <p class="cv-page__summary">{cvProfile.summary}</p>
+        </div>
+      </section>
+
+      <section class="cv-page__section">
+        <div class="cv-page__section-label">
+          <h2>Expériences</h2>
+        </div>
+
+        <div class="cv-page__section-content cv-page__section-content--experience">
+          <div class="cv-page__experience-split">
+            <div class="cv-page__experience-column">
+              <p class="cv-page__column-title">Parcours principal</p>
+
+              {mainExperiences.map((experience) => (
+                <article class="cv-page__entry">
+                  <div class="cv-page__entry-heading">
+                    <div>
+                      <h3 class="cv-page__entry-title">{experience.title}</h3>
+                      <div class="cv-page__entry-meta">
+                        <p class="cv-page__entry-subtitle">{experience.company}</p>
+                        <p class="cv-page__entry-period">{experience.period}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ul class="cv-page__entry-list">
+                    {experience.bullets.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+
+            <div class="cv-page__experience-column cv-page__experience-column--side">
+              <p class="cv-page__column-title">Activités freelance</p>
+
+              {sideExperiences.map((experience) => (
+                <article class="cv-page__entry">
+                  <div class="cv-page__entry-heading">
+                    <div>
+                      <h3 class="cv-page__entry-title">{experience.title}</h3>
+                      <div class="cv-page__entry-meta cv-page__entry-meta--side">
+                        <p class="cv-page__entry-subtitle">{experience.company}</p>
+                        <p class="cv-page__entry-period">{experience.period}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ul class="cv-page__entry-list">
+                    {experience.bullets.map((bullet) => (
+                      <li>{bullet}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-page__section">
+        <div class="cv-page__section-label">
+          <h2>Compétences</h2>
+        </div>
+
+        <div class="cv-page__section-content cv-page__section-content--grid">
+          {cvProfile.skills.map((skill) => (
+            <article class="cv-page__skill-group">
+              <div class="cv-page__skill-heading">
+                <h3 class="cv-page__skill-title">{skill.title}</h3>
+              </div>
+              <div
+                class="cv-page__skill-bar"
+                aria-hidden="true"
+                style={`--skill-level: ${skill.level}%`}
+              >
+                <span class="cv-page__skill-bar-fill"></span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section class="cv-page__section">
+        <div class="cv-page__section-label">
+          <h2>Formation</h2>
+        </div>
+
+        <div class="cv-page__section-content">
+          <ul class="cv-page__education-list">
+            {cvProfile.education.map((education) => (
+              <li class="cv-page__education-item">
+                <span class="cv-page__education-title">{education.title}</span>
+                <span class="cv-page__education-detail">{education.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </article>
+  </main>
 </BaseLayout>

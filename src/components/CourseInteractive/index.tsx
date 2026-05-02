@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { EllipsisVertical } from 'lucide-react'
 import type { ChatTurn, Course } from '../../types/content'
+import { getCourseBySlug } from '../../pages/Course/_courses'
 import {
   CourseChat,
   clearCourseChatProgress,
@@ -24,6 +25,9 @@ export function CourseInteractive({
   skills,
   turns,
 }: CourseInteractiveProps) {
+  const liveCourse = import.meta.env.DEV ? getCourseBySlug(courseSlug) : undefined
+  const currentSkills = liveCourse?.skills ?? skills
+  const currentTurns = liveCourse?.chat ?? turns
   const skillsRef = useRef<HTMLDivElement | null>(null)
   const [isChatMenuOpen, setIsChatMenuOpen] = useState(false)
   const [isResetModalOpen, setIsResetModalOpen] = useState(false)
@@ -36,10 +40,10 @@ export function CourseInteractive({
     setIsChatMenuOpen(false)
     setIsResetModalOpen(false)
     setChatInstanceKey(0)
-    setIsChatCompleted(isCourseChatCompleted(courseSlug, turns))
+    setIsChatCompleted(isCourseChatCompleted(courseSlug, currentTurns))
     setHasChatStarted(hasCourseChatProgress(courseSlug))
-    setChatProgressPercent(getCourseChatProgressPercent(courseSlug, turns))
-  }, [courseSlug, turns])
+    setChatProgressPercent(getCourseChatProgressPercent(courseSlug, currentTurns))
+  }, [courseSlug, currentTurns])
 
   useEffect(() => {
     if (!isChatCompleted || !skillsRef.current) {
@@ -117,7 +121,7 @@ export function CourseInteractive({
           courseSlug={courseSlug}
           onCompletionChange={setIsChatCompleted}
           onProgressChange={setChatProgressPercent}
-          turns={turns}
+          turns={currentTurns}
         />
       )}
 
@@ -147,12 +151,12 @@ export function CourseInteractive({
         </div>
       ) : null}
 
-      {skills.length > 0 && isChatCompleted ? (
+      {currentSkills.length > 0 && isChatCompleted ? (
         <>
           <div ref={skillsRef} className="course-page__skills">
             <p className="course-page__skills-title">Ce que vous avez appris</p>
             <ul className="course-page__skills-list">
-              {skills.map((skill) => (
+              {currentSkills.map((skill) => (
                 <li key={skill} className="course-page__skills-item">
                   {skill}
                 </li>

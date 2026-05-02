@@ -38,6 +38,6 @@
     "globals": "^17.4.0",
     "sass-embedded": "^1.93.2",
     "typescript": "^5.8.3",
-    "vite": "^8.0.1"
+    "vite": "^7"
   }
 }

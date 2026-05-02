@@ -2525,6 +2525,20 @@
       "Mettre en place les modes de livraison et les moyens de paiement",
       "Utiliser les groupes de clients dans une configuration Sylius"
     ],
-    "chat": []
+    "chat": [
+      {
+        "id": "greetings",
+        "author": "Patxi",
+        "content": [
+          {
+            "type": "p",
+            "data": "Salut"
+          }
+        ],
+        "responses": {
+          "hi": "Salut"
+        }
+      }
+    ]
   }
 ]
