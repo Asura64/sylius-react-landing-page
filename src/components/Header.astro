@@ -1,0 +1,49 @@
+---
+import type { NavigationContent } from '../types/content'
+import logoSrc from '../assets/logo-header.webp'
+import './Header/style.scss'
+
+type Props = {
+  brandHref?: string
+  navigation: NavigationContent
+  showCta?: boolean
+}
+
+const {
+  navigation,
+  brandHref = '#',
+  showCta = true,
+} = Astro.props
+
+const brandMarkSrc = typeof logoSrc === 'string' ? logoSrc : logoSrc.src
+---
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a class="brand" href={brandHref}>
+      <span class="brand__mark">
+        <img src={brandMarkSrc} alt="" />
+      </span>
+      <span class="brand__text">{navigation.brand}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Navigation principale">
+      {navigation.links.map((link) => (
+        <a
+          class={`site-nav__link${link.active ? ' site-nav__link--active' : ''}`}
+          href={link.href}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    {showCta ? (
+      <a class="button button--primary button--small" href={navigation.cta.href}>
+        {navigation.cta.label}
+      </a>
+    ) : (
+      <span class="site-header__cta-spacer" aria-hidden="true"></span>
+    )}
+  </div>
+</header>

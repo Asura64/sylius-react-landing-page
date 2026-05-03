@@ -1,0 +1,59 @@
+---
+import type { HeroContent } from '../types/content'
+import './HeroSection/style.scss'
+
+type Props = {
+  hero: HeroContent
+}
+
+const { hero } = Astro.props
+---
+
+<section id="hero" class="hero">
+  <div class="hero__orb hero__orb--primary"></div>
+  <div class="hero__orb hero__orb--secondary"></div>
+
+  <div class="hero__grid">
+    <div class="hero__content">
+      <p class="hero__eyebrow">
+        <span class="hero__eyebrow-dot"></span>
+        {hero.eyebrow}
+      </p>
+      <h1 class="hero__title">
+        {hero.titlePrefix} <span>{hero.titleHighlight}</span>.
+      </h1>
+      <p class="hero__text">{hero.description}</p>
+
+      <div class="hero__actions">
+        <a class="button button--primary" href={hero.primaryAction.href}>
+          {hero.primaryAction.label}
+        </a>
+        <a class="button button--tertiary" href={hero.secondaryAction.href}>
+          {hero.secondaryAction.label}
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero__visual" aria-hidden="true">
+      <div class="hero__screen hero__screen--main">
+        <div class="hero__code-lines">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="hero__screen hero__screen--panel">
+        <div class="hero__metric-pill">{hero.visualLabel}</div>
+        <div class="hero__metric-grid">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="hero__glow"></div>
+    </div>
+  </div>
+</section>

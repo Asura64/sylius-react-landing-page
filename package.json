@@ -5,39 +5,22 @@
   "homepage": "https://patxi.iparaguirre.fr",
   "type": "module",
   "scripts": {
-    "dev:astro": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host",
-    "build:astro": "ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "preview:astro": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host",
-    "deploy:astro": "npm run build:astro && gh-pages -d dist -b prerender --dotfiles",
-    "build:client": "vite build",
-    "build:server": "vite build --ssr src/entry-prerender.tsx --outDir dist-ssr",
-    "build:prerender": "npm run build:client && npm run build:server && node ./scripts/prerender.mjs",
-    "deploy:prerender": "npm run build:prerender && gh-pages -d prerender-dist -b prerender",
-    "dev": "vite --host",
-    "build": "npm run build:client",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev --host",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host",
+    "deploy": "npm run build && gh-pages -d dist -b prerender --dotfiles",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@astrojs/react": "^5.0.4",
+    "@hotwired/stimulus": "^3.2.2",
     "astro": "^6.2.1",
-    "lucide-react": "^1.7.0",
-    "react": "^19.2.4",
-    "react-dom": "^19.2.4",
-    "react-router-dom": "^7.13.2"
+    "gh-pages": "^6.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9.39.4",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.5.2",
-    "gh-pages": "^6.3.0",
     "globals": "^17.4.0",
     "sass-embedded": "^1.93.2",
-    "typescript": "^5.8.3",
-    "vite": "^7"
+    "typescript": "^5.8.3"
   }
 }

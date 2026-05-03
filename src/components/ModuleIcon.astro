@@ -1,0 +1,19 @@
+---
+import { renderModuleIconSvg } from '../lib/iconSvg'
+
+type Props = {
+  className?: string
+  name: string
+  size?: number
+  strokeWidth?: number
+}
+
+const {
+  className,
+  name,
+  size,
+  strokeWidth,
+} = Astro.props
+---
+
+<Fragment set:html={renderModuleIconSvg(name, { className, size, strokeWidth })} />

@@ -1,16 +1,32 @@
-# React + Vite
+# Patxi Training Site
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Site statique Astro pour la formation Sylius.
 
-Currently, two official plugins are available:
+## Commandes utiles
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- `npm install`
+- `npm run dev`
+- `npm run build`
+- `npm run preview`
+- `npm run deploy`
 
-## React Compiler
+Les scripts par défaut pointent vers le flux Astro.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture
 
-## Expanding the ESLint configuration
+- `src/pages/**/*.astro` : routes publiques
+- `src/components/*.astro` : composants de rendu statique
+- `src/controllers/*_controller.ts` : logique client Stimulus
+- `src/lib/*.ts` : helpers partagés
+- `src/data/*.json` : contenu
+- `public/` : assets copiés tels quels
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Le site public n’utilise plus React. L’interactivité client restante est isolée dans des controllers Stimulus.
+
+## Déploiement
+
+Le build Astro est publié sur la branche GitHub Pages `prerender` via :
+
+```bash
+npm run deploy
+```

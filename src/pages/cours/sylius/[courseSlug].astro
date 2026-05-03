@@ -2,13 +2,24 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 import '../../../App.scss'
 import '../../../components/Footer/style.scss'
+import '../../../components/ChatAvatar/style.scss'
+import '../../../components/CourseChat/style.scss'
+import '../../../components/CourseItem/Architecture/style.scss'
+import '../../../components/CourseItem/Dump/style.scss'
+import '../../../components/CourseItem/H2/style.scss'
+import '../../../components/CourseItem/Img/style.scss'
+import '../../../components/CourseItem/Info/style.scss'
+import '../../../components/CourseItem/InlineRichText.scss'
+import '../../../components/CourseItem/P/style.scss'
+import '../../../components/CourseItem/Quiz/style.scss'
+import '../../../components/CourseItem/Ul/style.scss'
+import '../../../components/CourseItem/Yaml/style.scss'
 import '../../Course/style.scss'
-import { CourseInteractive } from '../../../components/CourseInteractive'
-import { CourseTimeline } from '../../../components/CourseTimeline'
-import { Header } from '../../../components/Header'
+import { renderCourseItemHtml } from '../../../lib/courseItemHtml'
 import { getCoursePageData } from '../../../lib/coursePage'
 import { siteUrl } from '../../../lib/site'
-import { ModuleIcon } from '../../../components/ModuleIcon'
+import Header from '../../../components/Header.astro'
+import ModuleIcon from '../../../components/ModuleIcon.astro'
 import { courses } from '../../Course/_courses'
 import { landingPage } from '../../LandingPage/_landingPage'
 
@@ -40,6 +51,7 @@ const {
 } = pageData
 
 const { footer } = landingPage
+const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === course.slug)
 ---
 
 <BaseLayout
@@ -51,7 +63,32 @@ const { footer } = landingPage
     <Header navigation={courseNavigation} brandHref="/#hero" showCta={false} />
 
     <main class="app">
-      <CourseTimeline currentCourseSlug={course.slug} moduleCourses={moduleCourses} client:load />
+      <nav
+        class="course-page__timeline course-page__timeline--header"
+        aria-label="Parcours du module"
+        data-controller="course-timeline"
+        data-course-timeline-current-slug-value={course.slug}
+        data-course-timeline-courses-value={JSON.stringify(moduleCourses)}
+      >
+        <ol class="course-page__timeline-list">
+          {moduleCourses.map((moduleCourse, index) => (
+            <li
+              class={`course-page__timeline-item${moduleCourse.slug === course.slug ? ' course-page__timeline-item--current' : ''}${index <= currentCourseIndex ? ' course-page__timeline-item--reached' : ''}`}
+              data-course-slug={moduleCourse.slug}
+            >
+              <a class="course-page__timeline-link" href={`/cours/sylius/${moduleCourse.slug}/`}>
+                <span class="course-page__timeline-marker">
+                  <span>{index + 1}</span>
+                  <span data-course-completed-check hidden aria-hidden="true">
+                    ✓
+                  </span>
+                </span>
+                <span class="course-page__timeline-label">{moduleCourse.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
 
       <div class="course-page__shell">
         <section class="course-page__content" aria-label="Contenu du cours">
@@ -110,14 +147,32 @@ const { footer } = landingPage
               ) : null}
             </div>
           ) : (
-            <CourseInteractive
-              courseSlug={course.slug}
-              nextCourse={nextCourse}
-              previousCourse={previousCourse}
-              skills={course.skills}
-              turns={course.chat}
-              client:load
-            />
+            <>
+              <div
+                class="course-page__interactive"
+                data-controller="course-chat"
+                data-action="click->course-chat#handleClick change->course-chat#handleChange"
+                data-course-chat-course-slug-value={course.slug}
+                data-course-chat-next-course-value={JSON.stringify(nextCourse ?? null)}
+                data-course-chat-previous-course-value={JSON.stringify(previousCourse ?? null)}
+                data-course-chat-skills-value={JSON.stringify(course.skills)}
+                data-course-chat-turns-value={JSON.stringify(course.chat)}
+              >
+                <div data-course-chat-target="mount"></div>
+              </div>
+
+              <div hidden aria-hidden="true">
+                {course.chat.map((turn) =>
+                  turn.content.map((item, itemIndex) => (
+                    item.type === 'quiz' ? null : (
+                      <template id={`course-item-template-${turn.id}-${itemIndex}`}>
+                        <Fragment set:html={renderCourseItemHtml(item)} />
+                      </template>
+                    )
+                  )),
+                )}
+              </div>
+            </>
           )}
         </section>
       </div>
