@@ -1,0 +1,73 @@
+{
+  "configuration": {
+    "sylius_version_tag": "v2.2.5"
+  },
+  "navigation": {
+    "brand": "Formation Sylius 2",
+    "links": [
+      { "label": "Accueil", "href": "#hero", "active": true },
+      { "label": "Modules", "href": "#modules", "active": false },
+      { "label": "Postuler", "href": "#postuler", "active": false }
+    ],
+    "cta": { "label": "Commencer", "href": "#postuler" }
+  },
+  "hero": {
+    "eyebrow": "Sylius 2.2 Edition",
+    "titlePrefix": "Formation Sylius 2",
+    "titleHighlight": "pour les devs",
+    "description": "Maîtrisez Sylius 2 avec un parcours progressif, de l'installation à la configuration métier de la boutique, puis aux personnalisations avancées, workflows et bonnes pratiques projet.",
+    "primaryAction": { "label": "Commencer maintenant", "href": "#postuler" },
+    "secondaryAction": { "label": "Voir le programme", "href": "#modules" },
+    "visualLabel": "Shop"
+  },
+  "featureGrid": {
+    "kicker": "Accompagnement dédié",
+    "title": "Accompagnement Sur Mesure",
+    "description": "Profitez d'un mentorat Sylius 2 pour accélérer vos projets e-commerce avec un accompagnement adapté à vos besoins réels et à vos enjeux du moment.",
+    "actions": [
+      { "label": "Me contacter par mail", "href": "mailto:patxi.iparaguirre@gmail.com", "variant": "light" },
+      { "label": "Prendre rendez-vous", "href": "https://calendly.com/patxi-iparaguirre/prise-contact-formation-sylius", "variant": "outline" }
+    ],
+    "highlights": [
+      {
+        "title": "Sessions de mentorat",
+        "description": "Présentiel ou distanciel selon vos besoins, avec des sessions de 45 min à 1h.",
+        "icon": "◔",
+        "tone": "primary"
+      },
+      {
+        "title": "Format flexible",
+        "description": "Distanciel en 1:1 ou présentiel en petit groupe pour une attention maximale.",
+        "icon": "◫",
+        "tone": "secondary"
+      },
+      {
+        "title": "Méthodologie active",
+        "description": "Approche pragmatique : 80% de pratique sur le code et 20% de théorie ciblée.",
+        "icon": "◌",
+        "tone": "tertiary"
+      },
+      {
+        "title": "Flexibilité totale",
+        "description": "Aucun engagement, modules au choix, sessions ponctuelles ou régulières.",
+        "icon": "⟳",
+        "tone": "primary"
+      },
+      {
+        "title": "Support GitLab",
+        "description": "Suivi structuré via tags, branches et thématiques pour garder un vrai fil pédagogique.",
+        "icon": "⌘",
+        "tone": "secondary"
+      }
+    ]
+  },
+  "footer": {
+    "brand": "Patxi Iparaguirre",
+    "copy": "©2026 - Formateur, Mentor et Lead Dev",
+    "links": [
+      { "label": "\uD83D\uDCD6 Sylius Doc", "href": "https://docs.sylius.com" },
+      { "label": "\uD83D\uDCAC Community Slack", "href": "https://sylius.com/slack" },
+      { "label": "\uD83D\uDCBB Sylius Demo", "href": "https://demo.sylius.com" }
+    ]
+  }
+}
