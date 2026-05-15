@@ -7,14 +7,23 @@ import '../components/JourneySection/style.scss'
 import '../components/TimelineItem/style.scss'
 import { getDefaultLandingStartHref } from '../lib/landingCta'
 import { siteUrl } from '../lib/site'
-import { landingPage } from './LandingPage/_landingPage'
-import { courses, publicCourses, getCoursesByModuleId, getFirstCourseByModuleId } from './Course/_courses'
+import { getLandingPage } from './LandingPage/_landingPage'
+import { getPublicCourses, getCoursesByModuleId, getFirstCourseByModuleId } from './Course/_courses'
 import ModuleIcon from '../components/ModuleIcon.astro'
 import Header from '../components/Header.astro'
 import HeroSection from '../components/HeroSection.astro'
 import FeatureGrid from '../components/FeatureGrid.astro'
 
+const landingPage = await getLandingPage()
+const publicCourses = await getPublicCourses()
 const { navigation, hero, modules, featureGrid, footer } = landingPage
+const moduleEntries = await Promise.all(
+  modules.map(async (module) => ({
+    module,
+    moduleCourses: await getCoursesByModuleId(module.id),
+    firstCourse: await getFirstCourseByModuleId(module.id),
+  })),
+)
 const startHref = getDefaultLandingStartHref(publicCourses, navigation.cta.href)
 
 const landingNavigation = {
@@ -84,8 +93,6 @@ const schema = {
     class="app"
     data-controller="landing-page"
     data-action="click->landing-page#handleClick"
-    data-landing-page-courses-value={JSON.stringify(courses)}
-    data-landing-page-public-courses-value={JSON.stringify(publicCourses)}
     data-landing-page-fallback-href-value={navigation.cta.href}
   >
     <div class="app__layout">
@@ -124,10 +131,9 @@ const schema = {
               ></div>
             </div>
 
-            {modules.map((module, index) => {
-              const moduleCourses = getCoursesByModuleId(module.id)
-              const href = getFirstCourseByModuleId(module.id)?.slug
-                ? `/cours/sylius/${getFirstCourseByModuleId(module.id)?.slug}/`
+            {moduleEntries.map(({ module, moduleCourses, firstCourse }, index) => {
+              const href = firstCourse?.slug
+                ? `/cours/sylius/${firstCourse.slug}/`
                 : undefined
 
               return (

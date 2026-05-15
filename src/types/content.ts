@@ -231,6 +231,11 @@ export type CourseItemDto =
   | ArchitectureItem
 export type CourseItem = CourseItemDto
 
+export type CourseGithubLinks = {
+  start?: string
+  end?: string
+}
+
 export type CourseDto = {
   id: number
   module_id: number
@@ -241,6 +246,7 @@ export type CourseDto = {
   description: string
   meta_description: string
   skills: string[]
+  github?: CourseGithubLinks
   chat?: ChatTurnDto[]
   content: CourseItemDto[]
 }
@@ -255,6 +261,7 @@ export type Course = {
   description: string
   metaDescription: string
   skills: string[]
+  github?: CourseGithubLinks
   chat: ChatTurn[]
   content: CourseItem[]
 }

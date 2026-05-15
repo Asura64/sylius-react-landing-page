@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus'
-import type { ChatTurn } from '../types/content'
-import type { Course } from '../types/content'
+import type { ChatTurn, Course } from '../types/content'
+import { getCourseSequenceData, getCourses, getModules } from '../lib/contentData'
 import {
   clearCourseChatProgress,
   courseChatTypingDelay,
@@ -11,6 +11,8 @@ import {
   getCurrentProgressPercent,
   getInitialConfirmedItemIds,
   getInitialRevealedItemCounts,
+  getCourseItemTypingDelay,
+  getMinimumCourseItemTypingDelay,
   getQuizCompletionResponse,
   hasCourseChatProgress,
   isCourseChatCompleted,
@@ -33,7 +35,8 @@ type State = {
   revealedTurnCount: number
 }
 
-function escapeHtml(value: string) {
+function escapeHtml(value: string | undefined): string {
+  value = value ? value : ''
   return value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
@@ -79,6 +82,15 @@ function renderExpandIcon() {
   `
 }
 
+function renderExternalLinkIcon() {
+  return `
+    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7 17 17 7"></path>
+      <path d="M7 7h10v10"></path>
+    </svg>
+  `
+}
+
 function renderEllipsisIcon() {
   return `
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -89,39 +101,26 @@ function renderEllipsisIcon() {
   `
 }
 
-function parseCourseLink(value: string | undefined) {
-  if (!value) {
-    return null
-  }
-
-  try {
-    return JSON.parse(value) as CourseLink
-  } catch {
-    return null
-  }
-}
-
 export default class extends Controller<HTMLElement> {
   static targets = ['mount']
 
   static values = {
     courseSlug: String,
-    nextCourse: String,
-    previousCourse: String,
-    skills: Array,
-    turns: Array,
   }
 
   declare readonly courseSlugValue: string
-  declare readonly nextCourseValue: string
-  declare readonly previousCourseValue: string
-  declare readonly skillsValue: string[]
-  declare readonly turnsValue: ChatTurn[]
   declare readonly mountTarget: HTMLElement
 
   private fullscreenImage: { alt: string; src: string } | null = null
   private hasPendingTypingScroll = false
+  private hasPriorityNextTypingDelay = false
+  private hasLoadError = false
+  private isReady = false
+  private githubEndUrl: string | null = null
+  private nextCourseLink: CourseLink = null
   private previousCompletionState = false
+  private previousCourseLink: CourseLink = null
+  private skills: string[] = []
   private state: State = {
     answersByTurnId: {},
     confirmedItemIds: {},
@@ -133,6 +132,7 @@ export default class extends Controller<HTMLElement> {
     revealedItemCountByTurnId: {},
     revealedTurnCount: 0,
   }
+  private turns: ChatTurn[] = []
   private typingTimeout: number | null = null
   private readonly handleWindowKeydown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -150,10 +150,8 @@ export default class extends Controller<HTMLElement> {
   }
 
   connect() {
-    this.restoreStateFromStorage()
-    this.render()
-    this.scheduleNextStep()
     window.addEventListener('keydown', this.handleWindowKeydown)
+    void this.initialize()
   }
 
   disconnect() {
@@ -166,6 +164,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleClick(event: Event) {
+    if (!this.isReady) {
+      return
+    }
+
     const target = event.target instanceof Element ? event.target : null
 
     if (!target) {
@@ -248,6 +250,7 @@ export default class extends Controller<HTMLElement> {
       }
 
       this.hasPendingTypingScroll = true
+      this.hasPriorityNextTypingDelay = true
       this.state.answersByTurnId = {
         ...this.state.answersByTurnId,
         [turnId]: responseId,
@@ -268,6 +271,7 @@ export default class extends Controller<HTMLElement> {
       }
 
       this.hasPendingTypingScroll = true
+      this.hasPriorityNextTypingDelay = true
       this.state.confirmedItemIds = {
         ...this.state.confirmedItemIds,
         [itemId]: true,
@@ -339,8 +343,8 @@ export default class extends Controller<HTMLElement> {
     if (yamlCopy) {
       const yamlPanel = yamlCopy
         .closest('.course-item-yaml')
-        ?.querySelector<HTMLElement>('.course-item-yaml__panel code')
-      const text = yamlPanel?.textContent ?? ''
+        ?.querySelector<HTMLElement>('.course-item-yaml__panel')
+      const text = yamlPanel?.getAttribute('data-copy-text') ?? ''
 
       if (text.trim()) {
         void this.copyText(text, yamlCopy, 'course-item-yaml__copy--copied', 'Copié')
@@ -384,6 +388,10 @@ export default class extends Controller<HTMLElement> {
   }
 
   handleChange(event: Event) {
+    if (!this.isReady) {
+      return
+    }
+
     const target = event.target instanceof HTMLInputElement ? event.target : null
 
     if (!target || target.dataset.courseChatAction !== 'toggle-quiz-choice') {
@@ -435,20 +443,50 @@ export default class extends Controller<HTMLElement> {
     this.render()
   }
 
-  private get previousCourse() {
-    return parseCourseLink(this.previousCourseValue)
-  }
+  private async initialize() {
+    try {
+      const [modules, courses] = await Promise.all([getModules(), getCourses()])
+      const courseSequence = getCourseSequenceData(this.courseSlugValue, modules, courses)
 
-  private get nextCourse() {
-    return parseCourseLink(this.nextCourseValue)
+      if (!courseSequence || !this.element.isConnected) {
+        return
+      }
+
+      this.turns = courseSequence.course.chat
+      this.skills = courseSequence.course.skills
+      this.githubEndUrl = courseSequence.course.github?.end ?? null
+      this.previousCourseLink = courseSequence.previousCourse
+        ? {
+            slug: courseSequence.previousCourse.slug,
+            title: courseSequence.previousCourse.title,
+          }
+        : null
+      this.nextCourseLink = courseSequence.nextCourse
+        ? {
+            slug: courseSequence.nextCourse.slug,
+            title: courseSequence.nextCourse.title,
+          }
+        : null
+      this.restoreStateFromStorage()
+      this.isReady = true
+      this.render()
+      this.scheduleNextStep()
+    } catch {
+      if (!this.element.isConnected) {
+        return
+      }
+
+      this.hasLoadError = true
+      this.render()
+    }
   }
 
   private get accessibleTurns() {
-    return getAccessibleTurns(this.courseSlugValue, this.turnsValue, this.state.answersByTurnId)
+    return getAccessibleTurns(this.courseSlugValue, this.turns, this.state.answersByTurnId)
   }
 
   private restoreStateFromStorage() {
-    const storedProgress = readStoredProgress(this.courseSlugValue, this.turnsValue)
+    const storedProgress = readStoredProgress(this.courseSlugValue, this.turns)
 
     if (!storedProgress) {
       this.state.hasStarted = hasCourseChatProgress(this.courseSlugValue)
@@ -457,7 +495,7 @@ export default class extends Controller<HTMLElement> {
 
     const confirmedItemIds = getInitialConfirmedItemIds(
       this.courseSlugValue,
-      this.turnsValue,
+      this.turns,
       storedProgress.revealedTurnCount,
       storedProgress.answersByTurnId,
       storedProgress.quizStatesByItemId,
@@ -473,7 +511,7 @@ export default class extends Controller<HTMLElement> {
       quizStatesByItemId: storedProgress.quizStatesByItemId,
       revealedItemCountByTurnId: getInitialRevealedItemCounts(
         this.courseSlugValue,
-        this.turnsValue,
+        this.turns,
         storedProgress.revealedTurnCount,
         storedProgress.answersByTurnId,
         confirmedItemIds,
@@ -481,7 +519,7 @@ export default class extends Controller<HTMLElement> {
       ),
       revealedTurnCount: storedProgress.revealedTurnCount,
     }
-    this.previousCompletionState = isCourseChatCompleted(this.courseSlugValue, this.turnsValue)
+    this.previousCompletionState = isCourseChatCompleted(this.courseSlugValue, this.turns)
   }
 
   private scheduleNextStep() {
@@ -504,11 +542,21 @@ export default class extends Controller<HTMLElement> {
     }
 
     if (this.state.revealedTurnCount === 0) {
+      const firstTurn = accessibleTurns[0]
+      const firstAccessibleItem = firstTurn
+        ? getAccessibleTurnItems(
+            this.courseSlugValue,
+            firstTurn,
+            this.state.answersByTurnId,
+            this.state.confirmedItemIds,
+            this.state.quizStatesByItemId,
+          )[0]?.item
+        : undefined
+      const initialTypingDelay = firstAccessibleItem?.typingDelay ?? courseChatTypingDelay
+
       this.state.isTyping = true
       this.render()
       this.typingTimeout = window.setTimeout(() => {
-        const firstTurn = accessibleTurns[0]
-
         this.state.revealedTurnCount = 1
         this.state.revealedItemCountByTurnId = {
           [firstTurn.id]: 1,
@@ -517,7 +565,7 @@ export default class extends Controller<HTMLElement> {
         this.persistState()
         this.render()
         this.scheduleNextStep()
-      }, courseChatTypingDelay)
+      }, initialTypingDelay)
       return
     }
 
@@ -537,10 +585,22 @@ export default class extends Controller<HTMLElement> {
       this.state.quizStatesByItemId,
     )
     const revealedItemCount = this.state.revealedItemCountByTurnId[lastRevealedTurn.id] ?? 0
+    const consumeNextTypingDelay = (defaultDelay: number) => {
+      if (!this.hasPriorityNextTypingDelay) {
+        return defaultDelay
+      }
+
+      this.hasPriorityNextTypingDelay = false
+
+      return getMinimumCourseItemTypingDelay()
+    }
 
     if (revealedItemCount < accessibleItems.length) {
+      const previousItem = revealedItemCount > 0 ? accessibleItems[revealedItemCount - 1]?.item : undefined
       const nextItem = accessibleItems[revealedItemCount]?.item
-      const nextItemTypingDelay = nextItem?.typingDelay ?? courseChatTypingDelay
+      const nextItemTypingDelay = consumeNextTypingDelay(
+        nextItem?.typingDelay ?? getCourseItemTypingDelay(previousItem),
+      )
 
       this.state.isTyping = true
       this.render()
@@ -582,6 +642,19 @@ export default class extends Controller<HTMLElement> {
     }
 
     const nextTurn = accessibleTurns[this.state.revealedTurnCount]
+    const nextTurnFirstItem = nextTurn
+      ? getAccessibleTurnItems(
+          this.courseSlugValue,
+          nextTurn,
+          this.state.answersByTurnId,
+          this.state.confirmedItemIds,
+          this.state.quizStatesByItemId,
+        )[0]?.item
+      : undefined
+    const previousItem = accessibleItems.at(-1)?.item
+    const nextTurnTypingDelay = consumeNextTypingDelay(
+      nextTurnFirstItem?.typingDelay ?? getCourseItemTypingDelay(previousItem),
+    )
 
     if (!nextTurn) {
       this.state.isTyping = false
@@ -601,7 +674,7 @@ export default class extends Controller<HTMLElement> {
       this.persistState()
       this.render()
       this.scheduleNextStep()
-    }, courseChatTypingDelay)
+    }, nextTurnTypingDelay)
   }
 
   private persistState() {
@@ -623,6 +696,22 @@ export default class extends Controller<HTMLElement> {
 
   private render() {
     this.mountTarget.replaceChildren()
+
+    if (this.hasLoadError) {
+      this.mountTarget.appendChild(this.createFragment(`
+        <div class="course-page__locked">
+          <p class="course-page__locked-title">Chargement impossible</p>
+          <p class="course-page__locked-copy">
+            Les données du cours n'ont pas pu être récupérées.
+          </p>
+        </div>
+      `))
+      return
+    }
+
+    if (!this.isReady) {
+      return
+    }
 
     if (this.state.hasStarted) {
       this.mountTarget.appendChild(this.buildOptions())
@@ -669,8 +758,15 @@ export default class extends Controller<HTMLElement> {
     this.mountTarget.appendChild(transcript)
     this.mountTarget.appendChild(this.buildProgressBlock())
 
-    if (this.isChatCompleted() && this.skillsValue.length > 0) {
-      this.mountTarget.appendChild(this.buildSkillsBlock())
+    if (this.isChatCompleted()) {
+      if (this.skills.length > 0) {
+        this.mountTarget.appendChild(this.buildSkillsBlock())
+      }
+
+      if (this.githubEndUrl) {
+        this.mountTarget.appendChild(this.buildGithubEndBlock())
+      }
+
       const courseNav = this.buildCourseNav()
 
       if (courseNav) {
@@ -1060,7 +1156,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   private buildSkillsBlock() {
-    const skills = this.skillsValue
+    const skills = this.skills
       .map((skill) => `<li class="course-page__skills-item">${escapeHtml(skill)}</li>`)
       .join('')
 
@@ -1072,20 +1168,38 @@ export default class extends Controller<HTMLElement> {
     `)
   }
 
+  private buildGithubEndBlock() {
+    if (!this.githubEndUrl) {
+      return document.createDocumentFragment()
+    }
+
+    return this.createFragment(`
+      <div class="course-page__github-note">
+        <p class="course-page__github-note-title">&lt Code final &gt</p>
+        <p class="course-page__github-note-copy">
+          <a href="${escapeHtml(this.githubEndUrl)}" target="_blank" rel="noreferrer">
+            <span>Lien GitHub</span>
+            ${renderExternalLinkIcon()}
+          </a>
+        </p>
+      </div>
+    `)
+  }
+
   private buildCourseNav() {
-    if (!this.previousCourse && !this.nextCourse) {
+    if (!this.previousCourseLink && !this.nextCourseLink) {
       return null
     }
 
     return this.createFragment(`
       <div class="course-page__course-nav">
         ${
-          this.nextCourse
+          this.nextCourseLink
             ? `
               <div class="course-page__course-nav-card course-page__course-nav-card--next">
                 <p class="course-page__course-nav-eyebrow">Cours suivant</p>
-                <p class="course-page__course-nav-title">${escapeHtml(this.nextCourse.title)}</p>
-                <a class="button button--primary" href="/cours/sylius/${escapeHtml(this.nextCourse.slug)}/">
+                <p class="course-page__course-nav-title">${escapeHtml(this.nextCourseLink.title)}</p>
+                <a class="button button--primary" href="/cours/sylius/${escapeHtml(this.nextCourseLink.slug)}/">
                   Continuer
                 </a>
               </div>
@@ -1093,12 +1207,12 @@ export default class extends Controller<HTMLElement> {
             : ''
         }
         ${
-          this.previousCourse
+          this.previousCourseLink
             ? `
               <div class="course-page__course-nav-card course-page__course-nav-card--previous">
                 <p class="course-page__course-nav-eyebrow">Cours précédent</p>
-                <p class="course-page__course-nav-title">${escapeHtml(this.previousCourse.title)}</p>
-                <a class="button button--tertiary" href="/cours/sylius/${escapeHtml(this.previousCourse.slug)}/">
+                <p class="course-page__course-nav-title">${escapeHtml(this.previousCourseLink.title)}</p>
+                <a class="button button--tertiary" href="/cours/sylius/${escapeHtml(this.previousCourseLink.slug)}/">
                   Revenir
                 </a>
               </div>
@@ -1223,7 +1337,7 @@ export default class extends Controller<HTMLElement> {
   }
 
   private findItemById(itemId: string) {
-    for (const turn of this.turnsValue) {
+    for (const turn of this.turns) {
       for (const [itemIndex, item] of turn.content.entries()) {
         if (getChatItemId(turn.id, itemIndex) === itemId) {
           return item

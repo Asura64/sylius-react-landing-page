@@ -1,9 +1,14 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repository is now a pure Astro + Stimulus site. Application code lives in `src/`: Astro routes in `src/pages`, reusable public UI in `src/components`, client-side controllers in `src/controllers`, typed models in `src/types`, and SCSS tokens/base styles in `src/styles`. Content is data-driven from JSON files in `src/data`. Static assets that must be copied as-is belong in `public/`.
+This repository is now a pure Astro + Stimulus site. Application code lives in `src/`: Astro routes in `src/pages`, reusable public UI in `src/components`, client-side controllers in `src/controllers`, typed models in `src/types`, and SCSS tokens/base styles in `src/styles`. Content is data-driven from JSON files in `public/data`. Static assets that must be copied as-is belong in `public/`.
 
-Landing-page content is aggregated in `src/pages/LandingPage/_landingPage.ts` from `src/data/global.json` and `src/data/modules.json`. Course data lives in `src/data/courses.json`, while course lookup/mapping helpers live in `src/pages/Course/_courses.ts`.
+Landing-page content is aggregated in `src/pages/LandingPage/_landingPage.ts` from `public/data/global.json` and `public/data/modules.json`. Course data lives in `public/data/courses.json`, while shared course/module loading and mapping helpers live in `src/lib/contentData.ts`.
+
+Public data loading rule:
+- Astro pages may read `public/data/*.json` server-side to pre-render markup.
+- Stimulus controllers must not receive large serialized JSON payloads through `data-*` attributes.
+- If a controller needs course/module data at runtime, it should load it through the shared helpers in `src/lib/contentData.ts`, which fetch `/data/*.json` in the browser.
 
 Important routing/layout files:
 - `src/layouts/BaseLayout.astro`: common SEO/layout shell.
@@ -40,7 +45,7 @@ When editing course content:
 - `chat` is the source of truth for public course content; legacy `content` may still exist in JSON but is no longer rendered on public course pages.
 - `CourseItem` types are data-driven and typed in `src/types/content.ts`.
 - `yaml` items use structured `object/array/scalar` data, not raw YAML strings.
-- `InlineRichText` supports lightweight markdown-like syntax plus `{{ path.to.value }}` interpolation from `src/data/global.json`.
+- `InlineRichText` supports lightweight markdown-like syntax plus `{{ path.to.value }}` interpolation from `public/data/global.json`.
 
 ## Testing Guidelines
 There is no dedicated test runner committed yet. Before opening a PR, run `npm run lint` and `npm run build` to catch type, rendering, and static-generation regressions. If you add tests, keep them next to the feature or under a local `__tests__` directory and name them `*.test.ts`.
@@ -51,7 +56,7 @@ For local code changes during an interactive session, prefer targeted validation
 Recent history uses bracketed prefixes such as `[Feature] New course publication` and `[Fix] fix yaml renderer style`. Keep that pattern: `[Feature]`, `[Fix]`, `[Chore]`, followed by a short imperative summary. PRs should describe the user-visible change, note any content or route additions, link the related issue when applicable, and include screenshots for UI changes. Mention whether `npm run lint` and `npm run build` were run.
 
 ## Content & Deployment Notes
-Course pages are generated from `src/data/*.json` through Astro routes; changes to routing or content should be verified in the generated static output under `dist/`.
+Course pages are generated from `public/data/*.json` through Astro routes; changes to routing or content should be verified in the generated static output under `dist/`.
 
 Current deployment/migration context:
 - Astro is the public rendering path.

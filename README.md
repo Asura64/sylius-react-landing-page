@@ -18,7 +18,7 @@ Les scripts par défaut pointent vers le flux Astro.
 - `src/components/*.astro` : composants de rendu statique
 - `src/controllers/*_controller.ts` : logique client Stimulus
 - `src/lib/*.ts` : helpers partagés
-- `src/data/*.json` : contenu
+- `public/data/*.json` : contenu chargé depuis des fichiers publics
 - `public/` : assets copiés tels quels
 
 Le site public n’utilise plus React. L’interactivité client restante est isolée dans des controllers Stimulus.

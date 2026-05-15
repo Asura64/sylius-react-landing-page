@@ -4,26 +4,29 @@ import '../../../App.scss'
 import '../../../components/Footer/style.scss'
 import '../../../components/ChatAvatar/style.scss'
 import '../../../components/CourseChat/style.scss'
-import '../../../components/CourseItem/Architecture/style.scss'
-import '../../../components/CourseItem/Dump/style.scss'
-import '../../../components/CourseItem/H2/style.scss'
-import '../../../components/CourseItem/Img/style.scss'
-import '../../../components/CourseItem/Info/style.scss'
-import '../../../components/CourseItem/InlineRichText.scss'
-import '../../../components/CourseItem/P/style.scss'
-import '../../../components/CourseItem/Quiz/style.scss'
-import '../../../components/CourseItem/Ul/style.scss'
-import '../../../components/CourseItem/Yaml/style.scss'
+import '../../../lib/courseItems/architecture/style.scss'
+import '../../../lib/courseItems/dump/style.scss'
+import '../../../lib/courseItems/h2/style.scss'
+import '../../../lib/courseItems/img/style.scss'
+import '../../../lib/courseItems/info/style.scss'
+import '../../../lib/courseItems/inlineRichText/style.scss'
+import '../../../lib/courseItems/p/style.scss'
+import '../../../lib/courseItems/quiz/style.scss'
+import '../../../lib/courseItems/ul/style.scss'
+import '../../../lib/courseItems/yaml/style.scss'
 import '../../Course/style.scss'
 import { renderCourseItemHtml } from '../../../lib/courseItemHtml'
+import { renderExternalLinkIcon } from '../../../lib/courseItems/shared'
 import { getCoursePageData } from '../../../lib/coursePage'
 import { siteUrl } from '../../../lib/site'
 import Header from '../../../components/Header.astro'
 import ModuleIcon from '../../../components/ModuleIcon.astro'
-import { courses } from '../../Course/_courses'
-import { landingPage } from '../../LandingPage/_landingPage'
+import { getCourses } from '../../Course/_courses'
+import { getLandingPage } from '../../LandingPage/_landingPage'
 
-export function getStaticPaths() {
+export async function getStaticPaths() {
+  const courses = await getCourses()
+
   return courses.map((course) => ({
     params: {
       courseSlug: course.slug,
@@ -32,7 +35,7 @@ export function getStaticPaths() {
 }
 
 const { courseSlug } = Astro.params
-const pageData = courseSlug ? getCoursePageData(courseSlug) : undefined
+const pageData = courseSlug ? await getCoursePageData(courseSlug) : undefined
 
 if (!pageData) {
   return Astro.redirect('/')
@@ -42,14 +45,13 @@ const {
   course,
   module,
   moduleCourses,
-  previousCourse,
-  nextCourse,
   nextPublicCourse,
   hasChat,
   themeClass,
   courseNavigation,
 } = pageData
 
+const landingPage = await getLandingPage()
 const { footer } = landingPage
 const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === course.slug)
 ---
@@ -68,7 +70,6 @@ const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === cours
         aria-label="Parcours du module"
         data-controller="course-timeline"
         data-course-timeline-current-slug-value={course.slug}
-        data-course-timeline-courses-value={JSON.stringify(moduleCourses)}
       >
         <ol class="course-page__timeline-list">
           {moduleCourses.map((moduleCourse, index) => (
@@ -100,6 +101,18 @@ const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === cours
           </div>
           <h1 class="course-page__title">{course.title}</h1>
           <p class="course-page__description">{course.description}</p>
+
+          {hasChat && course.github?.start ? (
+            <div class="course-page__github-note">
+              <p class="course-page__github-note-title">&lt Code de départ &gt</p>
+              <p class="course-page__github-note-copy">
+                <a href={course.github.start} target="_blank" rel="noreferrer">
+                  <span>Lien GitHub</span>
+                  <Fragment set:html={renderExternalLinkIcon()} />
+                </a>
+              </p>
+            </div>
+          ) : null}
 
           {course.private ? (
             <div class="course-page__locked">
@@ -153,10 +166,6 @@ const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === cours
                 data-controller="course-chat"
                 data-action="click->course-chat#handleClick change->course-chat#handleChange"
                 data-course-chat-course-slug-value={course.slug}
-                data-course-chat-next-course-value={JSON.stringify(nextCourse ?? null)}
-                data-course-chat-previous-course-value={JSON.stringify(previousCourse ?? null)}
-                data-course-chat-skills-value={JSON.stringify(course.skills)}
-                data-course-chat-turns-value={JSON.stringify(course.chat)}
               >
                 <div data-course-chat-target="mount"></div>
               </div>

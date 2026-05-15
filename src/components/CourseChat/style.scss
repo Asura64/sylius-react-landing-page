@@ -60,6 +60,7 @@ $course-chat-response-stagger: 0.2s;
       display: inline-flex;
       gap: 0.4rem;
       align-items: center;
+      margin: 1rem 0;
       width: fit-content;
     }
 
@@ -77,6 +78,7 @@ $course-chat-response-stagger: 0.2s;
     flex-wrap: wrap;
     gap: 0.75rem;
     justify-content: flex-end;
+    margin: 1rem 0;
   }
 
   &__response-button {

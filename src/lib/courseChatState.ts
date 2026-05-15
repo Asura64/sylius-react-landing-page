@@ -1,4 +1,5 @@
-import type { ChatTurn } from '../types/content'
+import type { ChatTurn, CourseItem } from '../types/content'
+import { getCourseItemReadingText } from './courseItems/readingText'
 
 export type QuizStateValue = {
   selectedIds: string[]
@@ -23,12 +24,46 @@ export const courseChatTypingDelay = 1000
 export const courseChatStorageVersion = 2
 export const courseProgressChangedEventName = 'course:progress-changed'
 
+const minimumCourseItemTypingDelay = 900
+const maximumCourseItemTypingDelay = 6000
+const readingDelayPerWord = 170
+const readingDelayBase = 700
+
 export function getCourseChatStorageKey(courseSlug: string) {
   return `course-chat-progress:${courseSlug}`
 }
 
 export function getChatItemId(turnId: string, itemIndex: number) {
   return `${turnId}:${itemIndex}`
+}
+
+export function getMinimumCourseItemTypingDelay() {
+  return minimumCourseItemTypingDelay
+}
+
+function countWords(text: string) {
+  if (!text) {
+    return 0
+  }
+
+  return text.split(/\s+/).filter(Boolean).length
+}
+
+export function getCourseItemTypingDelay(previousItem?: CourseItem) {
+  if (!previousItem) {
+    return courseChatTypingDelay
+  }
+
+  const wordCount = countWords(getCourseItemReadingText(previousItem))
+
+  if (wordCount === 0) {
+    return courseChatTypingDelay
+  }
+
+  return Math.max(
+    minimumCourseItemTypingDelay,
+    Math.min(maximumCourseItemTypingDelay, readingDelayBase + wordCount * readingDelayPerWord),
+  )
 }
 
 export function hasCourseChatProgress(courseSlug: string) {

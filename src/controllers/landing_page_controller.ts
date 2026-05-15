@@ -1,6 +1,7 @@
 import { Controller } from '@hotwired/stimulus'
 import type { Course } from '../types/content'
 import { courseProgressChangedEventName, hasCourseChatProgress, isCourseChatCompleted } from '../lib/courseChatState'
+import { getCourses } from '../lib/contentData'
 import { getLandingCtaState } from '../lib/landingCta'
 
 const colorMap: Record<string, string> = {
@@ -57,14 +58,11 @@ function animateScrollTo(targetTop: number, duration = 300) {
 
 export default class extends Controller<HTMLElement> {
   static values = {
-    courses: Array,
     fallbackHref: String,
-    publicCourses: Array,
   }
 
-  declare readonly coursesValue: Course[]
   declare readonly fallbackHrefValue: string
-  declare readonly publicCoursesValue: Course[]
+  private courses: Course[] = []
   private frameId: number | null = null
 
   private readonly handleWindowUpdate = () => {
@@ -81,12 +79,11 @@ export default class extends Controller<HTMLElement> {
   }
 
   connect() {
-    this.updateLandingCtas()
-    this.updateLandingCompletedCourses()
     this.updateLandingTimeline()
     window.addEventListener('scroll', this.handleWindowUpdate, { passive: true })
     window.addEventListener('resize', this.handleWindowUpdate)
     window.addEventListener(courseProgressChangedEventName, this.handleWindowUpdate)
+    void this.loadCourses()
   }
 
   disconnect() {
@@ -98,6 +95,17 @@ export default class extends Controller<HTMLElement> {
     window.removeEventListener('scroll', this.handleWindowUpdate)
     window.removeEventListener('resize', this.handleWindowUpdate)
     window.removeEventListener(courseProgressChangedEventName, this.handleWindowUpdate)
+  }
+
+  private async loadCourses() {
+    this.courses = await getCourses()
+
+    if (!this.element.isConnected) {
+      return
+    }
+
+    this.updateLandingCtas()
+    this.updateLandingCompletedCourses()
   }
 
   handleClick(event: Event) {
@@ -129,9 +137,13 @@ export default class extends Controller<HTMLElement> {
   }
 
   private updateLandingCtas() {
+    if (!this.courses.length) {
+      return
+    }
+
     const ctaState = getLandingCtaState(
-      this.coursesValue,
-      this.publicCoursesValue,
+      this.courses,
+      this.courses.filter((course) => !course.private),
       this.fallbackHrefValue,
       {
         hasProgress: hasCourseChatProgress,
@@ -153,8 +165,13 @@ export default class extends Controller<HTMLElement> {
   }
 
   private updateLandingCompletedCourses() {
+    if (!this.courses.length) {
+      return
+    }
+
     const completedSlugs = new Set(
-      this.publicCoursesValue
+      this.courses
+        .filter((course) => !course.private)
         .filter((course) => course.chat.length > 0 && isCourseChatCompleted(course.slug, course.chat))
         .map((course) => course.slug),
     )
