@@ -64,14 +64,15 @@ Current deployment/migration context:
 - The old Vite/React pipeline has been removed from the public build path.
 
 Canonical and routing conventions are important for this project:
-- Homepage canonical must be `https://patxi.iparaguirre.fr` (no trailing slash).
-- Course URLs must use a trailing slash in generated links, canonical URLs, and sitemap entries:
+- Homepage canonical must be `https://patxi.iparaguirre.fr/` (with trailing slash) to match Astro's configuration.
+- Course pages must NOT be indexed (they have `noindex: true` and are excluded from `sitemap.xml`).
+- Course URLs should still use a trailing slash for internal linking:
   - `https://patxi.iparaguirre.fr/cours/sylius/<slug>/`
-- Internal links should follow the same rule: homepage without trailing slash, course pages with trailing slash.
+- Internal links should follow the same rule: homepage and all pages with trailing slash.
 
 If working on Astro routes, route additions usually require updating:
 - `src/pages/**/*.astro`
-- `public/sitemap.xml`
+- `public/sitemap.xml` (only for indexable pages)
 - any data lookups in `src/pages/LandingPage/_landingPage.ts`, `src/pages/Course/_courses.ts`, or `src/lib/`
 
 UI-specific conventions established in this project:

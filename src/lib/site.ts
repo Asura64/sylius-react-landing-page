@@ -1,1 +1,1 @@
-export const siteUrl = 'https://patxi.iparaguirre.fr'
+export const siteUrl = 'https://patxi.iparaguirre.fr/'

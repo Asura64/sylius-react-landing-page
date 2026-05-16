@@ -59,10 +59,11 @@ const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === cours
 <BaseLayout
   title={course.metaTitle || course.title}
   description={course.metaDescription || course.description}
-  canonical={`${siteUrl}/cours/sylius/${course.slug}/`}
+  canonical={`${siteUrl}cours/sylius/${course.slug}/`}
+  noindex={true}
 >
   <div class={`course-page ${themeClass}`}>
-    <Header navigation={courseNavigation} brandHref="/#hero" showCta={false} />
+    <Header navigation={courseNavigation} brandHref="/" showCta={false} />
 
     <main class="app">
       <nav
