@@ -1,4 +1,40 @@
-export const cvProfile = {
+type CvContactIcon = 'globe' | 'phone' | 'mapPin'
+
+type CvContactItem = {
+  icon: CvContactIcon
+  value: string
+  href?: string
+}
+
+type CvExperience = {
+  title: string
+  company: string
+  period: string
+  track: 'main' | 'side'
+  bullets: string[]
+}
+
+type CvSkill = {
+  title: string
+  level: number
+}
+
+type CvEducation = {
+  title: string
+  detail: string
+}
+
+type CvProfile = {
+  name: string
+  title: string
+  summary: string
+  contact: CvContactItem[]
+  experiences: CvExperience[]
+  skills: CvSkill[]
+  education: CvEducation[]
+}
+
+export const cvProfile: CvProfile = {
   name: 'Patxi Iparaguirre',
   title: 'Lead Developer / Architecte',
   summary:
@@ -137,4 +173,4 @@ export const cvProfile = {
       detail: "2002 - Armée de l'air",
     },
   ],
-} as const
+}

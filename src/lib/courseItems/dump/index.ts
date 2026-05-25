@@ -1,23 +1,7 @@
-import type { DumpItemData, DumpValue } from '../../types/content'
-import type { DumpItem } from '../../types/content'
+import type { DumpItemData, DumpValue } from '../../../types/content'
+import type { DumpItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml } from '../shared'
-
-function getDumpValueKind(value: DumpValue): 'string' | 'number' | 'boolean' | 'null' | 'array' | 'object' {
-  if (value === null) {
-    return 'null'
-  }
-
-  if (Array.isArray(value)) {
-    return 'array'
-  }
-
-  if (typeof value === 'object') {
-    return 'object'
-  }
-
-  return typeof value
-}
 
 function formatDumpScalar(value: DumpValue) {
   if (typeof value === 'string') {
@@ -32,9 +16,9 @@ function formatDumpScalar(value: DumpValue) {
 }
 
 function renderDumpNode(value: DumpValue, name?: string, defaultOpen = true, depth = 0): string {
-  const kind = getDumpValueKind(value)
+  if (value === null || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    const kind = value === null ? 'null' : typeof value
 
-  if (kind === 'string' || kind === 'number' || kind === 'boolean' || kind === 'null') {
     return `
       <div class="course-item-dump__row">
         ${name ? `<span class="course-item-dump__key">${escapeHtml(name)}</span>` : ''}
@@ -45,7 +29,7 @@ function renderDumpNode(value: DumpValue, name?: string, defaultOpen = true, dep
     `
   }
 
-  if (kind === 'array') {
+  if (Array.isArray(value)) {
     return `
       <details class="course-item-dump__group" ${defaultOpen ? 'open' : ''}>
         <summary class="course-item-dump__summary">

@@ -1,4 +1,4 @@
-import type { ImageItem } from '../../types/content'
+import type { ImageItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml, getPlainTextFromInlineRichText, renderExpandIcon } from '../shared'
 

@@ -1,20 +1,15 @@
-function getPublicDataPath(fileName: string) {
-  return `${process.cwd()}/public/data/${fileName}`
-}
-
 export async function loadPublicJson<T>(fileName: string): Promise<T> {
-  if (typeof window !== 'undefined') {
-    const response = await fetch(`/data/${fileName}`)
+  if (import.meta.env.SSR) {
+    const { loadPublicJsonFromDisk } = await import('./publicDataServer')
 
-    if (!response.ok) {
-      throw new Error(`Unable to load /data/${fileName}`)
-    }
-
-    return (await response.json()) as T
+    return loadPublicJsonFromDisk<T>(fileName)
   }
 
-  const { readFile } = await import('node:fs/promises')
-  const rawValue = await readFile(getPublicDataPath(fileName), 'utf8')
+  const response = await fetch(`/data/${fileName}`)
 
-  return JSON.parse(rawValue) as T
+  if (!response.ok) {
+    throw new Error(`Unable to load /data/${fileName}`)
+  }
+
+  return (await response.json()) as T
 }

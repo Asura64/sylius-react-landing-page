@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro'
 import '../../../App.scss'
-import '../../../components/Footer/style.scss'
 import '../../../components/ChatAvatar/style.scss'
 import '../../../components/CourseChat/style.scss'
 import '../../../lib/courseItems/architecture/style.scss'
@@ -21,6 +20,7 @@ import { getCoursePageData } from '../../../lib/coursePage'
 import { siteUrl } from '../../../lib/site'
 import Header from '../../../components/Header.astro'
 import ModuleIcon from '../../../components/ModuleIcon.astro'
+import Footer from '../../../components/Footer.astro'
 import { getCourses } from '../../Course/_courses'
 import { getLandingPage } from '../../LandingPage/_landingPage'
 
@@ -188,28 +188,6 @@ const currentCourseIndex = moduleCourses.findIndex((item) => item.slug === cours
       </div>
     </main>
 
-    <footer class="site-footer">
-      <div class="site-footer__inner">
-        <div class="site-footer__brand-group">
-          <p class="site-footer__brand">{footer.brand}</p>
-          <p class="site-footer__copy">{footer.copy}</p>
-        </div>
-
-        <nav class="site-footer__nav" aria-label="Liens secondaires">
-          <button
-            class="site-footer__link site-footer__link-button"
-            type="button"
-            onclick="window.CookieConsent && window.CookieConsent.showPreferences()"
-          >
-            🍪 Gérer les cookies
-          </button>
-          {footer.links.map((link) => (
-            <a class="site-footer__link" href={link.href}>
-              {link.label}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </footer>
+    <Footer footer={footer} />
   </div>
 </BaseLayout>

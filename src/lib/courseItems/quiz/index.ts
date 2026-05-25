@@ -1,5 +1,5 @@
-import type { QuizItemData } from '../../types/content'
-import type { QuizItem } from '../../types/content'
+import type { QuizItemData } from '../../../types/content'
+import type { QuizItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml } from '../shared'
 

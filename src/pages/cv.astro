@@ -1,11 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import '../pages/Cv/style.scss'
-import { siteUrl } from '../lib/site'
+import '../styles/pages/cv.scss'
 import { cvProfile } from '../lib/cv'
+import { siteUrl } from '../lib/site'
 
 const mainExperiences = cvProfile.experiences.filter((experience) => experience.track === 'main')
 const sideExperiences = cvProfile.experiences.filter((experience) => experience.track === 'side')
+
+function getContactIcon(icon: typeof cvProfile.contact[number]['icon']) {
+  if (icon === 'globe') {
+    return '🌐'
+  }
+
+  if (icon === 'phone') {
+    return '📞'
+  }
+
+  return '📍'
+}
 ---
 
 <BaseLayout
@@ -26,7 +38,7 @@ const sideExperiences = cvProfile.experiences.filter((experience) => experience.
         <img
           class="cv-page__avatar"
           src="/resource/avatar/patxi_real.jpeg"
-          alt="Portrait de Patxi Iparaguirre"
+          alt={`Portrait de ${cvProfile.name}`}
         />
 
         <div class="cv-page__intro">
@@ -34,7 +46,7 @@ const sideExperiences = cvProfile.experiences.filter((experience) => experience.
             {cvProfile.contact.map((item) => (
               <li class="cv-page__contact-item">
                 <span class="cv-page__contact-icon" aria-hidden="true">
-                  {item.icon === 'globe' ? '🌐' : item.icon === 'phone' ? '📞' : '📍'}
+                  {getContactIcon(item.icon)}
                 </span>
                 {item.href ? (
                   <a class="cv-page__contact-link" href={item.href} target="_blank" rel="noreferrer">

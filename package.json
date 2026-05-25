@@ -9,7 +9,8 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview --host",
     "deploy": "npm run build && gh-pages -d dist -b prerender --dotfiles",
-    "lint": "eslint ."
+    "typecheck": "tsc --noEmit",
+    "lint": "npm run typecheck && eslint ."
   },
   "dependencies": {
     "@hotwired/stimulus": "^3.2.2",

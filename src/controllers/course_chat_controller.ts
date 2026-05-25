@@ -151,7 +151,7 @@ export default class extends Controller<HTMLElement> {
 
   connect() {
     window.addEventListener('keydown', this.handleWindowKeydown)
-    void this.initialize()
+    void this.loadCourse()
   }
 
   disconnect() {
@@ -443,7 +443,7 @@ export default class extends Controller<HTMLElement> {
     this.render()
   }
 
-  private async initialize() {
+  private async loadCourse() {
     try {
       const [modules, courses] = await Promise.all([getModules(), getCourses()])
       const courseSequence = getCourseSequenceData(this.courseSlugValue, modules, courses)
@@ -543,15 +543,18 @@ export default class extends Controller<HTMLElement> {
 
     if (this.state.revealedTurnCount === 0) {
       const firstTurn = accessibleTurns[0]
-      const firstAccessibleItem = firstTurn
-        ? getAccessibleTurnItems(
-            this.courseSlugValue,
-            firstTurn,
-            this.state.answersByTurnId,
-            this.state.confirmedItemIds,
-            this.state.quizStatesByItemId,
-          )[0]?.item
-        : undefined
+      if (!firstTurn) {
+        this.state.isTyping = false
+        this.render()
+        return
+      }
+      const firstAccessibleItem = getAccessibleTurnItems(
+        this.courseSlugValue,
+        firstTurn,
+        this.state.answersByTurnId,
+        this.state.confirmedItemIds,
+        this.state.quizStatesByItemId,
+      )[0]?.item
       const initialTypingDelay = firstAccessibleItem?.typingDelay ?? courseChatTypingDelay
 
       this.state.isTyping = true
@@ -856,7 +859,7 @@ export default class extends Controller<HTMLElement> {
         return Boolean(this.state.quizStatesByItemId[getChatItemId(previousTurn!.id, itemIndex)]?.passed)
       })
       const previousTurnShowedQuizCompletion =
-        Boolean(previousTurn) &&
+        previousTurn !== undefined &&
         !previousTurnAnswerId &&
         previousTurnQuizPassed &&
         getQuizCompletionResponse(previousTurn, previousTurnAccessibleItems) != null

@@ -1,5 +1,5 @@
-import type { YamlItemData, YamlValue } from '../../types/content'
-import type { YamlItem } from '../../types/content'
+import type { YamlItemData, YamlValue } from '../../../types/content'
+import type { YamlItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml, renderCopyIcon } from '../shared'
 

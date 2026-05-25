@@ -1,0 +1,34 @@
+---
+import type { FooterContent } from '../types/content'
+import './Footer/style.scss'
+
+type Props = {
+  footer: FooterContent
+}
+
+const { footer } = Astro.props
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__brand-group">
+      <p class="site-footer__brand">{footer.brand}</p>
+      <p class="site-footer__copy">{footer.copy}</p>
+    </div>
+
+    <nav class="site-footer__nav" aria-label="Liens secondaires">
+      <button
+        class="site-footer__link site-footer__link-button"
+        type="button"
+        onclick="window.CookieConsent && window.CookieConsent.showPreferences()"
+      >
+        🍪 Gérer les cookies
+      </button>
+      {footer.links.map((link) => (
+        <a class="site-footer__link" href={link.href}>
+          {link.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</footer>

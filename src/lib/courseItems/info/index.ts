@@ -1,5 +1,5 @@
-import type { InfoItemData } from '../../types/content'
-import type { InfoItem } from '../../types/content'
+import type { InfoItemData } from '../../../types/content'
+import type { InfoItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { renderInlineRichTextHtml } from '../inlineRichText'
 import { escapeHtml, getPlainTextFromInlineRichText, renderCircleAlertIcon } from '../shared'

@@ -1,21 +1,20 @@
-import type { ArchitectureNode } from '../../types/content'
-import type { ArchitectureItem } from '../../types/content'
+import type { ArchitectureNode } from '../../../types/content'
+import type { ArchitectureItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml, renderFileIcon, renderFolderIcon } from '../shared'
 
-function renderArchitectureTree(tree: ArchitectureNode, level = 0) {
+function renderArchitectureTree(tree: ArchitectureNode, level = 0): string {
   return `
     <ul class="course-item-architecture__tree${level === 0 ? ' course-item-architecture__tree--root' : ''}">
       ${Object.entries(tree)
         .map(([name, node]) => {
-          const isDirectory = node !== null
-          const hasChildren = isDirectory && Object.keys(node).length > 0
+          const hasChildren = node !== null && Object.keys(node).length > 0
 
           return `
             <li class="course-item-architecture__entry">
               <div class="course-item-architecture__row">
-                <span class="course-item-architecture__icon${isDirectory ? ' course-item-architecture__icon--directory' : ' course-item-architecture__icon--file'}" aria-hidden="true">
-                  ${isDirectory ? renderFolderIcon() : renderFileIcon()}
+                <span class="course-item-architecture__icon${node !== null ? ' course-item-architecture__icon--directory' : ' course-item-architecture__icon--file'}" aria-hidden="true">
+                  ${node !== null ? renderFolderIcon() : renderFileIcon()}
                 </span>
                 <span class="course-item-architecture__name">${escapeHtml(name)}</span>
               </div>

@@ -1,5 +1,5 @@
-import type { UnorderedListItemData } from '../../types/content'
-import type { UnorderedListItem } from '../../types/content'
+import type { UnorderedListItemData } from '../../../types/content'
+import type { UnorderedListItem } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { renderInlineRichTextHtml } from '../inlineRichText'
 import { getPlainTextFromInlineRichText } from '../shared'

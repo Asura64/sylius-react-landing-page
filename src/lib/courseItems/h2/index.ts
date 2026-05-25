@@ -1,4 +1,4 @@
-import type { H2Item } from '../../types/content'
+import type { H2Item } from '../../../types/content'
 import type { CourseItemHandler } from '../index'
 import { escapeHtml, getPlainTextFromInlineRichText } from '../shared'
 

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
 import '../App.scss'
-import '../components/Footer/style.scss'
 import '../components/SidebarNav/style.scss'
 import '../components/JourneySection/style.scss'
 import '../components/TimelineItem/style.scss'
@@ -13,6 +12,7 @@ import ModuleIcon from '../components/ModuleIcon.astro'
 import Header from '../components/Header.astro'
 import HeroSection from '../components/HeroSection.astro'
 import FeatureGrid from '../components/FeatureGrid.astro'
+import Footer from '../components/Footer.astro'
 
 const landingPage = await getLandingPage()
 const publicCourses = await getPublicCourses()
@@ -224,28 +224,6 @@ const schema = {
     </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <div class="site-footer__brand-group">
-        <p class="site-footer__brand">{footer.brand}</p>
-        <p class="site-footer__copy">{footer.copy}</p>
-      </div>
-
-      <nav class="site-footer__nav" aria-label="Liens secondaires">
-        <button
-          class="site-footer__link site-footer__link-button"
-          type="button"
-          onclick="window.CookieConsent && window.CookieConsent.showPreferences()"
-        >
-          🍪 Gérer les cookies
-        </button>
-        {footer.links.map((link) => (
-          <a class="site-footer__link" href={link.href}>
-            {link.label}
-          </a>
-        ))}
-      </nav>
-    </div>
-  </footer>
+  <Footer footer={footer} />
 
 </BaseLayout>
